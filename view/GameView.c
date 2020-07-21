@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -24,6 +25,14 @@
 
 struct gameView {
 	// TODO: ADD FIELDS HERE
+	Round round;
+	// Message messages[];
+	char *pastPlays;
+
+	Map map;
+
+	int score;
+	
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -37,6 +46,24 @@ GameView GvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
+	
+	// Current round
+	new->round = (strlen(pastPlays) + 1) / 40;
+
+	// int numSpaces = 0;
+	// for (int i = 0; i < MESSAGE_SIZE && pastPlays[i] != '\0'; i++) {
+	// 	if (pastPlays[i] == ' ') numSpaces++;
+	// }
+
+	// new->round = numSpaces/5;
+
+	// Round = strlen(pastPlays) / 40 + 1;
+
+	// int index;
+	// for (index = 0; index < MESSAGE_SIZE && messages[index] != NULL; i++);
+	// new->round = index;
+	new->score = GAME_START_SCORE;
+	new->pastPlays = strdup(pastPlays);
 
 	return new;
 }
@@ -52,20 +79,22 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->round;
 }
 
 Player GvGetPlayer(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	// Starting index for current round
+	int firstIndex = (gv->round) * 40;
+	// Next player's turn is zzz
+	int nextTurn = (((strlen(gv->pastPlays) - firstIndex)+1)/8) % 5;
+	return nextTurn;
 }
 
 int GvGetScore(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	// Calculate from history?
+	return gv->score;
 }
 
 int GvGetHealth(GameView gv, Player player)
@@ -77,12 +106,26 @@ int GvGetHealth(GameView gv, Player player)
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	// If player is already in current round
+	// if (40 * gv->round + player * 8 )
+	if (strlen(gv->pastPlays) == 0) return NOWHERE;
+
+	int lastLocationIndex = (strlen(gv->pastPlays) - 1) / 40 + player * 8;
+	// From previous round
+	//int locationIndex = (gv->round - 1) * 40 + player * 8;
+	char code[3] = {0};
+	code[0] = gv->pastPlays[lastLocationIndex + 1];
+	code[1] = gv->pastPlays[lastLocationIndex + 2];
+	code[2] = '\0';
+
+	return placeAbbrevToId(code);
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	if (gv->round == 0) return NOWHERE;
+	// int locationIndex = (gv->round - 1) * 40 + 32;
 	return NOWHERE;
 }
 
