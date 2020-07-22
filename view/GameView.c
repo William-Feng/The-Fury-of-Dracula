@@ -125,8 +125,12 @@ PlaceId GvGetVampireLocation(GameView gv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	if (gv->round == 0) return NOWHERE;
-	// int locationIndex = (gv->round - 1) * 40 + 32;
-	return NOWHERE;
+	int lastLocationIndex = (gv->round - 1) * 40 + 32;
+	char code[3] = {0};
+	code[0] = gv->pastPlays[lastLocationIndex + 1];
+	code[1] = gv->pastPlays[lastLocationIndex + 2];
+	code[2] = '\0';
+	return placeAbbrevToId(code);
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
