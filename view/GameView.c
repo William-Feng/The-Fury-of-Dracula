@@ -23,6 +23,7 @@
 
 int draculaHealth(GameView gv);
 int hunterHealth(GameView gv, Player player);
+int lastPlayerIndex(GameView gv, Player player);
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
@@ -93,7 +94,7 @@ int GvGetHealth(GameView gv, Player player)
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return 1;
 	// Vampire
-	if (player == 4) {
+	if (player == PLAYER_DRACULA) {
 		return draculaHealth(gv);
 	// Hunter
 	} else {
@@ -113,7 +114,11 @@ int hunterHealth(GameView gv, Player player) {
 			else if (gv->pastPlays[encounter] == 'D') health -= LIFE_LOSS_DRACULA_ENCOUNTER;
 		}
 		// Rest
-		
+		int playerIndex = lastPlayerIndex(gv, player);
+		if (gv->pastPlays[playerIndex + 1] == gv->pastPlays[playerIndex - 40 + 1] &&
+			gv->pastPlays[playerIndex + 2] == gv->pastPlays[playerIndex - 40 + 2]) {
+			health += 3;
+		}
 	}
 	return health;
 }
@@ -123,21 +128,30 @@ int draculaHealth(GameView gv) {
 	return health;
 }
 
-PlaceId GvGetPlayerLocation(GameView gv, Player player)
-{
+
+int lastPlayerIndex(GameView gv, Player player) {
 	// Player already moved in current round
 	int playerTurn = GvGetPlayer(gv);
-	int playerIndex;
 	// Check current round
 	if (player < playerTurn) {
-		playerIndex = gv->round * 40 + player * 8;
+		return gv->round * 40 + player * 8;
 	// Check round before if it's not the first round
 	} else if (gv->round != 0) {
-		playerIndex = (gv->round - 1) * 40 + player * 8;
+		return (gv->round - 1) * 40 + player * 8;
 	// Not in first round
 	} else {
-		return NOWHERE;
+		return -100;
 	}
+}
+
+
+
+PlaceId GvGetPlayerLocation(GameView gv, Player player)
+{
+	// Calculates index of the last entry for specified player
+	int playerIndex = lastPlayerIndex(gv, player);
+	// Not in first round
+	if (playerIndex == -100) return NOWHERE;
 
 	// Extract location code
 	char code[3] = {0};
@@ -148,30 +162,35 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 	switch (location) {
 		case (HIDE):
 		case (DOUBLE_BACK_1):
+			assert(playerIndex - 40 + 1 >= 0);
 			code[0] = gv->pastPlays[playerIndex - 40 + 1];
 			code[1] = gv->pastPlays[playerIndex - 40 + 2];
 			code[2] = '\0';
 			return placeAbbrevToId(code);
 
 		case (DOUBLE_BACK_2):
+			assert(playerIndex - 80 + 1 >= 0);
 			code[0] = gv->pastPlays[playerIndex - 80 + 1];
 			code[1] = gv->pastPlays[playerIndex - 80 + 2];
 			code[2] = '\0';
 			return placeAbbrevToId(code);
 
 		case (DOUBLE_BACK_3):
+			assert(playerIndex - 120 + 1 >= 0);
 			code[0] = gv->pastPlays[playerIndex - 120 + 1];
 			code[1] = gv->pastPlays[playerIndex - 120 + 2];
 			code[2] = '\0';
 			return placeAbbrevToId(code);
 
 		case (DOUBLE_BACK_4):
+			assert(playerIndex - 160 + 1 >= 0);
 			code[0] = gv->pastPlays[playerIndex - 160 + 1];
 			code[1] = gv->pastPlays[playerIndex - 160 + 2];
 			code[2] = '\0';
 			return placeAbbrevToId(code);
 
 		case (DOUBLE_BACK_5):
+			assert(playerIndex - 200 + 1 >= 0);
 			code[0] = gv->pastPlays[playerIndex - 200 + 1];
 			code[1] = gv->pastPlays[playerIndex - 200 + 2];
 			code[2] = '\0';
