@@ -23,7 +23,6 @@
 
 int draculaHealth(GameView gv);
 int hunterHealth(GameView gv, Player player);
-int lastPlayerIndex(GameView gv, Player player);
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
@@ -34,9 +33,6 @@ struct gameView {
 	char *pastPlays;
 
 	Map map;
-
-	int score;
-	
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -44,7 +40,6 @@ struct gameView {
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
@@ -53,8 +48,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	// Current round
 	new->round = (strlen(pastPlays) + 1) / 40;
-
-	new->score = GAME_START_SCORE;
 	new->pastPlays = strdup(pastPlays);
 
 	return new;
@@ -63,6 +56,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 void GvFree(GameView gv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	free(gv->pastPlays);
 	free(gv);
 }
 
@@ -92,7 +86,7 @@ int GvGetScore(GameView gv)
 int GvGetHealth(GameView gv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 1;
+	// return 1;
 	// Vampire
 	if (player == PLAYER_DRACULA) {
 		return draculaHealth(gv);
@@ -106,20 +100,26 @@ int GvGetHealth(GameView gv, Player player)
 int hunterHealth(GameView gv, Player player) {
 	int health = GAME_START_HUNTER_LIFE_POINTS;
 	// For each player round
-	for (int round = 0; round < gv->round - 1; round++) {
+	for (int round = 0; (player < GvGetPlayer(gv)) ? round < gv->round + 1: round < gv->round; round++) {
 		// Check encounters
-		int roundIndex = 3 + player * 8;
+		int roundIndex = 40 * round + 3 + player * 8;
 		for (int encounter = roundIndex; encounter < roundIndex + 4; encounter++) {
-			if (gv->pastPlays[encounter] == 'T') health -= LIFE_LOSS_TRAP_ENCOUNTER;
-			else if (gv->pastPlays[encounter] == 'D') health -= LIFE_LOSS_DRACULA_ENCOUNTER;
+			if (gv->pastPlays[encounter] == 'T') {
+				health -= LIFE_LOSS_TRAP_ENCOUNTER;
+			} else if (gv->pastPlays[encounter] == 'D') {
+				health -= LIFE_LOSS_DRACULA_ENCOUNTER;
+			}
 		}
-		// Rest
-		int playerIndex = lastPlayerIndex(gv, player);
-		if (gv->pastPlays[playerIndex + 1] == gv->pastPlays[playerIndex - 40 + 1] &&
+		// Rest (check before?)
+		int playerIndex = round * 40 + player * 8;
+		if (round > 0 &&
+			gv->pastPlays[playerIndex + 1] == gv->pastPlays[playerIndex - 40 + 1] &&
 			gv->pastPlays[playerIndex + 2] == gv->pastPlays[playerIndex - 40 + 2]) {
-			health += 3;
+			health = (health + 3 > 9) ? 9 : health + 3;
 		}
+		// printf("%d %d\n", round, health);
 	}
+	// Need to add health restore mechanic - dead hunter, skip next round
 	return health;
 }
 
@@ -128,30 +128,24 @@ int draculaHealth(GameView gv) {
 	return health;
 }
 
-
-int lastPlayerIndex(GameView gv, Player player) {
-	// Player already moved in current round
-	int playerTurn = GvGetPlayer(gv);
-	// Check current round
-	if (player < playerTurn) {
-		return gv->round * 40 + player * 8;
-	// Check round before if it's not the first round
-	} else if (gv->round != 0) {
-		return (gv->round - 1) * 40 + player * 8;
-	// Not in first round
-	} else {
-		return -100;
-	}
-}
-
-
-
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	// Calculates index of the last entry for specified player
-	int playerIndex = lastPlayerIndex(gv, player);
+	// Calculates index of the last entry for specified player //
+	// Player already moved in current round
+	int playerTurn = GvGetPlayer(gv);
+	int playerIndex;
+	// Check current round
+	if (player < playerTurn) {
+		playerIndex = gv->round * 40 + player * 8;
+	// Check round before if it's not the first round
+	} else if (gv->round != 0) {
+		playerIndex = (gv->round - 1) * 40 + player * 8;
 	// Not in first round
-	if (playerIndex == -100) return NOWHERE;
+	} else {
+		return NOWHERE;
+	}
+
+	// Dracula teleport
 
 	// Extract location code
 	char code[3] = {0};
@@ -197,7 +191,8 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 			return placeAbbrevToId(code);
 
 		default:
-			if (GvGetHealth(gv, player) <= 0) return ST_JOSEPH_AND_ST_MARY;
+			if (player != PLAYER_DRACULA && GvGetHealth(gv, player) <= 0)
+				return ST_JOSEPH_AND_ST_MARY;
 			else return location;
 	}
 }
