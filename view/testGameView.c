@@ -138,7 +138,7 @@ int main(void)
 		 		GAME_START_BLOOD_POINTS - LIFE_LOSS_HUNTER_ENCOUNTER);
 		assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == GENEVA);
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == GENEVA);
-		// assert(GvGetVampireLocation(gv) == NOWHERE);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
 
 		GvFree(gv);
 		printf("Test passed\n");
@@ -274,7 +274,7 @@ int main(void)
 		GameView gv = GvNew(trail, messages);
 		
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == GALATZ);
-		// assert(GvGetVampireLocation(gv) == CASTLE_DRACULA);
+		assert(GvGetVampireLocation(gv) == CASTLE_DRACULA);
 		// int numTraps = 0;
 		// PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
 		// assert(numTraps == 2);
