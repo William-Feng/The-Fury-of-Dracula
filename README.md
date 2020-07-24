@@ -1,5 +1,5 @@
 # The Fury of Dracula
-COMP2521 Assignment 2
+COMP2521 2020T2 Assignment 2
 
 ## Team JAWA (jane-amanda-william-andrew)
 *We don't go by the script.*
