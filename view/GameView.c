@@ -199,14 +199,27 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	if (gv->round == 0) return NOWHERE;
-	int lastLocationIndex = (gv->round - 1) * 40 + 32;
-	char code[3] = {0};
-	code[0] = gv->pastPlays[lastLocationIndex + 1];
-	code[1] = gv->pastPlays[lastLocationIndex + 2];
-	code[2] = '\0';
-	return placeAbbrevToId(code);
+    // Vampire not spawned if the 5th player (Dracula) hasn't played
+    if (strlen(gv->pastPlays) <= 4*8) return NOWHERE;
+    
+    // Divide message length by 40 (rounded down) to get the round
+    // Subtract 1 to go to the previous row
+    // Multiply by 40 to get the index of the row immediately above
+    // Add 36 to get the position of 'V' in that line (arrays zero indexed)
+    int vampireIndex = (strlen(gv->pastPlays) / 40 - 1) * 40 + 36;
+    // If finding the vampire index in the first turn
+    if (vampireIndex < 0) vampireIndex = 36;
+
+    char code[3] = {0};
+    code[2] = '\0';
+    // Vampire does not exist
+    if (gv->pastPlays[vampireIndex] != 'V') {
+        return NOWHERE;
+    } else { // Vampire does exist
+        code[0] = gv->pastPlays[vampireIndex - 3];
+        code[1] = gv->pastPlays[vampireIndex - 2];
+        return placeAbbrevToId(code);
+    }
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
