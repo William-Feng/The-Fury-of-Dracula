@@ -206,20 +206,35 @@ PlaceId GvGetVampireLocation(GameView gv)
     // Subtract 1 to go to the previous row
     // Multiply by 40 to get the index of the row immediately above
     // Add 36 to get the position of 'V' in that line (arrays zero indexed)
-    int vampireIndex = (strlen(gv->pastPlays) / 40 - 1) * 40 + 36;
+    int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 + 37 - 1;
     // If finding the vampire index in the first turn
-    if (vampireIndex < 0) vampireIndex = 36;
+    if (index < 0) index = 36;
 
-    char code[3] = {0};
-    code[2] = '\0';
-    // Vampire does not exist
-    if (gv->pastPlays[vampireIndex] != 'V') {
-        return NOWHERE;
-    } else { // Vampire does exist
-        code[0] = gv->pastPlays[vampireIndex - 3];
-        code[1] = gv->pastPlays[vampireIndex - 2];
-        return placeAbbrevToId(code);
-    }
+	// Vampire has been vanquished by one of the hunters
+	int vanquished = ((strlen(gv->pastPlays) + 1) / 40) * 40 + 4 - 1;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (gv->pastPlays[vanquished] == 'V') return NOWHERE;
+			vanquished++;
+		}
+		vanquished += 5;
+	}
+
+	for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
+		// Vampire exists
+		if (gv->pastPlays[index] == 'V') {
+			char code[3];
+			code[0] = gv->pastPlays[index - 3];
+			code[1] = gv->pastPlays[index - 2];
+			code[2] = '\0';
+			return placeAbbrevToId(code);
+		}
+		// Vampire has matured
+		if (gv->pastPlays[index + 1] == 'V') return NOWHERE;
+		index -= 40;
+	}
+	// Otherwise vampire hasn't been spawned
+	return NOWHERE;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
