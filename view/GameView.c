@@ -21,19 +21,33 @@
 #include "Places.h"
 // add your own #includes here
 
-int draculaHealth(GameView gv);
-int hunterHealth(GameView gv, Player player);
+#include <math.h>
+
+
+
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct gameView {
-	// TODO: ADD FIELDS HERE
 	Round round;
-	// Message messages[];
 	char *pastPlays;
-
 	Map map;
 };
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Function prototypes
+
+int min (int a , int b);
+bool vampireHunterEncounter (GameView gv, int location);
+bool hunterRest (GameView gv, int location) ;
+int healthDracula (GameView gv, Player player, int numTurns);
+int healthHunter (GameView gv, Player player, int numTurns);
+int findNumMoves (GameView gv, Player player);
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -48,7 +62,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	// Current round
 	new->round = (strlen(pastPlays) + 1) / 40;
+	
 	new->pastPlays = strdup(pastPlays);
+	new->map = MapNew();
 
 	return new;
 }
@@ -83,50 +99,24 @@ int GvGetScore(GameView gv)
 	return score;
 }
 
+
 int GvGetHealth(GameView gv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	// return 1;
-	// Vampire
+	// get number of turns
+	Round numTurns = GvGetRound(gv);
+	if (GvGetPlayer(gv) > player) numTurns++;
+
+	
+	// If player is Dracula
 	if (player == PLAYER_DRACULA) {
-		return draculaHealth(gv);
-	// Hunter
-	} else {
-		return hunterHealth(gv, player);
+		return healthDracula (gv, player, numTurns);
+
+	} else { // If player is Hunter
+		return healthHunter (gv, player, numTurns);
 	}
-
 }
 
-int hunterHealth(GameView gv, Player player) {
-	int health = GAME_START_HUNTER_LIFE_POINTS;
-	// For each player round
-	for (int round = 0; (player < GvGetPlayer(gv)) ? round < gv->round + 1: round < gv->round; round++) {
-		// Check encounters
-		int roundIndex = 40 * round + 3 + player * 8;
-		for (int encounter = roundIndex; encounter < roundIndex + 4; encounter++) {
-			if (gv->pastPlays[encounter] == 'T') {
-				health -= LIFE_LOSS_TRAP_ENCOUNTER;
-			} else if (gv->pastPlays[encounter] == 'D') {
-				health -= LIFE_LOSS_DRACULA_ENCOUNTER;
-			}
-		}
-		// Rest (check before?)
-		int playerIndex = round * 40 + player * 8;
-		if (round > 0 &&
-			gv->pastPlays[playerIndex + 1] == gv->pastPlays[playerIndex - 40 + 1] &&
-			gv->pastPlays[playerIndex + 2] == gv->pastPlays[playerIndex - 40 + 2]) {
-			health = (health + 3 > 9) ? 9 : health + 3;
-		}
-		// printf("%d %d\n", round, health);
-	}
-	// Need to add health restore mechanic - dead hunter, skip next round
-	return health;
-}
 
-int draculaHealth(GameView gv) {
-	int health = GAME_START_BLOOD_POINTS;
-	return health;
-}
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
@@ -222,10 +212,24 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
+	int numMoves = findNumMoves (gv, player);
+	PlaceId *moveHistory = malloc (numMoves * sizeof(PlaceId));
+
+	int strtElmt = player;
+	int incre = 0;
+
+	for (int i = 0; i < numMoves ; i++) { // need cases for Drac and hunter
+		char abbrev[3];
+		abbrev[0] = gv->pastPlays[(strtElmt * 8) + incre + 1 ];
+		abbrev[1] = gv->pastPlays[(strtElmt * 8) + incre + 2 ];
+		abbrev[2] = '\0';
+		moveHistory [i] = placeAbbrevToId (abbrev);
+		incre = incre + 40;
+	}
+
+	*numReturnedMoves = numMoves;
 	*canFree = false;
-	return NULL;
+	return moveHistory; 
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
@@ -261,15 +265,201 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	ConnList connList = MapGetConnections (gv->map, from);
+
+	if (player == PLAYER_DRACULA) {
+		
+		// find the number of valid Connections in the linked list
+		int i = 1;
+		
+		while (connList != NULL ) {
+			if (connList->type != RAIL && connList->p != ST_JOSEPH_AND_ST_MARY) {
+				i++;
+			}
+			connList = connList->next;
+		}
+
+		//allocate memory for dynamic array
+		PlaceId *reachable = malloc(i * sizeof(PlaceId));
+		if (reachable == NULL) {
+			fprintf(stderr, "Insufficient memory!\n");
+			exit(EXIT_FAILURE);
+		}
+		*numReturnedLocs = i;
+
+		
+		int k = 0;
+		while (connList!= NULL) {
+			if (connList->type != RAIL && connList->p != ST_JOSEPH_AND_ST_MARY) {
+				reachable[k] = connList->p;
+				k++;
+			}
+			connList = connList->next;
+		}
+
+		return reachable;
+	} 
+	
+	
+	
+	
+	else { // hunter
+		int i = 1; 
+		while (connList != NULL) {
+			if (connList->type == RAIL && (round + player) % 4 == 0) {
+				connList = connList->next;
+				continue;
+			} else {
+				connList = connList->next;
+			}
+			i++;
+		}
+
+
+		PlaceId *reachable = malloc(i * sizeof(PlaceId));
+		if (reachable == NULL) {
+			fprintf(stderr, "Insufficient memory!\n");
+			exit(EXIT_FAILURE);
+		}
+		*numReturnedLocs = i;
+
+		int k = 0;
+		while (connList != NULL) {
+			if (connList->type == RAIL && (round + player) % 4 == 0) {
+				reachable[k] = connList->p;
+				k++;
+			}
+			connList = connList->next;
+		}
+		return reachable;
+	}
+	
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
+	ConnList connList = MapGetConnections (gv->map, from);
+
+	if (player == PLAYER_DRACULA) {
+		// find the number of valid Connections in the linked list
+		int i = 1;
+		
+		while (connList != NULL ) {
+			if (connList->type == ROAD && road == true && connList->p != ST_JOSEPH_AND_ST_MARY) {
+				i++;
+			}
+			if (connList->type == BOAT && boat == true && connList->p != ST_JOSEPH_AND_ST_MARY) {
+				i++;
+			}
+			connList = connList->next;
+		}
+
+		//allocate memory for dynamic array
+		PlaceId *reachable = malloc(i * sizeof(PlaceId));
+		if (reachable == NULL) {
+			fprintf(stderr, "Insufficient memory!\n");
+			exit(EXIT_FAILURE);
+		}
+		*numReturnedLocs = i;
+
+		
+		int k = 0;
+		while (connList!= NULL) {
+			if (connList->type == ROAD && road == true && connList->p != ST_JOSEPH_AND_ST_MARY) {
+				reachable[k] = connList->p;
+				k++;
+			}
+			if (connList->type == BOAT && boat == true && connList->p != ST_JOSEPH_AND_ST_MARY) {
+				reachable[k] = connList->p;
+				k++;				
+			}
+			connList = connList->next;
+		}
+
+		return reachable;
+	} 
+	
+	
+	
+	
+	else { // hunter
+		int i = 1; 
+		if (connList->type == RAIL && (round + player) % 4 == 0) {
+			rail = false;
+		}
+
+		while (connList != NULL) {
+			if (connList->type == RAIL && rail == true) {
+				i++;
+			} else if (connList->type == ROAD && road == true) {
+				i++;
+			} else if (connList->type == BOAT && boat == true) {
+				i++;
+			}
+			connList = connList->next;
+		}
+
+
+		PlaceId *reachable = malloc(i * sizeof(PlaceId));
+		if (reachable == NULL) {
+			fprintf(stderr, "Insufficient memory!\n");
+			exit(EXIT_FAILURE);
+		}
+		*numReturnedLocs = i;
+
+		int k = 0;
+		while (connList != NULL) {
+			if (connList->type == RAIL && rail == true) {
+				reachable[k] = connList->p;
+				k++;				
+			} else if (connList->type == ROAD && road == true) {
+				reachable[k] = connList->p;
+				k++;
+			} else if (connList->type == BOAT && boat == true) {
+				reachable[k] = connList->p;
+				k++;
+			}
+			connList = connList->next;
+		}
+		return reachable;
+	}
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
 	return NULL;
@@ -279,3 +469,163 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 // Your own interface functions
 
 // TODO
+
+// interface functions
+
+
+
+
+
+
+
+
+
+
+int min (int a , int b) {
+	return (a > b) ? b : a;
+}
+
+
+
+
+
+
+bool vampireHunterEncounter (GameView gv, int location) {
+	Player currPlayer = GvGetPlayer(gv);
+	for(int i = 0; i < currPlayer; i++) {	
+		if (gv->pastPlays[location + (8 * i) + 4] == 'D') { // vampire encountered
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+
+
+
+
+bool hunterRest (GameView gv, int location) {
+	
+	if (gv->pastPlays[location] != gv->pastPlays[location - 40]) {
+		return false; 
+	}
+	if (gv->pastPlays[location + 1] != gv->pastPlays[location + 1 - 40]) {
+		return false; 
+	}
+	return true; 
+}
+
+
+
+
+
+
+
+
+int healthDracula (GameView gv, Player player, int numTurns) {
+	
+	int strtElmt = player;
+	int incre = 0;
+
+	int health = GAME_START_BLOOD_POINTS;
+
+	
+	for (int i = 0; i < numTurns; i++) {
+		char abbrev[3];
+		abbrev[0] = gv->pastPlays[(strtElmt * 8) + incre + 1];
+		abbrev[1] = gv->pastPlays[(strtElmt * 8) + incre + 2];
+		abbrev[2] = '\0';
+		PlaceId pid = placeAbbrevToId (abbrev);
+		PlaceType pT = placeIdToType (pid);
+		if (pT == SEA) { // is the place a sea?
+			health = health - LIFE_LOSS_SEA;	
+		} else if (gv->pastPlays[(strtElmt * 8) + incre + 1] == 'S' && gv->pastPlays[(strtElmt * 8) + incre + 2] == '?') { // in sea at end of turn
+			health = health - LIFE_LOSS_SEA;
+		} else if (pid == CASTLE_DRACULA) { // in castle dracula
+			health = health + LIFE_GAIN_CASTLE_DRACULA;
+		} else if (gv->pastPlays[(strtElmt * 8) + incre + 1] == 'D') { // test for doubel back
+			int p = gv->pastPlays[(strtElmt * 8) + incre + 2] - 48;
+			if (gv->pastPlays[((strtElmt * 8) + incre + 1) - (p * 40)] == 'S' && gv->pastPlays[(((strtElmt * 8) + incre + 1) - (p * 40)) + 1] == '?') { // is the place a sea?
+				health = health - LIFE_LOSS_SEA;
+			} else { /// is the place a sea? 
+				char abbreviation[3];
+				abbreviation[0] = gv->pastPlays[((strtElmt * 8) + incre + 1) - (p * 40)];
+				abbreviation[1] = gv->pastPlays[(((strtElmt * 8) + incre + 1) - (p * 40)) + 1];
+				abbreviation[2] = '\0';
+				PlaceId plcid = placeAbbrevToId (abbreviation);
+				PlaceType plcT = placeIdToType (plcid);
+				if (plcT == SEA) {
+					health = health - LIFE_LOSS_SEA;	
+				}
+				if (plcid == CASTLE_DRACULA) {
+					health = health + LIFE_GAIN_CASTLE_DRACULA;
+				}
+			}
+		} else if (gv->pastPlays[(strtElmt * 8) + incre + 1] == 'H') {
+			if (gv->pastPlays[(strtElmt * 8) + incre + 2] == 'I') {
+				if (gv->pastPlays[((strtElmt * 8) + incre + 1) - 40] == 'S') {
+					health = health - LIFE_LOSS_SEA;
+				}
+			}
+		}
+
+		if (vampireHunterEncounter(gv, (((strtElmt + 1 ) * 8) + incre))) { // encounters a hunter
+			health = health - LIFE_LOSS_HUNTER_ENCOUNTER;
+		} 
+		incre = incre + 40;
+	}
+	if (health < 0) return 0;
+	return health;
+}
+
+
+
+
+
+int healthHunter (GameView gv, Player player, int numTurns) {
+	int strtElmt = player;
+	int incre = 0;
+
+	int health = GAME_START_HUNTER_LIFE_POINTS;
+
+	for (int j = 0; j < numTurns; j++) {
+		for (int i = 0; i < 4; i++) {
+			if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
+				health = health - LIFE_LOSS_TRAP_ENCOUNTER;
+			}
+			if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { // encounter dracula
+				health = health - LIFE_LOSS_DRACULA_ENCOUNTER;
+			} 
+			if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { // gains 3 life points each time they rest // need to code for other bit
+				health = min ( (health + LIFE_GAIN_REST), GAME_START_HUNTER_LIFE_POINTS);
+			}
+		}
+		incre = incre + 40;
+	}
+	if (health < 0) return 0;
+	return health;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int findNumMoves (GameView gv, Player player)
+{
+	// Finding the number of turns they took
+	Round round = GvGetRound (gv);
+	if (GvGetPlayer(gv) > player) round++;
+
+	return round;
+}
