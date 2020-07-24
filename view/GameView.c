@@ -54,7 +54,6 @@ int healthHunter (GameView gv, Player player, int numTurns);
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
@@ -62,7 +61,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 	}
     new->pastPlays = strdup(pastPlays);
     new->map = MapNew();
-
 	return new;
 }
 
@@ -97,33 +95,34 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-	// get number of turns
+	// Retrieve number of turns
 	Round numTurns = GvGetRound(gv);
 	if (GvGetPlayer(gv) > player) numTurns++;
 
-	
-	// If player is Dracula
-	if (player == PLAYER_DRACULA) {
-		return healthDracula (gv, player, numTurns);
-
-	} else { // If player is Hunter
-		return healthHunter (gv, player, numTurns);
+	// Player is a hunter
+	if (player != PLAYER_DRACULA) {
+		return healthHunter(gv, player, numTurns);
+	// Player is Dracula
+	} else {
+		return healthDracula(gv, player, numTurns);
 	}
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-    int numLocs = 0;
-    bool canFree = true;
+    // Retrieve the last location using GvGetLastLocations
+	int numLocs = 0; bool canFree = true;
     PlaceId *locations = GvGetLastLocations(gv, player, 1, &numLocs, &canFree);
     PlaceId location = locations[0];
     free(locations);
 
-    // Process health
+    // No locations returned
     if (numLocs == 0) {
 		return NOWHERE;
+	// Player is a hunter
 	} else if (player != PLAYER_DRACULA) {
 		return (GvGetHealth(gv, player) <= 0) ? ST_JOSEPH_AND_ST_MARY : location;
+	// Player is Dracula
 	} else {
         return location;
     }
@@ -194,7 +193,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
         exit(EXIT_FAILURE);
     }
 
-    // Determine the bounds for the for loop
+    // Determine the bounds for the loop
     int finalMove = roundsPlayed(gv, player);
     int firstMove = max(finalMove - numMoves, 0);
     int moveCounter = 0;
@@ -225,9 +224,10 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
                             int *numReturnedLocs, bool *canFree)
 {
+	// Retrieve the last moves using GvGetLastMoves
 	PlaceId *moves = GvGetLastMoves(gv, player, numLocs, numReturnedLocs, canFree);
     
-    // Find location of special moves
+    // Find location for special moves
     int roundOffset = roundsPlayed(gv, player) - *numReturnedLocs;
     for (int index = 0; index < *numReturnedLocs; index++) {
         moves[index] = extractLocation(gv, player, moves[index], index + roundOffset);
@@ -272,12 +272,12 @@ int min(int a, int b) {
 }
 
 int roundsPlayed(GameView gv, Player player) {
-    // Add one if player has already gone in current turn
+    // Add one to round if player has already gone in current turn
     return (player < GvGetPlayer(gv)) ? GvGetRound(gv) + 1 : GvGetRound(gv);
 }
 
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
-    // Hunters
+    // Player is a Hunter
     if (player != PLAYER_DRACULA) {
 		// Health up to turn
         return (GvGetHealth(gv, player) <= 0) ? ST_JOSEPH_AND_ST_MARY : move;

@@ -47,7 +47,6 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
@@ -55,7 +54,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 	}
     new->pastPlays = strdup(pastPlays);
     new->map = MapNew();
-
 	return new;
 }
 
@@ -96,17 +94,19 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-    int numLocs = 0;
-    bool canFree = true;
+    // Retrieve the last location using GvGetLastLocations
+    int numLocs = 0; bool canFree = true;
     PlaceId *locations = GvGetLastLocations(gv, player, 1, &numLocs, &canFree);
     PlaceId location = locations[0];
     free(locations);
 
-    // Process health
+    // No locations returned
     if (numLocs == 0) {
 		return NOWHERE;
+	// Player is a hunter
 	} else if (player != PLAYER_DRACULA) {
 		return (GvGetHealth(gv, player) <= 0) ? ST_JOSEPH_AND_ST_MARY : location;
+	// Player is Dracula
 	} else {
         return location;
     }
@@ -177,7 +177,8 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
                             int *numReturnedLocs, bool *canFree)
 {
-	PlaceId *moves = GvGetLastMoves(gv, player, numLocs, numReturnedLocs, canFree);
+	// Retrieve the last moves using GvGetLastMoves
+    PlaceId *moves = GvGetLastMoves(gv, player, numLocs, numReturnedLocs, canFree);
     
     // Find location of special moves
     int roundOffset = roundsPlayed(gv, player) - *numReturnedLocs;
