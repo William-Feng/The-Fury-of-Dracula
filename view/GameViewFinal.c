@@ -42,13 +42,6 @@ int roundsPlayed(GameView gv, Player player);
 // Extract location for a specified move
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
 
-// Unchecked
-bool vampireHunterEncounter (GameView gv, int location);
-bool hunterRest (GameView gv, int location) ;
-int healthDracula (GameView gv, Player player, int numTurns);
-int healthHunter (GameView gv, Player player, int numTurns);
-
-
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -97,18 +90,8 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-	// get number of turns
-	Round numTurns = GvGetRound(gv);
-	if (GvGetPlayer(gv) > player) numTurns++;
-
-	
-	// If player is Dracula
-	if (player == PLAYER_DRACULA) {
-		return healthDracula (gv, player, numTurns);
-
-	} else { // If player is Hunter
-		return healthHunter (gv, player, numTurns);
-	}
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return 0;
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
@@ -131,42 +114,8 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-    // Vampire not spawned if the 5th player (Dracula) hasn't played
-    if (strlen(gv->pastPlays) <= 4*8) return NOWHERE;
-    
-    // Divide message length by 40 (rounded down) to get the round
-    // Subtract 1 to go to the previous row
-    // Multiply by 40 to get the index of the row immediately above
-    // Add 36 to get the position of 'V' in that line (arrays zero indexed)
-    int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 + 37 - 1;
-    // If finding the vampire index in the first turn
-    if (index < 0) index = 36;
-
-    // Vampire has been vanquished by one of the hunters
-    int vanquished = ((strlen(gv->pastPlays) + 1) / 40) * 40 + 4 - 1;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (gv->pastPlays[vanquished] == 'V') return NOWHERE;
-            vanquished++;
-        }
-        vanquished += 5;
-    }
-
-    for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
-        // Vampire exists
-        if (gv->pastPlays[index] == 'V') {
-            char code[3];
-            code[0] = gv->pastPlays[index - 3];
-            code[1] = gv->pastPlays[index - 2];
-            code[2] = '\0';
-            return placeAbbrevToId(code);
-        }
-        // Vampire has matured
-        if (gv->pastPlays[index + 1] == 'V') return NOWHERE;
-        index -= 40;
-    }
-    // Otherwise vampire hasn't been spawned
-    return NOWHERE;
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	return NOWHERE;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
@@ -323,129 +272,3 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
 	else if (move == TELEPORT) return CASTLE_DRACULA;
 	else return move;
 }
-
-
-// Unchecked yet
-
-bool vampireHunterEncounter (GameView gv, int location) {
-	Player currPlayer = GvGetPlayer(gv);
-	for(int i = 0; i < currPlayer; i++) {	
-		if (gv->pastPlays[location + (8 * i) + 4] == 'D') { // vampire encountered
-			return true;
-		}
-	}
-	return false;
-}
-
-
-
-
-
-
-
-bool hunterRest (GameView gv, int location) {
-	
-	if (gv->pastPlays[location] != gv->pastPlays[location - 40]) {
-		return false; 
-	}
-	if (gv->pastPlays[location + 1] != gv->pastPlays[location + 1 - 40]) {
-		return false; 
-	}
-	return true; 
-}
-
-
-
-
-
-
-
-
-int healthDracula (GameView gv, Player player, int numTurns) {
-	
-	int strtElmt = player;
-	int incre = 0;
-
-	int health = GAME_START_BLOOD_POINTS;
-
-	
-	for (int i = 0; i < numTurns; i++) {
-		char abbrev[3];
-		abbrev[0] = gv->pastPlays[(strtElmt * 8) + incre + 1];
-		abbrev[1] = gv->pastPlays[(strtElmt * 8) + incre + 2];
-		abbrev[2] = '\0';
-		PlaceId pid = placeAbbrevToId (abbrev);
-		PlaceType pT = placeIdToType (pid);
-		if (pT == SEA) { // is the place a sea?
-			health = health - LIFE_LOSS_SEA;	
-		} else if (gv->pastPlays[(strtElmt * 8) + incre + 1] == 'S' && gv->pastPlays[(strtElmt * 8) + incre + 2] == '?') { // in sea at end of turn
-			health = health - LIFE_LOSS_SEA;
-		} else if (pid == CASTLE_DRACULA) { // in castle dracula
-			health = health + LIFE_GAIN_CASTLE_DRACULA;
-		} else if (gv->pastPlays[(strtElmt * 8) + incre + 1] == 'D') { // test for doubel back
-			int p = gv->pastPlays[(strtElmt * 8) + incre + 2] - 48;
-			if (gv->pastPlays[((strtElmt * 8) + incre + 1) - (p * 40)] == 'S' && gv->pastPlays[(((strtElmt * 8) + incre + 1) - (p * 40)) + 1] == '?') { // is the place a sea?
-				health = health - LIFE_LOSS_SEA;
-			} else { /// is the place a sea? 
-				char abbreviation[3];
-				abbreviation[0] = gv->pastPlays[((strtElmt * 8) + incre + 1) - (p * 40)];
-				abbreviation[1] = gv->pastPlays[(((strtElmt * 8) + incre + 1) - (p * 40)) + 1];
-				abbreviation[2] = '\0';
-				PlaceId plcid = placeAbbrevToId (abbreviation);
-				PlaceType plcT = placeIdToType (plcid);
-				if (plcT == SEA) {
-					health = health - LIFE_LOSS_SEA;	
-				}
-				if (plcid == CASTLE_DRACULA) {
-					health = health + LIFE_GAIN_CASTLE_DRACULA;
-				}
-			}
-		} else if (gv->pastPlays[(strtElmt * 8) + incre + 1] == 'H') {
-			if (gv->pastPlays[(strtElmt * 8) + incre + 2] == 'I') {
-				if (gv->pastPlays[((strtElmt * 8) + incre + 1) - 40] == 'S') {
-					health = health - LIFE_LOSS_SEA;
-				}
-			}
-		}
-
-		if (vampireHunterEncounter(gv, (((strtElmt + 1 ) * 8) + incre))) { // encounters a hunter
-			health = health - LIFE_LOSS_HUNTER_ENCOUNTER;
-		} 
-		incre = incre + 40;
-	}
-	if (health < 0) return 0;
-	return health;
-}
-
-
-
-
-
-int healthHunter (GameView gv, Player player, int numTurns) {
-	int strtElmt = player;
-	int incre = 0;
-
-	int health = GAME_START_HUNTER_LIFE_POINTS;
-
-	for (int j = 0; j < numTurns; j++) {
-		for (int i = 0; i < 4; i++) {
-			if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
-				health = health - LIFE_LOSS_TRAP_ENCOUNTER;
-			}
-			if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { // encounter dracula
-				health = health - LIFE_LOSS_DRACULA_ENCOUNTER;
-			} 
-			if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { // gains 3 life points each time they rest // need to code for other bit
-				health = min ( (health + LIFE_GAIN_REST), GAME_START_HUNTER_LIFE_POINTS);
-			}
-		}
-		incre = incre + 40;
-	}
-	if (health < 0) return 0;
-	return health;
-}
-
-
-
-
-
