@@ -133,7 +133,6 @@ PlaceId GvGetVampireLocation(GameView gv)
 {
     // Vampire not spawned if the 5th player (Dracula) hasn't played
     if (strlen(gv->pastPlays) <= 4*8) return NOWHERE;
-    
     // Divide message length by 40 (rounded down) to get the round
     // Subtract 1 to go to the previous row
     // Multiply by 40 to get the index of the row immediately above
@@ -141,7 +140,6 @@ PlaceId GvGetVampireLocation(GameView gv)
     int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 + 37 - 1;
     // If finding the vampire index in the first turn
     if (index < 0) index = 36;
-
     // Vampire has been vanquished by one of the hunters
     int vanquished = ((strlen(gv->pastPlays) + 1) / 40) * 40 + 4 - 1;
     for (int i = 0; i < 4; i++) {
@@ -151,7 +149,6 @@ PlaceId GvGetVampireLocation(GameView gv)
         }
         vanquished += 5;
     }
-
     for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
         // Vampire exists
         if (gv->pastPlays[index] == 'V') {
