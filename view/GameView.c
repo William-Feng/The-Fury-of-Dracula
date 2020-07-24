@@ -135,68 +135,77 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 		return NOWHERE;
 	}
 
-	// Dracula teleport
-
-	// Extract location code
+	// Extract location code //
 	char code[3] = {0};
 	code[0] = gv->pastPlays[playerIndex + 1];
 	code[1] = gv->pastPlays[playerIndex + 2];
 	code[2] = '\0';
 	PlaceId location = placeAbbrevToId(code);
-	switch (location) {
-		case (HIDE):
-		case (DOUBLE_BACK_1):
-			assert(playerIndex - 40 + 1 >= 0);
-			code[0] = gv->pastPlays[playerIndex - 40 + 1];
-			code[1] = gv->pastPlays[playerIndex - 40 + 2];
-			code[2] = '\0';
-			return placeAbbrevToId(code);
 
-		case (DOUBLE_BACK_2):
-			assert(playerIndex - 80 + 1 >= 0);
-			code[0] = gv->pastPlays[playerIndex - 80 + 1];
-			code[1] = gv->pastPlays[playerIndex - 80 + 2];
-			code[2] = '\0';
-			return placeAbbrevToId(code);
+	if (player != PLAYER_DRACULA) {
+		return (GvGetHealth(gv, player) <= 0) ? ST_JOSEPH_AND_ST_MARY : location;
+	} 
 
-		case (DOUBLE_BACK_3):
-			assert(playerIndex - 120 + 1 >= 0);
-			code[0] = gv->pastPlays[playerIndex - 120 + 1];
-			code[1] = gv->pastPlays[playerIndex - 120 + 2];
-			code[2] = '\0';
-			return placeAbbrevToId(code);
+	bool found = false;
+	int newPlayerIndex = playerIndex;
+	while (!found && newPlayerIndex >= 0) {
+		// Loop until location is not a move
+		if (location != HIDE && location != DOUBLE_BACK_1 && location != DOUBLE_BACK_2 &&
+			location != DOUBLE_BACK_3 && location != DOUBLE_BACK_4 &&
+			location != DOUBLE_BACK_5) {
+			found = true;
+			break;
+		}
 
-		case (DOUBLE_BACK_4):
-			assert(playerIndex - 160 + 1 >= 0);
-			code[0] = gv->pastPlays[playerIndex - 160 + 1];
-			code[1] = gv->pastPlays[playerIndex - 160 + 2];
-			code[2] = '\0';
-			return placeAbbrevToId(code);
-
-		case (DOUBLE_BACK_5):
-			assert(playerIndex - 200 + 1 >= 0);
-			code[0] = gv->pastPlays[playerIndex - 200 + 1];
-			code[1] = gv->pastPlays[playerIndex - 200 + 2];
-			code[2] = '\0';
-			return placeAbbrevToId(code);
-
-		default:
-			if (player != PLAYER_DRACULA && GvGetHealth(gv, player) <= 0)
-				return ST_JOSEPH_AND_ST_MARY;
-			else return location;
+		// Determine how far to go back
+		if (playerIndex - 40 + 1 >= 0 &&
+			(location == HIDE || location == DOUBLE_BACK_1)) {
+			newPlayerIndex -= 40;
+		} else if (playerIndex - 80 + 1 >= 0 && location == DOUBLE_BACK_2) {
+			newPlayerIndex -= 80;
+		} else if (playerIndex - 120 + 1 >= 0 && location == DOUBLE_BACK_3) {
+			newPlayerIndex -= 120;
+		} else if (playerIndex - 160 + 1 >= 0 && location == DOUBLE_BACK_4) {
+			newPlayerIndex -= 160;
+		} else if (playerIndex - 200 + 1 >= 0 && location == DOUBLE_BACK_5) {
+			newPlayerIndex -= 200;
+		}
+		
+		// Update location
+		code[0] = gv->pastPlays[newPlayerIndex + 1];
+		code[1] = gv->pastPlays[newPlayerIndex + 2];
+		code[2] = '\0';
+		location = placeAbbrevToId(code);
 	}
+
+	if (!found) return UNKNOWN_PLACE;
+	else if (location == TELEPORT) return CASTLE_DRACULA;
+	else return location;
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	if (gv->round == 0) return NOWHERE;
-	int lastLocationIndex = (gv->round - 1) * 40 + 32;
-	char code[3] = {0};
-	code[0] = gv->pastPlays[lastLocationIndex + 1];
-	code[1] = gv->pastPlays[lastLocationIndex + 2];
-	code[2] = '\0';
-	return placeAbbrevToId(code);
+    // Vampire not spawned if the 5th player (Dracula) hasn't played
+    if (strlen(gv->pastPlays) <= 4*8) return NOWHERE;
+    
+    // Divide message length by 40 (rounded down) to get the round
+    // Subtract 1 to go to the previous row
+    // Multiply by 40 to get the index of the row immediately above
+    // Add 36 to get the position of 'V' in that line (arrays zero indexed)
+    int vampireIndex = (strlen(gv->pastPlays) / 40 - 1) * 40 + 36;
+    // If finding the vampire index in the first turn
+    if (vampireIndex < 0) vampireIndex = 36;
+
+    char code[3] = {0};
+    code[2] = '\0';
+    // Vampire does not exist
+    if (gv->pastPlays[vampireIndex] != 'V') {
+        return NOWHERE;
+    } else { // Vampire does exist
+        code[0] = gv->pastPlays[vampireIndex - 3];
+        code[1] = gv->pastPlays[vampireIndex - 2];
+        return placeAbbrevToId(code);
+    }
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
@@ -246,7 +255,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	*canFree = false;
+	*canFree = true;
 	return NULL;
 }
 
