@@ -211,7 +211,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 
 PlaceId GvGetVampireLocation(GameView gv)
-{ /* 
+{
     // Vampire not spawned if the 5th player (Dracula) hasn't played
     if (strlen(gv->pastPlays) <= 4*8) return NOWHERE;
     // Divide message length by 40 (rounded down) to get the round
@@ -243,7 +243,7 @@ PlaceId GvGetVampireLocation(GameView gv)
         if (gv->pastPlays[index + 1] == 'V') return NOWHERE;
         index -= 40;
     }
-    */
+    
     // Otherwise vampire hasn't been spawned
     return NOWHERE; 
 }
@@ -529,7 +529,7 @@ char *playToPlcAbbrev (char *play, int index)
 
 
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
-    /* // Player is a Hunter
+    // Hunters
     if (player != PLAYER_DRACULA) {
 		// Health up to turn
         return (GvGetHealth(gv, player) <= 0) ? ST_JOSEPH_AND_ST_MARY : move;
@@ -566,8 +566,11 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
 		code[1] = gv->pastPlays[playerIndex + 2];
 		code[2] = '\0';
 		move = placeAbbrevToId(code);
-	} */
-    return UNKNOWN_PLACE;
+	}
+
+	if (!found) return UNKNOWN_PLACE;
+	else if (move == TELEPORT) return CASTLE_DRACULA;
+	else return move;
 }
 
 // The wrapper function
