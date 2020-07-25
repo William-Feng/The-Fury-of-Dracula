@@ -89,8 +89,41 @@ Player GvGetPlayer(GameView gv)
 
 int GvGetScore(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	int score = GAME_START_SCORE;
+
+	// decreases by 1 each time Dracula finishes his turn
+	score -= gv->round * SCORE_LOSS_DRACULA_TURN;
+
+	// decreases by 6 each time a hunter loses all life points and teleported
+	// to St Joseph and St Mary
+	// PlayerLocation might be wrong???
+	if (GvGetPlayer(gv) >= PLAYER_LORD_GODALMING && GvGetPlayer(gv) <= PLAYER_MINA_HARKER) {
+		if (GvGetPlayerLocation(gv, GvGetPlayer(gv)) == HOSPITAL_PLACE) {
+			score -= SCORE_LOSS_HUNTER_HOSPITAL;
+		}
+	}
+
+	// decreases by 13 each time a vampire matures (falls off the trail)
+	if (GvGetPlayer(gv) == PLAYER_LORD_GODALMING) {
+		int lastLocation = 0;
+		PlaceId *trail = GvGetLastLocations(gv, PLAYER_DRACULA, TRAIL_SIZE, &lastLocation, false);
+		PlaceId vampireLocation = GvGetVampireLocation(gv);
+
+		for (int i = 0; i < lastLocation; i++) {
+			if (vampireLocation == trail[i]) {
+				score -= SCORE_LOSS_VAMPIRE_MATURES;
+			}
+		}
+	}
+	
+	// If score reaches zero, Dracula has won
+	if (score == 0) {
+		// game lost
+	}
+
+	// return score 
+	assert (score >= 0); 
+	return score; 
 }
 
 int GvGetHealth(GameView gv, Player player)
@@ -167,9 +200,51 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numTraps = 0;
-	return NULL;
+	// Dynamically allocated array of trap locations
+	PlaceId *trapLocations = malloc(sizeof(PlaceId *));
+
+	char *token;
+
+	// Extract plays from pastPlays string
+	token = strtok(gv->pastPlays, " ");
+
+	// Keep count of traps counted
+	int traps = 0;
+
+	while (token != NULL) {
+		// store each move made
+		char move[7];
+		char location[3];
+		location[2] = '\0';
+		strcpy(move, token);
+		if (move[0] == 'D' && move[3] == 'T') {
+			// trap found
+			location[0] = move[1];
+			location[1] = move[2];
+			PlaceId loc = placeAbbrevToId(location);
+			
+			trapLocations[traps] = loc;
+			traps++;
+
+			strncpy(move, "", strlen(move));
+		} else if (move[0] != 'D' && move[3] == 'T') {
+			traps--;
+			location[0] = move[1];
+			location[1] = move[2];
+			PlaceId loc = placeAbbrevToId(location);
+			for (int k = 0; k < traps; k++) {
+				if (trapLocations[k] == loc) {
+					trapLocations[k] = trapLocations[traps];
+					break;
+				}
+			}
+			strncpy(move, "", strlen(move));
+		}
+		token = strtok(NULL, " ");
+	}
+
+	*numTraps = traps;
+	return trapLocations;
 }
 
 ////////////////////////////////////////////////////////////////////////
