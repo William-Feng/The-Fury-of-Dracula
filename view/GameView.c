@@ -92,7 +92,7 @@ int GvGetScore(GameView gv)
 	int score = GAME_START_SCORE;
 
 	// decreases by 1 each time Dracula finishes his turn
-	score -= gv->round * SCORE_LOSS_DRACULA_TURN;
+	score -= GvGetRound(gv) * SCORE_LOSS_DRACULA_TURN;
 
 	// decreases by 6 each time a hunter loses all life points and teleported
 	// to St Joseph and St Mary
