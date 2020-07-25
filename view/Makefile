@@ -9,7 +9,7 @@
 #
 ########################################################################
 
-CC = gcc
+CC = dcc
 CFLAGS = -Wall -Werror -g
 BINS = testGameView testHunterView testDraculaView testMap
 
