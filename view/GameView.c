@@ -117,33 +117,32 @@ Player GvGetPlayer(GameView gv)
 
 int GvGetScore(GameView gv)
 {
+	if (GvGetRound(gv) == 0) {
+		return GAME_START_SCORE;
+	}
+
 	int score = GAME_START_SCORE;
 
 	// decreases by 1 each time Dracula finishes his turn
-	score -= GvGetRound(gv) * SCORE_LOSS_DRACULA_TURN;
+	score = score - GvGetRound(gv) * SCORE_LOSS_DRACULA_TURN;
 
-	// decreases by 6 each time a hunter loses all life points and teleported
+    	// decreases by 6 each time a hunter loses all life points and teleported
 	// to St Joseph and St Mary
-	// PlayerLocation might be wrong???
-	if (GvGetPlayer(gv) >= PLAYER_LORD_GODALMING && GvGetPlayer(gv) <= PLAYER_MINA_HARKER) {
-		if (GvGetPlayerLocation(gv, GvGetPlayer(gv)) == HOSPITAL_PLACE) {
+	for (int i = 0; i < NUM_PLAYERS - 1; i++) {
+		if (GvGetPlayerLocation(gv, i) == HOSPITAL_PLACE) {
 			score -= SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 	}
 
-	// decreases by 13 each time a vampire matures (falls off the trail)
-	if (GvGetPlayer(gv) == PLAYER_LORD_GODALMING) {
-		int lastLocation = 0;
-		PlaceId *trail = GvGetLastLocations(gv, PLAYER_DRACULA, TRAIL_SIZE, &lastLocation, false);
-		PlaceId vampireLocation = GvGetVampireLocation(gv);
+	// decreases by 13 each time a vampire matures (falls off the trail
+    	int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 + 37 - 1;
+    	if (index < 0) index = 36;
+    	for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
+        	if (gv->pastPlays[index + 1] == 'V')
+			score -= SCORE_LOSS_VAMPIRE_MATURES;
+        	index -= 40;
+    	}
 
-		for (int i = 0; i < lastLocation; i++) {
-			if (vampireLocation == trail[i]) {
-				score -= SCORE_LOSS_VAMPIRE_MATURES;
-			}
-		}
-	}
-	
 	// If score reaches zero, Dracula has won
 	if (score == 0) {
 		// game lost
