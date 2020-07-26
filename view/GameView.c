@@ -122,7 +122,7 @@ int GvGetScore(GameView gv)
         // decreases by 6 each time a hunter loses all life points and teleported
 	// to St Joseph and St Mary
 	for (int i = 0; i < NUM_PLAYERS - 1; i++) {
-		if (GvGetHealth(gv, i) == 0) {
+		if (GvGetHealth(gv, i) <= 0) {
 			score -= SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 	}
