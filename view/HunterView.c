@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -26,8 +27,58 @@
 struct hunterView {
 	// TODO: ADD FIELDS HERE
 	GameView gv;
+	char *pastPlays;
 
 };
+
+// Queue
+typedef struct queueNode {
+	PlaceId city;
+	struct queueNode *next;
+} QueueNode;
+
+typedef struct queueRep {
+	QueueNode *head;
+	QueueNode *tail;
+} QueueRep;
+
+typedef QueueRep *Queue;
+
+Queue newQueue() {
+	QueueRep *q = malloc(sizeof(*q));
+	*q = (QueueRep){ .head = NULL, .tail = NULL };
+	return q;
+}
+
+void enQueue(Queue q, PlaceId city) {
+	assert(q != NULL);
+
+	QueueNode *newNode = malloc(sizeof(*newNode));
+	assert(newNode != NULL);
+	newNode->city = city;
+	newNode->next = NULL;
+	// *newNode = (QueueNode){ .city = city, .next = NULL };
+
+	if (q->head == NULL) q->head = newNode;
+	if (q->tail != NULL) q->tail->next = newNode;
+	q->tail = newNode;
+}
+
+PlaceId deQueue(Queue q) {
+	assert(q != NULL);
+	assert(q->head != NULL);
+	PlaceId city = q->head->city;
+	QueueNode *remove = q->head;
+	q->head = remove->next;
+	if (q->head == NULL) q->tail = NULL;
+	// free(remove); // Seg Fault :(
+	return city;
+}
+
+bool queueIsEmpty(Queue q) {
+	return q->head == NULL;
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -41,6 +92,8 @@ HunterView HvNew(char *pastPlays, Message messages[])
 		exit(EXIT_FAILURE);
 	}
 	new->gv = GvNew(pastPlays, messages);
+	new->pastPlays = strdup(pastPlays);
+	
 
 	return new;
 }
@@ -48,6 +101,7 @@ HunterView HvNew(char *pastPlays, Message messages[])
 void HvFree(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	free(hv->pastPlays);
 	free(hv);
 }
 
@@ -91,33 +145,99 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*round = 0;
-	return GvGetPlayerLocation(hv->gv, PLAYER_DRACULA);
+	// return GvGetPlayerLocation(hv->gv, PLAYER_DRACULA);
 
 	// Rounds
-	for (Round round = HvGetRound(hv) - 1; round >= 0; round--) {
+	Round i = HvGetRound(hv) - 1;
+	while (i >= 0) {
+		// Extract Move
 		char abbrev[3] = {0};
-		abbrev[0] = hv->gv[round * 40 + 32 + 1];
-		abbrev[1] = hv->gv[round * 40 + 32 + 2];
+		abbrev[0] = hv->pastPlays[i * 40 + 32 + 1];
+		abbrev[1] = hv->pastPlays[i * 40 + 32 + 2];
 		abbrev[2] = '\0';
 		PlaceId move = placeAbbrevToId(abbrev);
-		// filteredMove = extractLocation(hv->gv, PLAYER_DRACULA, move, round);
-		if (move == hide) continue;
-		else if ()
-		
+
+		if (placeIsReal(move)) {
+			*round = i;
+			return move;
+		} else if (move == DOUBLE_BACK_2) {
+			i -= 2;
+		} else if (move == DOUBLE_BACK_3) {
+			i -= 3;
+		} else if (move == DOUBLE_BACK_4) {
+			i -= 4;
+		} else if (move == DOUBLE_BACK_5) {
+			i -= 5;
+		// HIDE, DOUBLE_BACK_1, unknown place
+		} else {
+			i -= 1;
+		}
 	}
 
-
-
-
-
+	// Not found yet
+	return NOWHERE;
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	// BFS queue
+	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	
+	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	assert(visited != NULL);
+	for (int i = 0; i < MAX_REAL_PLACE; i++) {
+		// Mark unvisited
+		visited[i] = -1;
+	}
+	bool found = false;
+	visited[dest] = dest;
+
+	// Queue implementation
+	Queue q = newQueue();
+	assert(q);
+	enQueue(q, dest);
+	while (!found && !queueIsEmpty(q)) {
+		PlaceId city = deQueue(q);
+		if (city == src) {
+			found = true;
+		} else {
+			int numReachable = 0;
+			PlaceId *reachableFromCity = GvGetReachable(hv->gv, hunter, HvGetRound(hv),
+														city, &numReachable);
+			for (int j = 0; j < numReachable; j++) {
+				PlaceId reachableCity = reachableFromCity[j];
+				// Unvisited
+				if (visited[reachableCity] == -1) {
+					visited[reachableCity] = city;
+					enQueue(q, reachableCity);
+				}
+			}
+		}
+	}
+	free(q);
+
+	// No path found
+	if (found == false) {
+		*pathLength = 0;
+		return NULL;
+	}
+
+	// Add to path, traversing through the visited array
+	PlaceId *path = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	assert(path != NULL);
+	PlaceId city = src;
 	*pathLength = 0;
-	return NULL;
+	while (city < MAX_REAL_PLACE && city != dest) {
+		path[*pathLength] = visited[city];
+		city = visited[city];
+		*pathLength = *pathLength + 1;
+	}
+	path[*pathLength] = dest;
+
+	free(visited);
+	return path;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -125,34 +245,34 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player player = HvGetPlayer(hv);
+	return GvGetReachable(hv->gv, player, HvGetRound(hv),
+						  HvGetPlayerLocation(hv, player), numReturnedLocs);
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player player = HvGetPlayer(hv);
+	return GvGetReachableByType(hv->gv, player, HvGetRound(hv),
+						  		HvGetPlayerLocation(hv, player), road, rail, boat,
+								numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	return GvGetReachable(hv->gv, player, HvGetRound(hv),
+						  HvGetPlayerLocation(hv, player), numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	return GvGetReachableByType(hv->gv, player, HvGetRound(hv),
+						  		HvGetPlayerLocation(hv, player), road, rail, boat,
+								numReturnedLocs);
 }
 
 ////////////////////////////////////////////////////////////////////////
