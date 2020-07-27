@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "DraculaView.h"
 #include "Game.h"
@@ -23,7 +24,8 @@
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
-	// TODO: ADD FIELDS HERE
+	char *pastPlays;
+	Map map;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -37,14 +39,16 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
-
+	new->pastPlays = pastPlays;
+	new->map = MapNew();
 	return new;
 }
 
 void DvFree(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	free(dv);
+	free (dv->pastPlays);
+	free (dv->map);
+	free (dv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -52,8 +56,7 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return (strlen(dv->pastPlays) + 1) / 40;
 }
 
 int DvGetScore(DraculaView dv)
@@ -64,7 +67,6 @@ int DvGetScore(DraculaView dv)
 
 int DvGetHealth(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return 0;
 }
 

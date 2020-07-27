@@ -93,9 +93,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 void GvFree(GameView gv)
 {
     // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-    free(gv->pastPlays);
-    MapFree(gv->map);
-    free(gv);
+    free (gv->pastPlays);
+    MapFree (gv->map);
+    free (gv);
 }
 
 ////////////////////////////////////////////////////////////////////////
