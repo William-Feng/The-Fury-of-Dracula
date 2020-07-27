@@ -291,19 +291,19 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	}
 
 	// Determine the bounds for the loop
-	    int finalMove = roundsPlayed(gv, player);
-	    int firstMove = max(finalMove - numMoves, 0);
-	    int moveCounter = 0;
-	    for (int round = firstMove; round < finalMove; round++) {
-		// Extract location for player within round
-		char abbrev[3] = {0};
-		abbrev[0] = gv->pastPlays[round * 40 + player * 8 + 1];
-		abbrev[1] = gv->pastPlays[round * 40 + player * 8 + 2];
-		abbrev[2] = '\0';
-		// Append to moves array
-		moves[moveCounter] = placeAbbrevToId(abbrev);
-		moveCounter++;
-	    }
+    int finalMove = roundsPlayed(gv, player);
+    int firstMove = max(finalMove - numMoves, 0);
+    int moveCounter = 0;
+    for (int round = firstMove; round < finalMove; round++) {
+        // Extract location for player within round
+        char abbrev[3] = {0};
+        abbrev[0] = gv->pastPlays[round * 40 + player * 8 + 1];
+        abbrev[1] = gv->pastPlays[round * 40 + player * 8 + 2];
+        abbrev[2] = '\0';
+        // Append to moves array
+        moves[moveCounter] = placeAbbrevToId(abbrev);
+        moveCounter++;
+    }
     
 	*numReturnedMoves = moveCounter;
 	*canFree = true;

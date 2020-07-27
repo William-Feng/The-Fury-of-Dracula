@@ -25,6 +25,8 @@
 
 struct hunterView {
 	// TODO: ADD FIELDS HERE
+	GameView gv;
+
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -38,6 +40,7 @@ HunterView HvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
+	new->gv = GvNew(pastPlays, messages);
 
 	return new;
 }
@@ -53,38 +56,32 @@ void HvFree(HunterView hv)
 
 Round HvGetRound(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetRound(hv->gv);
 }
 
 Player HvGetPlayer(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	return GvGetPlayer(hv->gv);
 }
 
 int HvGetScore(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetScore(hv->gv);
 }
 
 int HvGetHealth(HunterView hv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetHealth(hv->gv, player);
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetPlayerLocation(hv->gv, player);
 }
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetVampireLocation(hv->gv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -94,7 +91,25 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*round = 0;
-	return NOWHERE;
+	return GvGetPlayerLocation(hv->gv, PLAYER_DRACULA);
+
+	// Rounds
+	for (Round round = HvGetRound(hv) - 1; round >= 0; round--) {
+		char abbrev[3] = {0};
+		abbrev[0] = hv->gv[round * 40 + 32 + 1];
+		abbrev[1] = hv->gv[round * 40 + 32 + 2];
+		abbrev[2] = '\0';
+		PlaceId move = placeAbbrevToId(abbrev);
+		// filteredMove = extractLocation(hv->gv, PLAYER_DRACULA, move, round);
+		if (move == hide) continue;
+		else if ()
+		
+	}
+
+
+
+
+
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
