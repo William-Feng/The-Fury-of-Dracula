@@ -470,7 +470,7 @@ int min(int a, int b) {
     return (a > b) ? b : a;
 }
 
-int roundsPlayed(GameView gv, Player player) {
+int roundsPlayed(GameView gv, Player player) { //same as FindNumMoves
     // Add one to round if player has already gone in current turn
     return (player < GvGetPlayer(gv)) ? GvGetRound(gv) + 1 : GvGetRound(gv);
 }
