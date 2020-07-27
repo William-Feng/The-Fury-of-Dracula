@@ -263,6 +263,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
     int numMoves = findNumMoves (gv, player);
+    //////    if (numMoves == 0 ) return NULL; ??????
     PlaceId *moveHistory = malloc (numMoves * sizeof(PlaceId));
 
     int strtElmt = player;
@@ -578,10 +579,10 @@ bool isDoubleBackMove (char *pastPlays, int index)
 
 
 // Determines if Dracula's move in the pastPlays string was a hide move.
-bool isHideMove(char *pastPlays, int location) 
+bool isHideMove(char *pastPlays, int index) 
 {
-    if (pastPlays[location] != 'H') return false;
-    if (pastPlays[location] != 'I') return false;
+    if (pastPlays[index] != 'H') return false;
+    if (pastPlays[index + 1] != 'I') return false;
         return true;
 }
 
@@ -613,24 +614,26 @@ int healthHunter (GameView gv, Player player, int numTurns)
     int strtElmt = player;
     int incre = 0;
     int health = GAME_START_HUNTER_LIFE_POINTS;
+    bool cond = false;
 
-    for (int j = 0; j < numTurns; j++) {
+    for (int j = 0; j < numTurns; j++) {  
         for (int i = 0; i < 4; i++) { // could separate this bit into a function
             if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
                 health = health - LIFE_LOSS_TRAP_ENCOUNTER;
             } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
                 // encounter dracula
-                health = health - LIFE_LOSS_DRACULA_ENCOUNTER;
+                health = health - LIFE_LOSS_DRACULA_ENCOUNTER;              
             } 
         }
-        if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
+        if (cond == false && hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
             // Hunters have a maximum health
             health = min (health + LIFE_GAIN_REST, GAME_START_HUNTER_LIFE_POINTS);
         }
         incre = incre + 40;
+        
+        if (health <= 0 && j < numTurns - 1) health = GAME_START_HUNTER_LIFE_POINTS;
+        else if (health <= 0 && j == numTurns - 1) health = 0; 
     }
-
-    if (health < 0) return 0;
     return health;
 }
 
