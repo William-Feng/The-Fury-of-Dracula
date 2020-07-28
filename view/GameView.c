@@ -52,22 +52,29 @@ int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health);
 bool isDoubleBackMove (char *pastPlays, int index);
 bool isHideMove(char *pastPlays, int location);
 int healthHunter (GameView gv, Player player, int numTurns);
-int draculaNumReachablePlaces (ConnList connList);
 PlaceId *makePlaceIdArray (int elements);
-void fillReachableDracula (PlaceId *reachable, ConnList connList, PlaceId from);
 int dracNumReachableByType (ConnList connList, bool road, bool boat);
 void fillDracReachableByTypeArray (ConnList connList, bool road, bool boat,
                                     PlaceId *reachable, PlaceId from);
 int getNumReachableHunter (ConnList connList, bool road, bool rail, bool boat, 
                             int numMoves, Map map, PlaceId from);
 int numReachableHunterRail (ConnList connList, int numMoves, Map map, PlaceId grandparent,
-                             PlaceId parent);
+                             PlaceId parent, int *k, bool *places);
 void fillHunterReachByTypeArray (ConnList connList, bool road, bool rail, bool boat, 
                         PlaceId *reachable, PlaceId from, int numMoves,
                         Map map, int j);
 void fillReachableHunterRail (ConnList connList, int numMoves, Map map,
                                 PlaceId GrandParent, PlaceId parent,
-                                PlaceId *reachable, int *i);
+                                PlaceId *reachable, int *i, bool *places);
+
+
+
+
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -326,36 +333,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-    ConnList connList = MapGetConnections (gv->map, from);
-
-    if (player == PLAYER_DRACULA) { /* ///////////////////////////////////////////////////////////// dracula can always teleport to castle dracula???/ */
-        // find the number of valid Connections in the linked list
-        
-        int i = draculaNumReachablePlaces (connList);
-
-        //allocate memory for dynamic array
-        PlaceId *reachable = makePlaceIdArray (i);
-        *numReturnedLocs = i;
-        // Filling the dynamic array with Dracula's past moves
-        fillReachableDracula (reachable, connList, from);
-        
-        return reachable;
-    } 
-    
-    else { // hunter
-        bool road = true; bool rail = true; bool boat = true;
-        int numMoves = (round + player) % 4;
-        if (connList->type == RAIL && numMoves == 0) rail = false;
-      
-        int  i = 1 + getNumReachableHunter(connList, road, rail, boat, numMoves, gv->map, from);
-        *numReturnedLocs = i;
-
-        PlaceId *reachable = makePlaceIdArray (i);
-        *numReturnedLocs = i;
-
-        fillHunterReachByTypeArray (connList , road, rail, boat, reachable, from, numMoves, gv->map, i);
-        return reachable;
-    }
+    return GvGetReachableByType (gv, player, round, from, true, true, true, numReturnedLocs);
     
 }
 
@@ -365,7 +343,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 {
     ConnList connList = MapGetConnections (gv->map, from);
 
-    if (player == PLAYER_DRACULA) {
+    if (player == PLAYER_DRACULA) { /* ///////////////////////////////////////////////////////////// dracula can always teleport to castle dracula???/ */
         int i = dracNumReachableByType (connList, road, boat);
 
         //allocate memory for dynamic array
@@ -647,30 +625,6 @@ bool hunterRest (GameView gv, int location) // need to also make sure that the h
 
 
 
-// Find minimum of two integers
-// int min (int a , int b) 
-// {
-    // return (a > b) ? b : a;
-//}
-
-
-
-
-
-
-// Find the number of locations that can be reached by dracula from a particular
-// starting location
-int draculaNumReachablePlaces (ConnList connList) 
-{
-    int i = 1;
-    while (connList != NULL ) {
-        if (connList->type != RAIL && connList->p != ST_JOSEPH_AND_ST_MARY) {
-            i++;
-        }
-         connList = connList->next;
-        }
-        return i;
-}
 
 
 
@@ -687,26 +641,6 @@ PlaceId *makePlaceIdArray (int elements)
     return array;
 }
 
-
-
-
-
-
-
-// Filling a dynamically allocated array with possible reachable locations from 
-// a starting location (POV: dracula)
-void fillReachableDracula (PlaceId *reachable, ConnList connList, PlaceId from) 
-{
-    reachable[0] = from;
-    int k = 1;
-    while (connList!= NULL) {
-        if (connList->type != RAIL && connList->p != ST_JOSEPH_AND_ST_MARY) {
-            reachable[k] = connList->p;
-            k++;
-        }
-        connList = connList->next;
-    }
-}
 
 
 
@@ -790,7 +724,12 @@ int getNumReachableHunter(ConnList connList, bool road, bool rail, bool boat,
     }
 
     if (connListDup->type == RAIL && rail == true) {
-        i = i + numReachableHunterRail (connListDup, numMoves, map, NOWHERE, from);
+        int k;
+        bool places[NUM_REAL_PLACES];
+        for (int m = 0; m < NUM_REAL_PLACES; m++) {
+            places[m] = false;
+        }
+        i = i + numReachableHunterRail (connListDup, numMoves, map, NOWHERE, from, &k, places);
     } 
 
     return i;
@@ -804,21 +743,21 @@ int getNumReachableHunter(ConnList connList, bool road, bool rail, bool boat,
 // Finds the number of locations that can be reached by rail for a certain Hunter
 // given that various different distances can be travelled by rail.
 int numReachableHunterRail (ConnList connList, int distance, Map map, 
-                            PlaceId GrandParent, PlaceId parent)
+                            PlaceId GrandParent, PlaceId parent, int *i, bool *places)
 {
-    int i = 0;
+    *i = 0;
     if (distance == 0) return 0; // base case. 
 
-
     while (connList != NULL) {
-        if (connList->type == RAIL && connList->p != GrandParent) {
-            i++;
+        if (connList->type == RAIL && connList->p != GrandParent && places[connList->p] == false) {
+            places[connList->p] = true;
+            *i = *i + 1;
             ConnList connListTwo = MapGetConnections (map, connList->p);
-            i = i + numReachableHunterRail (connListTwo, distance - 1, map, parent, connList->p);       
+            *i = *i + numReachableHunterRail (connListTwo, distance - 1, map, parent, connList->p, i, places);       
         }
         connList = connList->next;
     }
-    return i;
+    return *i;
 }
 
 
@@ -853,7 +792,11 @@ void fillHunterReachByTypeArray (ConnList connListDup, bool road, bool rail,
 	}
     
     if ( rail == true) { // if the Hunter can travel by rail
-        fillReachableHunterRail (connList, numMoves, map, NOWHERE, from, reachable, &k);
+        bool places[NUM_REAL_PLACES];
+        for (int m = 0; m < NUM_REAL_PLACES; m++) {
+            places[m] = false;
+        }
+        fillReachableHunterRail (connList, numMoves, map, NOWHERE, from, reachable, &k, places);
     } 
 }
 
@@ -868,21 +811,23 @@ void fillHunterReachByTypeArray (ConnList connListDup, bool road, bool rail,
 // Adds these locations to an array
 void fillReachableHunterRail (ConnList connList, int numMoves, Map map,
                                 PlaceId GrandParent, PlaceId parent,
-                                PlaceId *reachable, int *i)          
+                                PlaceId *reachable, int *i, bool *places)          
 { 
     if (numMoves == 0) return; //base case
 
     while (connList != NULL) {
-        if (connList->type == RAIL && connList->p != GrandParent) {
-			reachable[*i] = connList->p;
+        if (connList->type == RAIL && connList->p != GrandParent && places[connList->p] == false ) {
+			places[connList->p] = true;
+            reachable[*i] = connList->p;
             ConnList connListTwo = MapGetConnections (map, connList->p);
             *i = *i + 1;
-			fillReachableHunterRail (connListTwo, numMoves - 1, map, parent, connList->p, reachable , i);
+			fillReachableHunterRail (connListTwo, numMoves - 1, map, parent, connList->p, reachable , i, places);
 
         }
         connList = connList->next;
     } 
 }
+
 
 
 
