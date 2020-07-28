@@ -25,10 +25,8 @@
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct hunterView {
-	// TODO: ADD FIELDS HERE
 	GameView gv;
 	char *pastPlays;
-
 };
 
 // Queue
@@ -72,7 +70,7 @@ PlaceId deQueue(Queue q) {
 	QueueNode *remove = q->head;
 	q->head = remove->next;
 	if (q->head == NULL) q->tail = NULL;
-	// free(remove); // Seg Fault :(
+	free(remove); // Seg Fault :(
 	return city;
 }
 
@@ -102,7 +100,6 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	new->gv = GvNew(pastPlays, messages);
 	new->pastPlays = strdup(pastPlays);
 	
-
 	return new;
 }
 
@@ -190,7 +187,6 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	// BFS queue
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	
@@ -240,8 +236,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	PlaceId *path = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	assert(path != NULL);
 	PlaceId city = dest;
-	*pathLength = 0;
 	path[0] = dest;
+	*pathLength = 1;
 	while (city < MAX_REAL_PLACE && city != src) {
 		path[*pathLength] = visited[city];
 		city = visited[city];
@@ -252,7 +248,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	// 	PlaceId temp = 
 	// }
 
-
+	// Add to ADT?
 	free(visited);
 	return path;
 }
