@@ -233,12 +233,12 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	assert(path != NULL);
 	PlaceId city = dest;
 	*pathLength = 0;
+	path[0] = dest;
 	while (city < MAX_REAL_PLACE && city != src) {
 		path[*pathLength] = visited[city];
 		city = visited[city];
 		*pathLength = *pathLength + 1;
 	}
-	path[*pathLength] = src;
 	// Flip array
 	free(visited);
 	return path;
