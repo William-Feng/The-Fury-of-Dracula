@@ -119,10 +119,35 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		*numReturnedMoves = 0;
 		return NULL;
 	}
+	char *trail = movesInTrail(dv);
+	int numDoubleBacks;
+	int numTrailMoves = minNum(TRAIL_SIZE, DvFindNumMoves(dv->gv, PLAYER_DRACULA));
+
+	if (!doubleBack(numTrailMoves, trail)) numDoubleBacks = numTrailMoves;
+	else numDoubleBacks = 0;
+
+	int numHideMoves;
+	if (!hideMove(numTrailMoves, trail)) numHideMoves = 1;
+	else numHideMoves = 0;
 	
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
-	return NULL;
+	int numReturnedLocs;
+	PlaceId *locs = DvWhereCanIGo(dv, &numReturnedLocs);
+	int total = numReturnedLocs + numHideMoves + numDoubleBacks;
+	PlaceId *validMoves = DvMakePlaceIdArray(total);
+	int i;
+	for (i = 0; i < numReturnedLocs; i++) {
+		validMoves[i] = locs[i];
+	}
+
+	if (!hideMove(numTrailMoves, trail)) validMoves[i] = HIDE;
+	
+	int increment = 0;
+	for (int j = i + 1; j < total; j++) {
+		validMoves[j] = DOUBLE_BACK_1 + increment;
+		increment++;
+	}
+	*numReturnedMoves = total;
+	return validMoves;
 }
 
 
