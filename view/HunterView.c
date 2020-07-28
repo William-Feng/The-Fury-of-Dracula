@@ -46,6 +46,7 @@ typedef QueueRep *Queue;
 
 Queue newQueue() {
 	QueueRep *q = malloc(sizeof(*q));
+	assert(q != NULL);
 	*q = (QueueRep){ .head = NULL, .tail = NULL };
 	return q;
 }
@@ -71,7 +72,7 @@ PlaceId deQueue(Queue q) {
 	QueueNode *remove = q->head;
 	q->head = remove->next;
 	if (q->head == NULL) q->tail = NULL;
-	// free(remove); // Seg Fault :(
+	free(remove); // Seg Fault :(
 	return city;
 }
 
@@ -193,29 +194,31 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		visited[i] = -1;
 	}
 	bool found = false;
-	visited[dest] = dest;
+	visited[src] = src;
 
 	// Queue implementation
 	Queue q = newQueue();
-	assert(q);
-	enQueue(q, dest);
+	enQueue(q, src);
+	Round round = HvGetRound(hv);
 	while (!found && !queueIsEmpty(q)) {
 		PlaceId city = deQueue(q);
-		if (city == src) {
+		if (city == dest) {
 			found = true;
 		} else {
 			int numReachable = 0;
-			PlaceId *reachableFromCity = GvGetReachable(hv->gv, hunter, HvGetRound(hv),
+			PlaceId *reachableFromCity = GvGetReachable(hv->gv, hunter, round,
 														city, &numReachable);
+			// For each of the reachable cities
 			for (int j = 0; j < numReachable; j++) {
 				PlaceId reachableCity = reachableFromCity[j];
-				// Unvisited
-				if (visited[reachableCity] == -1) {
+				// If reachable city is unvisited
+				if (placeIsReal(reachableCity) && visited[reachableCity] == -1) {
 					visited[reachableCity] = city;
 					enQueue(q, reachableCity);
 				}
 			}
 		}
+		round++;
 	}
 	free(q);
 
@@ -228,15 +231,15 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	// Add to path, traversing through the visited array
 	PlaceId *path = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	assert(path != NULL);
-	PlaceId city = src;
+	PlaceId city = dest;
 	*pathLength = 0;
-	while (city < MAX_REAL_PLACE && city != dest) {
+	while (city < MAX_REAL_PLACE && city != src) {
 		path[*pathLength] = visited[city];
 		city = visited[city];
 		*pathLength = *pathLength + 1;
 	}
-	path[*pathLength] = dest;
-
+	path[*pathLength] = src;
+	// Flip array
 	free(visited);
 	return path;
 }
