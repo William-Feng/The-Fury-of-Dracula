@@ -35,7 +35,6 @@ struct draculaView {
 
 char *movesInTrail (DraculaView dv);
 bool inTrailAlready (PlaceId curr, char *Trail, int numTrailMoves); 
-int maxNum (int a, int b);
 int minNum (int a, int b);
 PlaceId *DvMakePlaceIdArray (int elements);
 int DvFindNumMoves (GameView gv, Player player);
@@ -44,22 +43,12 @@ bool DvIsDoubleBackMove (char *pastPlays, int index);
 bool doubleBack (int numMoves, char *trail);
 bool DvIsHideMove(char *pastPlays, int index);
 bool hideMove (int numMovesTrail, char *trail);
-int getNumReachablePlaces (ConnList connList, bool doubleBackInTrail, 
+int getNumReachablePlaces (PlaceId *reachable, int numReturnedLocs, bool doubleBackInTrail, 
 								bool hideInTrail, char *trail, PlaceId lastMove, 
 								int numTrailMoves) ;
-PlaceId *makeWhereCanIgoArray ( int numReachable, ConnList connList,
+PlaceId *makeWhereCanIgoArray (int numReachable, PlaceId *reachable, int numReturnedLocs,
 								 bool doubleBackInTrail, bool hideInTrail, 
 								 char *trail, PlaceId lastMove, int numTrailMoves);
-PlaceId *makeWhereCanIgoArray ( int numReachable, ConnList connList,
-								 bool doubleBackInTrail, bool hideInTrail, 
-								 char *trail, PlaceId lastMove, int numTrailMoves); 
-int getNumReachablePlacesByType (ConnList connList, bool doubleBackInTrail, 
-								bool hideInTrail, char *trail, PlaceId lastMove, 
-								int numTrailMoves, bool boat, bool road);
-PlaceId *makeWhereCanIgoArrayByType ( int numReachable, ConnList connList,
-								 	bool doubleBackInTrail, bool hideInTrail, 
-								 	char *trail, PlaceId lastMove, 
-									int numTrailMoves, bool road, bool boat);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -130,10 +119,6 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		return NULL;
 	}
 	
-	
-	
-	
-	
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedMoves = 0;
 	return NULL;
@@ -144,37 +129,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 // i did not consider TP
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
-	
-	if (DvFindNumMoves(dv->gv, PLAYER_DRACULA) == 0) { // There are no previous moves.
-		*numReturnedLocs = 0;
-		return NULL;
-	}
-
-	// Finding the last known location of dracula
-	PlaceId lastMove = draculaLastMove (dv);
-	// Finding the locations that are connected to dracula's location
-	ConnList connList = MapGetConnections (dv->map, lastMove);
-	
-	//Making dracula's trail and determining the number of moves in his trail.
-	char *trail = movesInTrail(dv);
-	int numTrailMoves = minNum(TRAIL_SIZE, DvFindNumMoves(dv->gv, PLAYER_DRACULA));
-	
-	// Determining if there is a double back move in the trail
-	bool doubleBackInTrail = doubleBack (numTrailMoves, trail);
-	// Determining if there is a hide move in the trail
-	bool hideInTrail = hideMove (numTrailMoves, trail);
-
-	// Finding the number of reachable places from Dracula's current location.
-	int numReachable = getNumReachablePlaces (connList, doubleBackInTrail, 
-												hideInTrail, trail, lastMove, 
-												numTrailMoves);
-	*numReturnedLocs = numReachable;
-	if (numReturnedLocs == 0) return NULL;
-
-	// creating and filling an array of reachable places from Dracula's current location.
-	return makeWhereCanIgoArray (numReachable, connList, doubleBackInTrail,
-								 hideInTrail, trail, lastMove, numTrailMoves);
-
+	return DvWhereCanIGoByType(dv, true, true, numReturnedLocs);
 }
 
 
@@ -188,38 +143,50 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 		*numReturnedLocs = 0;
 		return NULL;
 	}
-
+	
 	// Finding the last known location of dracula
 	PlaceId lastMove = draculaLastMove (dv);
-	// Finding the locations that are connected to dracula's location
-	ConnList connList = MapGetConnections (dv->map, lastMove);
+
+	int numberLocsGv;
+	PlaceId *reachable = GvGetReachableByType(dv->gv,PLAYER_DRACULA, 
+												GvGetRound(dv->gv), lastMove, road,
+												false, boat, &numberLocsGv);
+
 	
-	//Making dracula's trail and determining the number of moves in his trail.
+	//Determing the number of moves in Dracula's trail.
 	char *trail = movesInTrail(dv);
-	int numTrailMoves = minNum(TRAIL_SIZE, DvFindNumMoves(dv->gv, PLAYER_DRACULA));
+	int numTrailMoves = minNum(TRAIL_SIZE, DvFindNumMoves(dv->gv, PLAYER_DRACULA));	
 	
 	// Determining if there is a double back move in the trail
 	bool doubleBackInTrail = doubleBack (numTrailMoves, trail);
 	// Determining if there is a hide move in the trail
 	bool hideInTrail = hideMove (numTrailMoves, trail);
-	
-	// Finding the number of reachable places from Dracula's current location.
-	// This is is dependent on the type of transport required to reach this location
-	// from Dracula's current location. 
-	int numReachable = getNumReachablePlacesByType (connList, doubleBackInTrail, 
-													hideInTrail, trail, lastMove, 
-													numTrailMoves, boat, road); 
 
+	int numReachable = getNumReachablePlaces (reachable, numberLocsGv, doubleBackInTrail, 
+												hideInTrail, trail, lastMove, 
+												numTrailMoves);
 	*numReturnedLocs = numReachable;
 	if (numReturnedLocs == 0) return NULL;
 
 	// creating and filling an array of reachable places from Dracula's current location.
-	// This is is dependent on the type of transport required to reach this location. 
-	// from Dracula's current location.
-	return makeWhereCanIgoArrayByType ( numReachable, connList, doubleBackInTrail, 
-										hideInTrail, trail, lastMove, numTrailMoves,
-										road,boat); 
+	return makeWhereCanIgoArray (numReachable, reachable, numberLocsGv, doubleBackInTrail,
+								 hideInTrail, trail, lastMove, numTrailMoves);		
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
@@ -301,10 +268,6 @@ bool inTrailAlready (PlaceId curr, char *Trail, int numTrailMoves) {
 
 
 
-int maxNum (int a, int b) {
-    return (a > b) ? a : b;
-}
-
 int minNum (int a, int b) {
     return (a > b) ? b : a;
 }
@@ -361,6 +324,15 @@ PlaceId draculaLastMove (DraculaView dv) {
 }
 
 
+
+bool doubleBack (int numMoves, char *trail) {
+	for (int i = 0; i < numMoves; i++) {
+		if (DvIsDoubleBackMove(trail, i * 3)) return true;
+	}
+	return false;
+}
+
+
 //Determines if Dracula's move in the pastPlays string was a double back move.
 bool DvIsDoubleBackMove (char *pastPlays, int index) 
 {
@@ -375,20 +347,16 @@ bool DvIsDoubleBackMove (char *pastPlays, int index)
 
 
 
-bool doubleBack (int numMoves, char *trail) {
-	for (int i = 0; i < numMoves; i++) {
-		if (DvIsDoubleBackMove(trail, i * 3)) return true;
+
+
+
+
+bool hideMove (int numMovesTrail, char *trail) {
+	for (int i = 0; i < numMovesTrail; i++) {
+		if (DvIsHideMove (trail, i * 3)) return true;
 	}
 	return false;
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -404,35 +372,21 @@ bool DvIsHideMove(char *pastPlays, int index)
 
 
 
-bool hideMove (int numMovesTrail, char *trail) {
-	for (int i = 0; i < numMovesTrail; i++) {
-		if (DvIsHideMove (trail, i * 3)) return true;
-	}
-	return false;
-}
 
-
-
-int getNumReachablePlaces (ConnList connList, bool doubleBackInTrail, 
+int getNumReachablePlaces (PlaceId *reachable, int numReturnedLocs, bool doubleBackInTrail, 
 								bool hideInTrail, char *trail, PlaceId lastMove, 
 								int numTrailMoves) 
 {
 	int numReachable = 0;
-	while (connList != NULL) {
-		PlaceId curr = connList->p;
-		if (connList->type == RAIL) {
-			connList = connList->next;
-			continue;
-		} else if (inTrailAlready (curr, trail, numTrailMoves) && doubleBackInTrail == true) {
-			connList = connList->next;
+	for (int i= 0; i < numReturnedLocs; i++) {
+		PlaceId curr = reachable[i];
+		if (inTrailAlready (curr, trail, numTrailMoves) && doubleBackInTrail == true) {
 			continue;
 		} else if (inTrailAlready (curr, trail, numTrailMoves) && hideInTrail == true
 					&& curr == lastMove) {
-			connList = connList->next;
 			continue;
 		} 
 		numReachable++;
-		connList = connList->next;
 	}
 	return numReachable;
 }
@@ -440,107 +394,27 @@ int getNumReachablePlaces (ConnList connList, bool doubleBackInTrail,
 
 
 
-PlaceId *makeWhereCanIgoArray ( int numReachable, ConnList connList,
+PlaceId *makeWhereCanIgoArray ( int numReachable, PlaceId *reachable, int numReturnedLocs,
 								 bool doubleBackInTrail, bool hideInTrail, 
 								 char *trail, PlaceId lastMove, int numTrailMoves) 
 {
+	int j = 0;
 	PlaceId *whereCanIgo = DvMakePlaceIdArray (numReachable);
-	int i = 0;
-	while (connList != NULL) {
-		PlaceId curr = connList->p;
-		if (connList->type == RAIL) {
-			connList = connList->next;
-			continue;
-		} else if (inTrailAlready (curr, trail, numTrailMoves) && doubleBackInTrail == true) {
-			connList = connList->next;
+	for (int i = 0; i < numReturnedLocs; i++) {
+		PlaceId curr = reachable[i];
+		if (inTrailAlready (curr, trail, numTrailMoves) && doubleBackInTrail == true) {
 			continue;
 		} else if (inTrailAlready (curr, trail, numTrailMoves) && hideInTrail == true
 					&& curr == lastMove) {
-			connList = connList->next;
 			continue;
 		} 
-		whereCanIgo[i] = connList->p;
-		i++;
-		connList = connList->next;
+		whereCanIgo[j] = reachable[i];
+		j++;
 	}
 	return whereCanIgo;
 
 }
 
 
-
-
-
-
-
-int getNumReachablePlacesByType (ConnList connList, bool doubleBackInTrail, 
-								bool hideInTrail, char *trail, PlaceId lastMove, 
-								int numTrailMoves, bool boat, bool road) 
-{ 
-	int numReachable = 0;
-	while (connList != NULL) {
-		PlaceId curr = connList->p;
-		if (connList->type == RAIL) {
-			connList = connList->next;
-			continue;
-		} else if (connList->type == ROAD && road == false) {
-			connList = connList->next;
-			continue;
-		} else if (connList->type == BOAT && boat == false) {
-			connList = connList->next;
-			continue;
-		} else if (inTrailAlready (curr, trail, numTrailMoves) && doubleBackInTrail == true) {
-			connList = connList->next;
-			continue;
-		} else if (inTrailAlready (curr, trail, numTrailMoves) && hideInTrail == true
-					&& curr == lastMove) {
-			connList = connList->next;
-			continue;
-		} 
-		numReachable++;
-		connList = connList->next;
-	}
-	return numReachable;
-}
-
-
-
-
-
-
-PlaceId *makeWhereCanIgoArrayByType ( int numReachable, ConnList connList,
-								 	bool doubleBackInTrail, bool hideInTrail, 
-								 	char *trail, PlaceId lastMove, 
-									int numTrailMoves, bool road, bool boat) 
-{
-	PlaceId *whereCanIgo = malloc (numReachable * sizeof(PlaceId));
-	int i = 0;
-	while (connList != NULL) {
-		PlaceId curr = connList->p;
-		if (connList->type == RAIL) {
-			connList = connList->next;
-			continue;
-		} else if (connList->type == ROAD && road == false) {
-			connList = connList->next;
-			continue;
-		} else if (connList->type == BOAT && boat == false) {
-			connList = connList->next;
-			continue;
-		} else if (inTrailAlready (curr, trail, numTrailMoves) && doubleBackInTrail == true) {
-			connList = connList->next;
-			continue;
-		} else if (inTrailAlready (curr, trail, numTrailMoves) && hideInTrail == true
-					&& curr == lastMove) {
-			connList = connList->next;
-			continue;
-		} 
-		whereCanIgo[i] = connList->p;
-		i++;
-		connList = connList->next;
-	}
-
-
-	return whereCanIgo;
-}
 
 
