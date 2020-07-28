@@ -20,6 +20,8 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
+
 // add your own #includes here
 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -29,60 +31,35 @@ struct hunterView {
 	char *pastPlays;
 };
 
-// Queue
-typedef struct queueNode {
-	PlaceId city;
-	struct queueNode *next;
-} QueueNode;
+// // Queue
+// typedef struct queueNode {
+// 	PlaceId city;
+// 	struct queueNode *next;
+// } QueueNode;
 
-typedef struct queueRep {
-	QueueNode *head;
-	QueueNode *tail;
-} QueueRep;
+// typedef struct queueRep {
+// 	QueueNode *head;
+// 	QueueNode *tail;
+// } QueueRep;
 
-typedef QueueRep *Queue;
+// typedef QueueRep *Queue;
 
-Queue newQueue() {
-	QueueRep *q = malloc(sizeof(*q));
-	assert(q != NULL);
-	q->head = q->tail = NULL;
-	return q;
-}
+// Queue newQueue();
 
-void enQueue(Queue q, PlaceId city) {
-	assert(q != NULL);
+// void enQueue(Queue q, PlaceId city);
 
-	QueueNode *newNode = malloc(sizeof(*newNode));
-	assert(newNode != NULL);
-	newNode->city = city;
-	newNode->next = NULL;
-	// *newNode = (QueueNode){ .city = city, .next = NULL };
+// PlaceId deQueue(Queue q);
 
-	if (q->head == NULL) q->head = newNode;
-	if (q->tail != NULL) q->tail->next = newNode;
-	q->tail = newNode;
-}
+// void dropQueue(Queue q);
 
-PlaceId deQueue(Queue q) {
-	assert(q != NULL);
-	assert(q->head != NULL);
-	PlaceId city = q->head->city;
-	QueueNode *remove = q->head;
-	q->head = remove->next;
-	if (q->head == NULL) q->tail = NULL;
-	free(remove); // Seg Fault :(
-	return city;
-}
+// void showQueue(Queue q);
 
-void showQueue(Queue q) {
-	printf("[ ");
-	for (QueueNode *curr = q->head; curr; curr=curr->next)
-		printf("%d ", curr->city);
-	printf("]\n");
-}
+// bool queueIsEmpty(Queue q);
 
-bool queueIsEmpty(Queue q) {
-	return q->head == NULL;
+
+static int roundsPlayed(HunterView gv, Player player) { //same as FindNumMoves
+    // Add one to round if player has already gone in current turn
+    return (player < HvGetPlayer(gv)) ? HvGetRound(gv) + 1 : HvGetRound(gv);
 }
 
 
@@ -187,48 +164,58 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	// BFS queue
+	// Breadth First Search Implementation
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	
-	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	// Visited array for storing predecessor city
+	PlaceId *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	assert(visited != NULL);
+	// Array for storing which round a city would be visited
+	PlaceId *visitedRound = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	assert(visitedRound != NULL);
+
+	// Initialisation
 	for (int i = 0; i < MAX_REAL_PLACE; i++) {
 		// Mark unvisited
 		visited[i] = -1;
+		visitedRound[i] = -1;
 	}
 	bool found = false;
 	visited[src] = src;
+	visitedRound[src] = roundsPlayed(hv, hunter);
 
-	// Queue implementation
+	// Queue Implementation
 	Queue q = newQueue();
 	enQueue(q, src);
-	Round round = HvGetRound(hv);
 	while (!found && !queueIsEmpty(q)) {
-		// showQueue(q);
 		PlaceId city = deQueue(q);
 		if (city == dest) {
 			found = true;
 		} else {
 			int numReachable = 0;
-			PlaceId *reachableFromCity = GvGetReachable(hv->gv, hunter, round,
+			PlaceId *reachableFromCity = GvGetReachable(hv->gv, hunter, visitedRound[city],
 														city, &numReachable);
 			// For each of the reachable cities
 			for (int j = 0; j < numReachable; j++) {
 				PlaceId reachableCity = reachableFromCity[j];
 				// If reachable city is unvisited
 				if (placeIsReal(reachableCity) && visited[reachableCity] == -1) {
+					// Update predecessor city
 					visited[reachableCity] = city;
+					// Update which round the city would be visited
+					visitedRound[reachableCity] = visitedRound[city] + 1;
 					enQueue(q, reachableCity);
 				}
 			}
 		}
-		round++;
 	}
-	free(q);
+	dropQueue(q);
+	free(visitedRound);
 
 	// No path found
 	if (found == false) {
 		*pathLength = 0;
+		free(visited);
 		return NULL;
 	}
 
@@ -241,12 +228,16 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	while (city < MAX_REAL_PLACE && city != src) {
 		path[*pathLength] = visited[city];
 		city = visited[city];
-		*pathLength = *pathLength + 1;
+		(*pathLength)++;
 	}
-	// Flip array
-	// for (int i = 0; i < *pathLength/2; i++) {
-	// 	PlaceId temp = 
-	// }
+	(*pathLength)--;
+	
+	// Flip array to be from src to dest
+	for (int i = 0; i < *pathLength/2; i++) {
+		PlaceId temp = path[i];
+		path[i] = path[*pathLength - 1 - i];
+		path[*pathLength - 1 - i] = temp;
+	}
 
 	// Add to ADT?
 	free(visited);
@@ -275,7 +266,8 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-	return GvGetReachable(hv->gv, player, HvGetRound(hv),
+	// player has already played in current round
+	return GvGetReachable(hv->gv, player, roundsPlayed(hv, player),
 						  HvGetPlayerLocation(hv, player), numReturnedLocs);
 }
 
@@ -283,7 +275,7 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	return GvGetReachableByType(hv->gv, player, HvGetRound(hv),
+	return GvGetReachableByType(hv->gv, player, roundsPlayed(hv, player),
 						  		HvGetPlayerLocation(hv, player), road, rail, boat,
 								numReturnedLocs);
 }
