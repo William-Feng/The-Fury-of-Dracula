@@ -119,6 +119,19 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		*numReturnedMoves = 0;
 		return NULL;
 	}
+
+	// Finding the number of valid moves
+
+
+
+
+
+
+
+
+
+
+	//////////////
 	
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedMoves = 0;
@@ -132,7 +145,6 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	return DvWhereCanIGoByType(dv, true, true, numReturnedLocs);
 }
-
 
 
 
