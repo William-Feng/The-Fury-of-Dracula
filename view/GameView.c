@@ -262,22 +262,9 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
-    int numMoves = findNumMoves (gv, player);
-    //////    if (numMoves == 0 ) return NULL; ??????
-    PlaceId *moveHistory = malloc (numMoves * sizeof(PlaceId));
-
-    int strtElmt = player;
-    int incre = 0;
-
-    for (int i = 0; i < numMoves ; i++) { // Finding moves in the pastPlays array.
-        char *abbrev = playToPlcAbbrev(gv->pastPlays, (strtElmt * 8) + incre + 1);
-        moveHistory[i] = placeAbbrevToId (abbrev);
-        incre = incre + 40;
-    }
-
-    *numReturnedMoves = numMoves;
-    *canFree = false;
-    return moveHistory; 
+    // Run GvGetLastMoves for all the rounds the player has played in
+    int numMoves = roundsPlayed(gv, player);
+    return GvGetLastMoves(gv, player, numMoves, numReturnedMoves, canFree);
 }
 
 
