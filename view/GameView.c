@@ -328,7 +328,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 {
     ConnList connList = MapGetConnections (gv->map, from);
 
-    if (player == PLAYER_DRACULA) {
+    if (player == PLAYER_DRACULA) { /* ///////////////////////////////////////////////////////////// dracula can always teleport to castle dracula???/ */
         // find the number of valid Connections in the linked list
         
         int i = draculaNumReachablePlaces (connList);

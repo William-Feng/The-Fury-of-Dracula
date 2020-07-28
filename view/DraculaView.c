@@ -77,6 +77,52 @@ void DvFree (DraculaView dv)
 	free (dv);
 }
 
+
+bool DvIsTelePort (char *pastPlays, int index) 
+{
+	if (pastPlays[index] != 'T') return false;
+    if (pastPlays[index + 1] != 'P') return false;
+    return true;
+}
+
+bool DvIsCd (char *pastPlays, int index) 
+{
+	if (pastPlays[index] != 'C') return false;
+    if (pastPlays[index + 1] != 'D') return false;
+    return true;
+}	
+
+
+
+
+
+
+
+bool teleportMove (int numTrailMove, char *trail) {
+	for (int i = 0; i < numTrailMove; i++) {
+		if (DvIsTelePort (trail, i * 3)) return true;
+		else if (DvIsCd (trail, i * 3)) return true;
+	}
+	return false;
+}
+
+
+
+
+
+char *GvPlayToPlcAbbrev (char *play, int index) 
+{
+    char *abbrev = malloc (3 * sizeof(char));
+    abbrev[0] = play[index];
+    abbrev[1] = play[index + 1];
+    abbrev[2] = '\0';
+    return abbrev;
+}
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////
 // Game State Information
 
@@ -119,23 +165,99 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		*numReturnedMoves = 0;
 		return NULL;
 	}
+	char *trail = movesInTrail(dv);
+	int numDoubleBacks;
+	int numTrailMoves = minNum(TRAIL_SIZE, DvFindNumMoves(dv->gv, PLAYER_DRACULA));
 
-	// Finding the number of valid moves
+	/// For double back moves
+	if (!doubleBack(numTrailMoves, trail)) numDoubleBacks = numTrailMoves;
+	else {
+		numDoubleBacks = 0;
+	}
 
-
-
-
-
-
-
-
-
-
-	//////////////
+	/// For Hide moves
+	int numHideMoves;
+	if (!hideMove(numTrailMoves, trail)) numHideMoves = 1;
+	else {
+		numHideMoves = 0;
+	}
 	
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
-	return NULL;
+	// For where can i go moves
+	int numReturnedLocs;
+	PlaceId *locs = DvWhereCanIGo(dv, &numReturnedLocs);
+	int numLocsUsed = numReturnedLocs;
+	
+	// Ensure those moves are not in the trail already
+	int index = 0;
+	for (int i = 0; i < numTrailMoves; i++) {
+		char *current = GvPlayToPlcAbbrev(trail, index);
+		PlaceId currPlace = placeAbbrevToId (current);
+		for (int j = 0; j < numReturnedLocs; j++) {
+			if (currPlace == locs[j]) numLocsUsed--;
+		}
+		index += 3;
+	}
+
+	
+	// For TelePortMoves
+	int numTeleportMoves;
+	if (!teleportMove(numTrailMoves, trail)) numTeleportMoves = 1;
+	else {
+		numTeleportMoves = 0;
+	}
+	
+	
+	// calculating total moves
+	int total = numLocsUsed + numHideMoves + numDoubleBacks + numTeleportMoves;
+	PlaceId *validMoves = DvMakePlaceIdArray(total);
+	int i;
+
+	int incre = 0;
+	int m = 0;
+	
+	for (int k = 0; k < numReturnedLocs; k++) {
+		
+		bool cond = true;
+		for (i = 0; i < numTrailMoves; i++)	{
+			char *current = GvPlayToPlcAbbrev(trail, incre);
+			PlaceId currPlace = placeAbbrevToId (current);
+			if (currPlace == locs[k]) {
+				cond = false;
+				break;
+			}
+			incre += 3;
+		}
+
+		if (cond == true) {
+			validMoves[m] = locs[k];
+			m++;
+		}
+
+	}
+
+	i = numLocsUsed;
+
+
+	if (!hideMove(numTrailMoves, trail)) {
+		validMoves[i] = HIDE;
+		i++;
+	}
+
+	if (!teleportMove (numTrailMoves, trail)) {
+		validMoves[i] = TELEPORT;
+		i++;
+	} 
+	
+
+	int increment = 0;
+	for (int p = i ; p < total; p++) {
+		validMoves[p] = DOUBLE_BACK_1 + increment;
+		increment++;
+	}
+
+
+	*numReturnedMoves = total;
+	return validMoves;
 }
 
 
@@ -174,6 +296,12 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 	bool doubleBackInTrail = doubleBack (numTrailMoves, trail);
 	// Determining if there is a hide move in the trail
 	bool hideInTrail = hideMove (numTrailMoves, trail);
+	// Determining if there is a teleport move in the trail
+
+	// bool telePortInTrail = teleportMove (numTrailMoves, trail);
+
+	
+
 
 	int numReachable = getNumReachablePlaces (reachable, numberLocsGv, doubleBackInTrail, 
 												hideInTrail, trail, lastMove, 
@@ -257,14 +385,7 @@ char *movesInTrail (DraculaView dv) {
 // can our program leak memory???
 
 
-char *GvPlayToPlcAbbrev (char *play, int index) 
-{
-    char *abbrev = malloc (3 * sizeof(char));
-    abbrev[0] = play[index];
-    abbrev[1] = play[index + 1];
-    abbrev[2] = '\0';
-    return abbrev;
-}
+
 
 
 

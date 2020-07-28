@@ -108,23 +108,23 @@ int main(void)
 		assert(traps[0] == LONDON);
 		assert(traps[1] == LONDON);
 		assert(traps[2] == MANCHESTER);
-		free(traps);
-		*/
+		free(traps); */
+		
 		printf("Test passed!\n");
 		DvFree(dv);
 	}
 
 	{///////////////////////////////////////////////////////////////////
 	
-		// printf("Test for Dracula's valid moves 1\n");
+		printf("Test for Dracula's valid moves 1\n");
 		
-		// char *trail =
-			// "GGE.... SGE.... HGE.... MGE.... DCD.V.. "
-			// "GGE.... SGE.... HGE.... MGE....";
+		char *trail =
+			 "GGE.... SGE.... HGE.... MGE.... DCD.V.. "
+			 "GGE.... SGE.... HGE.... MGE....";
 		
-		// Message messages[9] = {};
-		// DraculaView dv = DvNew(trail, messages);
-		/* 
+		Message messages[9] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
 		int numMoves = -1;
 		PlaceId *moves = DvGetValidMoves(dv, &numMoves);
 		assert(numMoves == 4);
@@ -137,7 +137,7 @@ int main(void)
 		
 		printf("Test passed!\n");
 		DvFree(dv);
-		*/
+	
 	}
 	
 	{///////////////////////////////////////////////////////////////////
