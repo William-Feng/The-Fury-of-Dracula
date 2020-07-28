@@ -84,6 +84,7 @@ void DvFree (DraculaView dv)
 {
 	GvFree(dv->gv);
 	free (dv->pastPlays);
+	MapFree(dv->map);
 	free (dv);
 }
 
