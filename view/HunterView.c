@@ -47,7 +47,7 @@ typedef QueueRep *Queue;
 Queue newQueue() {
 	QueueRep *q = malloc(sizeof(*q));
 	assert(q != NULL);
-	*q = (QueueRep){ .head = NULL, .tail = NULL };
+	q->head = q->tail = NULL;
 	return q;
 }
 
@@ -72,8 +72,15 @@ PlaceId deQueue(Queue q) {
 	QueueNode *remove = q->head;
 	q->head = remove->next;
 	if (q->head == NULL) q->tail = NULL;
-	free(remove); // Seg Fault :(
+	// free(remove); // Seg Fault :(
 	return city;
+}
+
+void showQueue(Queue q) {
+	printf("[ ");
+	for (QueueNode *curr = q->head; curr; curr=curr->next)
+		printf("%d ", curr->city);
+	printf("]\n");
 }
 
 bool queueIsEmpty(Queue q) {
@@ -201,6 +208,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	enQueue(q, src);
 	Round round = HvGetRound(hv);
 	while (!found && !queueIsEmpty(q)) {
+		// showQueue(q);
 		PlaceId city = deQueue(q);
 		if (city == dest) {
 			found = true;
@@ -240,6 +248,11 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		*pathLength = *pathLength + 1;
 	}
 	// Flip array
+	// for (int i = 0; i < *pathLength/2; i++) {
+	// 	PlaceId temp = 
+	// }
+
+
 	free(visited);
 	return path;
 }
