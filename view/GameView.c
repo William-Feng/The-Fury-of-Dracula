@@ -109,7 +109,7 @@ int GvGetScore(GameView gv)
         score -= SCORE_LOSS_HUNTER_HOSPITAL * playerDeaths;
     }
 
-	return score; 
+	return score;
 }
 
 int GvGetHealth(GameView gv, Player player)
