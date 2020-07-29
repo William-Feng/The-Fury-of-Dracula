@@ -64,16 +64,16 @@ GameView GvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
-	new->pastPlays = strdup(pastPlays);
-	new->map = MapNew();
+    new->pastPlays = strdup(pastPlays);
+    new->map = MapNew();
 	return new;
 }
 
 void GvFree(GameView gv)
 {
-    free (gv->pastPlays);
-    MapFree (gv->map);
-    free (gv);
+    free(gv->pastPlays);
+    MapFree(gv->map);
+    free(gv);
 }
 
 ////////////////////////////////////////////////////////////////////////

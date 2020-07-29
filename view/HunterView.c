@@ -28,6 +28,7 @@
 struct hunterView {
 	GameView gv;
 	char *pastPlays;
+	Message *messages;
 	PlaceId *shortestSpecifiedPath;
 };
 
@@ -81,10 +82,16 @@ HunterView HvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
+	// Create GameView
 	new->gv = GvNew(pastPlays, messages);
+	// Store pastPlays
 	new->pastPlays = strdup(pastPlays);
+	// Store messages
+    int numPastPlays = (strlen(pastPlays) + 1) / 8;
+    new->messages = malloc(numPastPlays * sizeof(Message));
+    for (int i = 0; i < numPastPlays; i++) strcpy(new->messages[i], messages[i]);
+	// Store calls for HvGetShortestPath
 	new->shortestSpecifiedPath = NULL;
-	
 	return new;
 }
 
@@ -92,6 +99,7 @@ void HvFree(HunterView hv)
 {
 	GvFree(hv->gv);
 	free(hv->pastPlays);
+	free(hv->messages);
 	free(hv);
 }
 
