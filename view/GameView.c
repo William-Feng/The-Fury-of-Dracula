@@ -44,14 +44,14 @@ void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
 
 // Unchecked
 bool vampireHunterEncounter (GameView gv, int location);
-bool hunterRest (GameView gv, int location) ;
+bool hunterRest (GameView gv, int location);
 int healthDracula (GameView gv, Player player, int numTurns);
 char *playToPlcAbbrev (char *play, int location);
 int isPlaceSeaOrCastle (char *abbrev, int health);
 int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health);
 bool isDoubleBackMove (char *pastPlays, int index);
 bool isHideMove(char *pastPlays, int location);
-int healthHunter (GameView gv, Player player, int numTurns);
+int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
 
 
 
@@ -97,40 +97,19 @@ Player GvGetPlayer(GameView gv)
 
 int GvGetScore(GameView gv)
 {
-	if (GvGetRound(gv) == 0) {
-		return GAME_START_SCORE;
-	}
-
 	int score = GAME_START_SCORE;
-
-	// decreases by 1 each time Dracula finishes his turn
-	score = score - GvGetRound(gv) * SCORE_LOSS_DRACULA_TURN;
-
-        // decreases by 6 each time a hunter loses all life points and teleported
-	// to St Joseph and St Mary
-	for (int i = 0; i < NUM_PLAYERS - 1; i++) {
-		if (GvGetHealth(gv, i) <= 0) {
-			score -= SCORE_LOSS_HUNTER_HOSPITAL;
-		}
-	}
-
-	// decreases by 13 each time a vampire matures (falls off the trail)
-	int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 
-    + 38 - 1;
-        // If finding the vampire index in the first turn
-	if (index < 0) index = 37;
-	
-	for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
-		if (gv->pastPlays[index] == 'V') {
-			score -= SCORE_LOSS_VAMPIRE_MATURES;
-		}
-		index -= 40;
-	}
-
-	// If score reaches zero, Dracula has won
-	if (score == 0) {
-		// game lost
-	}
+    // Dracula Turns
+    score -= SCORE_LOSS_DRACULA_TURN * roundsPlayed(gv, PLAYER_DRACULA);
+    // Vampire Mature
+    for (Round round = 0; round < roundsPlayed(gv, PLAYER_DRACULA); round++) {
+        if (gv->pastPlays[round * 40 + 32 + 5] == 'V') score -= SCORE_LOSS_VAMPIRE_MATURES;
+    }
+    // Hunter Deaths
+    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+        int playerDeaths = 0;
+        healthHunter(gv, player, roundsPlayed(gv, player), &playerDeaths);
+        score -= SCORE_LOSS_HUNTER_HOSPITAL * playerDeaths;
+    }
 
 	return score; 
 }
@@ -143,7 +122,7 @@ int GvGetHealth(GameView gv, Player player)
     if (player == PLAYER_DRACULA) { //player is Dracula
         return healthDracula (gv, player, numTurns);
     } else { // If player is Hunter
-        return healthHunter (gv, player, numTurns);
+        return healthHunter (gv, player, numTurns, NULL);
     }
 }
 
@@ -553,29 +532,35 @@ bool vampireHunterEncounter (GameView gv, int location)
 
 
 // Finds the Health of a Hunter given the pastPlays string
-int healthHunter (GameView gv, Player player, int numTurns) 
+int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths) 
 {
     int strtElmt = player;
     int incre = 0;
     int health = GAME_START_HUNTER_LIFE_POINTS;
 
     for (int j = 0; j < numTurns; j++) {
-        for (int i = 0; i < 4; i++) { // could separate this bit into a function
-            if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
-                health = health - LIFE_LOSS_TRAP_ENCOUNTER;
-            } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
-                // encounter dracula
-                health = health - LIFE_LOSS_DRACULA_ENCOUNTER;
-            } 
-        }
+        // Rest
         if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
             // Hunters have a maximum health
             health = min (health + LIFE_GAIN_REST, GAME_START_HUNTER_LIFE_POINTS);
         }
+        // Encounters
+        for (int i = 0; i < 4; i++) { // could separate this bit into a function
+            if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
+                health -= LIFE_LOSS_TRAP_ENCOUNTER;
+            } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
+                // encounter dracula
+                health -= LIFE_LOSS_DRACULA_ENCOUNTER;
+            } 
+        }
+        // Deaths
+        if (health <= 0) {
+            if (j != numTurns - 1) health = GAME_START_HUNTER_LIFE_POINTS;
+            if (numDeaths != NULL) (*numDeaths)++;
+        }
         incre = incre + 40;
     }
-
-    if (health < 0) return 0;
+    if (health < 0) health = 0;
     return health;
 }
 
