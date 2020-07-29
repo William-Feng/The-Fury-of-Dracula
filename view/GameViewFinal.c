@@ -85,23 +85,19 @@ Player GvGetPlayer(GameView gv)
 
 int GvGetScore(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	int score = GAME_START_SCORE;
-	// For each round
-	for (Round round = 0; round < GvGetRound(gv); round++) {
-		/* NOTE EDGE CASES NOT IMPLEMENTED YET */
-		// Check player death
-		for (Player player = PLAYER_LORD_GODALMING; player <= PLAYER_MINA_HARKER; player++) {
-			// Player has gone in current round
-			if ((round * 40 + player * 8 + 7) <= strlen(gv->pastPlays) &&
-				healthHunter(gv, player, round) <= 0)
-				score -= SCORE_LOSS_HUNTER_HOSPITAL;
-		}
-		// Check dracula turn
-		if ((round * 40 + 4 * 8) < strlen(gv->pastPlays)) score -= SCORE_LOSS_DRACULA_TURN;
-		// Check vampire mature
-		
-	}
+    // Dracula Turns
+    score -= SCORE_LOSS_DRACULA_TURN * roundsPlayed(gv, PLAYER_DRACULA);
+    // Vampire Mature
+    for (Round round = 0; round < roundsPlayed(gv, PLAYER_DRACULA); round++) {
+        if (gv->pastPlays[round * 40 + 32 + 5] == 'V') score -= SCORE_LOSS_VAMPIRE_MATURES;
+    }
+    // Hunter Deaths
+    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+        int playerDeaths = 0;
+        healthHunter(gv, player, roundsPlayed(gv, player), &playerDeaths);
+        score -= SCORE_LOSS_HUNTER_HOSPITAL * playerDeaths;
+    }
 
 	return score;
 }

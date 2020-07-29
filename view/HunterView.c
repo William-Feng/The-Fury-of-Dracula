@@ -212,6 +212,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 					enQueue(q, reachableCity);
 				}
 			}
+			free(reachableFromCity);
 		}
 	}
 	dropQueue(q);
