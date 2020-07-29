@@ -207,30 +207,34 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 { 
-	int traps = 0;
+	PlaceId *trapLocations = malloc(18 * sizeof(PlaceId));
+    assert(trapLocations);
+    *numTraps = 0;
 	int index = 3;
-	PlaceId *trapLocations = malloc(sizeof(PlaceId*));
-	for (int i = 0; i < strlen(gv->pastPlays) / 8; i++) {
+	
+	// For each player
+    for (int i = 0; i < strlen(gv->pastPlays) / 8; i++) {
 		if (gv->pastPlays[index] == 'T') {
-			if (gv->pastPlays[index - 3] == 'D') {
+			// Dracula's Trap Encounter
+            if (gv->pastPlays[index - 3] == 'D') {
+                char move[3];
+				move[0] = gv->pastPlays[index - 2];
+				move[1] = gv->pastPlays[index - 1];
+                move[2] = '\0';
+                PlaceId loc = placeAbbrevToId(move);
+                trapLocations[*numTraps] = extractLocation(gv, PLAYER_DRACULA, loc, i/5);
+				(*numTraps)++;
+			// Hunter's Trap Encounter
+            } else {
+				(*numTraps)--;
 				char location[3];
 				location[2] = '\0';
 				location[0] = gv->pastPlays[index - 2];
 				location[1] = gv->pastPlays[index - 1];
 				PlaceId loc = placeAbbrevToId(location);
-				trapLocations[traps] = loc;
-				traps++;
-				strncpy(location, "", strlen(location));
-			} else if (gv->pastPlays[index - 3] != 'D') {
-				traps--;
-				char location[3];
-				location[2] = '\0';
-				location[0] = gv->pastPlays[index - 2];
-				location[1] = gv->pastPlays[index - 1];
-				PlaceId loc = placeAbbrevToId(location);
-				for (int j = 0; j < traps; j++) {
-					if (trapLocations[j] == loc && j != traps - 1) {
-						trapLocations[j] = trapLocations[traps];
+				for (int j = 0; j < *numTraps; j++) {
+					if (trapLocations[j] == loc && j != *numTraps - 1) {
+						trapLocations[j] = trapLocations[*numTraps];
 						break;
 					}
 				}
@@ -239,7 +243,7 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 		}
 		index += 8;
 	}
-	*numTraps = traps;
+
 	return trapLocations; 
 }
 
