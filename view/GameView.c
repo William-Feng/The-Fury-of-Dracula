@@ -146,40 +146,32 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-    // Vampire not spawned if the 5th player (Dracula) hasn't played
-    if (strlen(gv->pastPlays) <= 4*8) return NOWHERE;
-    // Divide message length by 40 (rounded down) to get the round
-    // Subtract 1 to go to the previous row
-    // Multiply by 40 to get the index of the row immediately above
-    // Add 36 to get the position of 'V' in that line (arrays zero indexed)
-    int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 + 37 - 1;
-    // If finding the vampire index in the first turn
-    if (index < 0) index = 36;
-    // Vampire has been vanquished by one of the hunters
-    int vanquished = ((strlen(gv->pastPlays) + 1) / 40) * 40 + 4 - 1;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (gv->pastPlays[vanquished] == 'V') return NOWHERE;
-            vanquished++;
+    PlaceId location = NOWHERE;
+    bool vanquished = false;
+    int firstRound = max(GvGetRound(gv) - 13, 0);
+    for (Round round = firstRound; round <= GvGetRound(gv); round++) {
+        // Check for Dracula-spawned vampire
+        if (roundsPlayed(gv, PLAYER_DRACULA) > round &&
+            gv->pastPlays[round * 40 + 32 + 4] == 'V') {
+            char move[3];
+            move[0] = gv->pastPlays[round * 40 + 32 + 1];
+            move[1] = gv->pastPlays[round * 40 + 32 + 2];
+            move[2] = '\0';
+            location = extractLocation(gv, PLAYER_DRACULA, placeAbbrevToId(move), round);
         }
-        vanquished += 5;
-    }
-    for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
-        // Vampire exists
-        if (gv->pastPlays[index] == 'V') {
-            char code[3];
-            code[0] = gv->pastPlays[index - 3];
-            code[1] = gv->pastPlays[index - 2];
-            code[2] = '\0';
-            return placeAbbrevToId(code);
+        // Check if hunters have vanquished the vampire
+        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+            if (roundsPlayed(gv, player) - 1 < round) continue;
+            for (int encounter = 3; encounter < 7; encounter++)
+                if (gv->pastPlays[round * 40 + player * 8 + encounter] == 'V')
+                    vanquished = true;
         }
-        // Vampire has matured
-        if (gv->pastPlays[index + 1] == 'V') return NOWHERE;
-        index -= 40;
+        // Check for matured vampires
+        if (roundsPlayed(gv, PLAYER_DRACULA) > round &&
+            gv->pastPlays[round * 40 + 32 + 5] == 'V')
+            vanquished = true;
     }
-    
-    // Otherwise vampire hasn't been spawned
-    return NOWHERE; 
+    return (vanquished) ? NOWHERE : location;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)

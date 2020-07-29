@@ -134,8 +134,32 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+    PlaceId location = NOWHERE;
+    bool vanquished = false;
+    int firstRound = max(GvGetRound(gv) - 13, 0);
+    for (Round round = firstRound; round <= GvGetRound(gv); round++) {
+        // Dracula Spawned Vampire
+        if (roundsPlayed(gv, PLAYER_DRACULA) > round &&
+            gv->pastPlays[round * 40 + 32 + 4] == 'V') {
+            char move[3];
+            move[0] = gv->pastPlays[round * 40 + 32 + 1];
+            move[1] = gv->pastPlays[round * 40 + 32 + 2];
+            move[2] = '\0';
+            location = extractLocation(gv, PLAYER_DRACULA, placeAbbrevToId(move), round);
+        }
+        // Vanquished
+        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+            if (roundsPlayed(gv, player) - 1 < round) continue;
+            for (int encounter = 3; encounter < 7; encounter++)
+                if (gv->pastPlays[round * 40 + player * 8 + encounter] == 'V')
+                    vanquished = true;
+        }
+        // Matured
+        if (roundsPlayed(gv, PLAYER_DRACULA) > round &&
+            gv->pastPlays[round * 40 + 32 + 5] == 'V')
+            vanquished = true;
+    }
+    return (vanquished) ? NOWHERE : location;
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
