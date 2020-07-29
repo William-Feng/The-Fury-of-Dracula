@@ -14,16 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct gameView {
     char *pastPlays;
@@ -338,11 +333,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
-
-// TODO
-
-// interface functions
-
 
 // Returns the higher of two integers
 int max(int a, int b) {
