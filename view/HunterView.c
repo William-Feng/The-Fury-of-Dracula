@@ -173,11 +173,9 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	
 	// Visited array for storing predecessor city
-	PlaceId *visited = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-	assert(visited != NULL);
+	PlaceId visited[NUM_REAL_PLACES] = {-1};
 	// Array for storing which round a city would be visited
-	PlaceId *visitedRound = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-	assert(visitedRound != NULL);
+	PlaceId visitedRound[NUM_REAL_PLACES] = {-1};
 
 	// Initialisation
 	for (int i = 0; i < MAX_REAL_PLACE; i++) {
@@ -216,12 +214,10 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		}
 	}
 	dropQueue(q);
-	free(visitedRound);
 
 	// No path found
 	if (found == false) {
 		*pathLength = 0;
-		free(visited);
 		return NULL;
 	}
 
@@ -237,7 +233,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		(*pathLength)++;
 	}
 	(*pathLength)--;
-	free(visited);
 	
 	// Flip array to be from src to dest
 	for (int i = 0; i < *pathLength/2; i++) {
