@@ -20,6 +20,7 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+
 // add your own #includes here
 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -32,16 +33,20 @@ struct gameView {
 ///////////////////////////////////////////////////////////////////////////////
 // Function prototypes
 
-int findNumMoves (GameView gv, Player player);
-
 // Returns the higher of two integers
 int max(int a, int b);
 // Returns the lower of two integers
 int min(int a, int b);
 // Calculates how many rounds a player has played
-int roundsPlayed(GameView gv, Player player);
+static int roundsPlayed(GameView gv, Player player);
 // Extract location for a specified move
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
+// Appends a city to a PlaceId array if it is unique
+void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city);
+// Adds connections to the reachable array which satisfy transport type
+void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
+                  bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
+
 // Unchecked
 bool vampireHunterEncounter (GameView gv, int location);
 bool hunterRest (GameView gv, int location) ;
@@ -52,27 +57,6 @@ int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health);
 bool isDoubleBackMove (char *pastPlays, int index);
 bool isHideMove(char *pastPlays, int location);
 int healthHunter (GameView gv, Player player, int numTurns);
-PlaceId *makePlaceIdArray (int elements);
-int dracNumReachableByType (ConnList connList, bool road, bool boat);
-void fillDracReachableByTypeArray (ConnList connList, bool road, bool boat,
-                                    PlaceId *reachable, PlaceId from);
-int getNumReachableHunter (ConnList connList, bool road, bool rail, bool boat, 
-                            int numMoves, Map map, PlaceId from);
-int numReachableHunterRail (ConnList connList, int numMoves, Map map, PlaceId grandparent,
-                             PlaceId parent, int *k, bool *places);
-void fillHunterReachByTypeArray (ConnList connList, bool road, bool rail, bool boat, 
-                        PlaceId *reachable, PlaceId from, int numMoves,
-                        Map map, int j);
-void fillReachableHunterRail (ConnList connList, int numMoves, Map map,
-                                PlaceId GrandParent, PlaceId parent,
-                                PlaceId *reachable, int *i, bool *places);
-
-
-
-
-
-
-
 
 
 
@@ -136,7 +120,8 @@ int GvGetScore(GameView gv)
 	}
 
 	// decreases by 13 each time a vampire matures (falls off the trail)
-	int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 + 38 - 1;
+	int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 
+    + 38 - 1;
         // If finding the vampire index in the first turn
 	if (index < 0) index = 37;
 	
@@ -158,7 +143,7 @@ int GvGetScore(GameView gv)
 int GvGetHealth(GameView gv, Player player)
 {
     // get number of turns
-    Round numTurns = findNumMoves(gv, player);
+    Round numTurns = roundsPlayed(gv, player);
 
     if (player == PLAYER_DRACULA) { //player is Dracula
         return healthDracula (gv, player, numTurns);
@@ -333,40 +318,22 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-    return GvGetReachableByType (gv, player, round, from, true, true, true, numReturnedLocs);
-    
+	return (player == PLAYER_DRACULA) ?
+	GvGetReachableByType(gv, player, round, from, true, false, true, numReturnedLocs):
+	GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
-    ConnList connList = MapGetConnections (gv->map, from);
-
-    if (player == PLAYER_DRACULA) { /* ///////////////////////////////////////////////////////////// dracula can always teleport to castle dracula???/ */
-        int i = dracNumReachableByType (connList, road, boat);
-
-        //allocate memory for dynamic array
-        PlaceId *reachable = makePlaceIdArray (i);
-        *numReturnedLocs = i;
-        
-        fillDracReachableByTypeArray (connList, road, boat, reachable, from); 
-    
-        return reachable;
-    } else { // hunter
-        int numMoves = (round + player) % 4;
-        if (connList->type == RAIL && numMoves == 0) rail = false;
-
-        int  i = 1 + getNumReachableHunter(connList, road, rail, boat, numMoves, gv->map, from);
-        *numReturnedLocs = i;
-
-        PlaceId *reachable = makePlaceIdArray (i);  
-        reachable[0] = from;
-
-		fillHunterReachByTypeArray (connList , road, rail, boat, reachable, from, numMoves, gv->map, i); 
-
-        return reachable;   
-    }
+    PlaceId *reachable = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+    assert(reachable != NULL);
+    *numReturnedLocs = 0;
+    int numRailMoves = (rail) ? (round + player) % 4 : 0;
+    addReachable(gv, player, from, numRailMoves, road, rail, boat,
+                 numReturnedLocs, reachable);
+    return reachable;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -377,81 +344,23 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 // interface functions
 
 
-// Finding the number of turns the player took
-int findNumMoves (GameView gv, Player player)
-{
-    Round round = GvGetRound (gv);
-    if (GvGetPlayer(gv) > player) round++; // because rounds are zero indexed
-    return round;
-}
-
-
-
-
-
-
-// Finding the health of a Dracula
-int healthDracula (GameView gv, Player player, int numTurns) 
-{
-    int strtElmt = player;
-    int increment = 0;
-    int health = GAME_START_BLOOD_POINTS;
-
-    for (int i = 0; i < numTurns; i++) {
-        // For Normal Moves,
-        char *abbrev = playToPlcAbbrev(gv->pastPlays, (strtElmt * 8) + increment + 1);
-        health = isPlaceSeaOrCastle (abbrev, health);
-
-        
-        //For Double Back Moves
-        if (isDoubleBackMove (gv->pastPlays, (strtElmt * 8) + increment + 1)) { // test for double back
-            int p = gv->pastPlays[(strtElmt * 8) + increment + 2] - 48;
-            char *abbrvtn = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - (p * 40));
-            health = isPlaceSeaOrCastle (abbrvtn, health);
-        } 
-        
-        // For HideMoves
-        else if (isHideMove(gv->pastPlays, (strtElmt * 8) + increment + 1)) {
-            char *plcAbbrev = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - 40 );
-            health = isPlaceSeaOrCastle (plcAbbrev, health);
-        }
-
-        if (vampireHunterEncounter(gv, (((strtElmt + 1 ) * 8) + increment))) { // encounters a hunter
-            health = health - LIFE_LOSS_HUNTER_ENCOUNTER;
-        } 
-        increment = increment + 40;
-    }
-
-    if (health < 0) return 0;
-    return health;
-}
-
-
-
+// Returns the higher of two integers
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
+// Returns the lower of two integers
 int min(int a, int b) {
     return (a > b) ? b : a;
 }
 
-int roundsPlayed(GameView gv, Player player) { //same as FindNumMoves
+// Calculates how many rounds a player has played
+static int roundsPlayed(GameView gv, Player player) {
     // Add one to round if player has already gone in current turn
     return (player < GvGetPlayer(gv)) ? GvGetRound(gv) + 1 : GvGetRound(gv);
 }
 
-//Convert a pastPlay into an abbreviation for a place
-char *playToPlcAbbrev (char *play, int index) 
-{
-    char *abbrev = malloc (3 * sizeof(char));
-    abbrev[0] = play[index];
-    abbrev[1] = play[index + 1];
-    abbrev[2] = '\0';
-    return abbrev;
-}
-
-
+// Extract location for a specified move
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
     // Hunters
     if (player != PLAYER_DRACULA) {
@@ -497,6 +406,96 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
 	else return move;
 }
 
+
+// Appends a city to a PlaceId array if it is unique
+void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city) {
+    // Check Unique
+    for (int i = 0; i < *numReturnedLocs; i++)
+        if (reachable[i] == city) return;
+    // Append if unique
+    reachable[*numReturnedLocs] = city;
+    (*numReturnedLocs)++;
+}
+
+
+// Adds connections to the reachable array which satisfy transport type
+void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
+                   bool road, bool rail, bool boat, int *numReturnedLocs, PlaceId *reachable)
+{
+    // Add current location
+    if (player == PLAYER_DRACULA && from == ST_JOSEPH_AND_ST_MARY) return;
+    arrayUniqueAppend(reachable, numReturnedLocs, from);
+    // Extract connections
+    ConnList connections = MapGetConnections(gv->map, from);
+    for (ConnList c = connections; c != NULL; c = c->next) {
+        if (player == PLAYER_DRACULA && c->p == ST_JOSEPH_AND_ST_MARY) continue;
+        // Add unique wanted road/boat connections
+        if ((road == true && c->type == ROAD) || (boat == true && c->type == BOAT))
+            arrayUniqueAppend(reachable, numReturnedLocs, c->p);
+        // Add rail connections
+        if (rail == true && numRailMoves > 0 && c->type == RAIL) {
+            arrayUniqueAppend(reachable, numReturnedLocs, c->p);
+            // Further recursive extraction for rail
+            if (numRailMoves > 1)
+                addReachable(gv, player, c->p, numRailMoves - 1, false, true, false,
+                             numReturnedLocs, reachable);
+        }
+    }
+}
+
+
+
+
+// Unchecked:
+
+//Convert a pastPlay into an abbreviation for a place
+char *playToPlcAbbrev (char *play, int index) 
+{
+    char *abbrev = malloc (3 * sizeof(char));
+    abbrev[0] = play[index];
+    abbrev[1] = play[index + 1];
+    abbrev[2] = '\0';
+    return abbrev;
+}
+
+
+// Finding the health of a Dracula
+int healthDracula (GameView gv, Player player, int numTurns) 
+{
+    int strtElmt = player;
+    int increment = 0;
+    int health = GAME_START_BLOOD_POINTS;
+
+    for (int i = 0; i < numTurns; i++) {
+        // For Normal Moves,
+        char *abbrev = playToPlcAbbrev(gv->pastPlays, (strtElmt * 8) + increment + 1);
+        health = isPlaceSeaOrCastle (abbrev, health);
+
+        
+        //For Double Back Moves
+        if (isDoubleBackMove (gv->pastPlays, (strtElmt * 8) + increment + 1)) { // test for double back
+            int p = gv->pastPlays[(strtElmt * 8) + increment + 2] - 48;
+            char *abbrvtn = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - (p * 40));
+            health = isPlaceSeaOrCastle (abbrvtn, health);
+        } 
+        
+        // For HideMoves
+        else if (isHideMove(gv->pastPlays, (strtElmt * 8) + increment + 1)) {
+            char *plcAbbrev = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - 40 );
+            health = isPlaceSeaOrCastle (plcAbbrev, health);
+        }
+
+        if (vampireHunterEncounter(gv, (((strtElmt + 1 ) * 8) + increment))) { // encounters a hunter
+            health = health - LIFE_LOSS_HUNTER_ENCOUNTER;
+        } 
+        increment = increment + 40;
+    }
+
+    if (health < 0) return 0;
+    return health;
+}
+
+
 // The wrapper function
 // Determine if an abbreviation corresponds to a Sea or castle or neither. 
 // It also calculates the new health for Dracula due to his location.
@@ -510,8 +509,6 @@ int isPlaceSeaOrCastle (char *abbrev, int health)
 }
 
 
-// Unchecked yet
-
 // Determine if an abbreviation corresponds to a Sea or castle or neither. 
 // It also calculates the new health for Dracula due to his location.
 int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health) 
@@ -523,9 +520,6 @@ int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health)
     }  
     return health;
 }
-
-
-
 
 
 //Determines if Dracula's move in the pastPlays string was a double back move.
@@ -541,19 +535,13 @@ bool isDoubleBackMove (char *pastPlays, int index)
 }
 
 
-
-
 // Determines if Dracula's move in the pastPlays string was a hide move.
-bool isHideMove(char *pastPlays, int index) 
+bool isHideMove(char *pastPlays, int location) 
 {
-    if (pastPlays[index] != 'H') return false;
-    if (pastPlays[index + 1] != 'I') return false;
+    if (pastPlays[location] != 'H') return false;
+    if (pastPlays[location] != 'I') return false;
         return true;
 }
-
-
-
-
 
 
 // Determines whether Vampire and Hunter encounters each other from the past plays
@@ -570,43 +558,32 @@ bool vampireHunterEncounter (GameView gv, int location)
 }
 
 
-
-
-
 // Finds the Health of a Hunter given the pastPlays string
 int healthHunter (GameView gv, Player player, int numTurns) 
 {
     int strtElmt = player;
     int incre = 0;
     int health = GAME_START_HUNTER_LIFE_POINTS;
-    bool cond = false;
 
-    for (int j = 0; j < numTurns; j++) {  
+    for (int j = 0; j < numTurns; j++) {
         for (int i = 0; i < 4; i++) { // could separate this bit into a function
             if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
                 health = health - LIFE_LOSS_TRAP_ENCOUNTER;
             } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
                 // encounter dracula
-                health = health - LIFE_LOSS_DRACULA_ENCOUNTER;              
+                health = health - LIFE_LOSS_DRACULA_ENCOUNTER;
             } 
         }
-        if (cond == false && hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
+        if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
             // Hunters have a maximum health
             health = min (health + LIFE_GAIN_REST, GAME_START_HUNTER_LIFE_POINTS);
         }
         incre = incre + 40;
-        
-        if (health <= 0 && j < numTurns - 1) health = GAME_START_HUNTER_LIFE_POINTS;
-        else if (health <= 0 && j == numTurns - 1) health = 0; 
     }
+
+    if (health < 0) return 0;
     return health;
 }
-
-
-
-
-
-
 
 
 // Determines if hunter stays in the same location between sucessive turns 
@@ -620,223 +597,3 @@ bool hunterRest (GameView gv, int location) // need to also make sure that the h
     }
     return true; 
 }
-
-
-
-
-
-
-
-
-
-
-// Dynamically allocates memory for a PlaceId array given the number of elements
-PlaceId *makePlaceIdArray (int elements)
-{
-    PlaceId *array = malloc(elements * sizeof(PlaceId));
-    if (array == NULL) { // memory not allocated
-        fprintf(stderr, "Insufficient memory!\n");
-        exit(EXIT_FAILURE);
-    }
-    return array;
-}
-
-
-
-
-
-
-
-
-
-
-
-// Find the number of locations reachable by dracula from a specific location
-// This function also restricts the locations available by method of transport
-int dracNumReachableByType (ConnList connList, bool road, bool boat)
-{
-    int i = 1;
-    while (connList != NULL ) { 
-        if (connList->type == ROAD && road == true && 
-            connList->p != ST_JOSEPH_AND_ST_MARY) {
-            i++;
-        }
-        if (connList->type == BOAT && boat == true && 
-            connList->p != ST_JOSEPH_AND_ST_MARY) {
-            i++;
-        }
-        connList = connList->next;
-    }
-     return i;
-}
-
-
-
-
-
-
-
-
-// This function returns the correct locations that can be reached by dracula
-// given a certain mode of transport in an array.
-void fillDracReachableByTypeArray (ConnList connList, bool road, bool boat,
-                                    PlaceId *reachable, PlaceId from) 
-{
-    reachable[0] = from;
-    int k = 1;
-
-    while (connList!= NULL) {
-        if (connList->type == ROAD && road == true && connList->p != ST_JOSEPH_AND_ST_MARY) {
-            reachable[k] = connList->p;
-            k++;
-        }
-        if (connList->type == BOAT && boat == true && connList->p != ST_JOSEPH_AND_ST_MARY) {
-            reachable[k] = connList->p;
-            k++;                
-        }
-        connList = connList->next;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-// Finds the number of locations able to be reached by the hunter from a specific 
-// place given that certain modes of transport are not available. 
-int getNumReachableHunter(ConnList connList, bool road, bool rail, bool boat, 
-                            int numMoves, Map map, PlaceId from)
-{
-    int i = 0;
-    ConnList connListDup = connList;
-    while (connList != NULL) {      
-        if (connList->type == ROAD && road == true) {
-            i++;
-        } else if (connList->type == BOAT && boat == true) {
-            i++;
-        }
-        connList = connList->next;
-    }
-
-    if (connListDup->type == RAIL && rail == true) {
-        int k;
-        bool places[NUM_REAL_PLACES];
-        for (int m = 0; m < NUM_REAL_PLACES; m++) {
-            places[m] = false;
-        }
-        i = i + numReachableHunterRail (connListDup, numMoves, map, NOWHERE, from, &k, places);
-    } 
-
-    return i;
-}
-
-
-
-
-
-
-// Finds the number of locations that can be reached by rail for a certain Hunter
-// given that various different distances can be travelled by rail.
-int numReachableHunterRail (ConnList connList, int distance, Map map, 
-                            PlaceId GrandParent, PlaceId parent, int *i, bool *places)
-{
-    *i = 0;
-    if (distance == 0) return 0; // base case. 
-
-    while (connList != NULL) {
-        if (connList->type == RAIL && connList->p != GrandParent && places[connList->p] == false) {
-            places[connList->p] = true;
-            *i = *i + 1;
-            ConnList connListTwo = MapGetConnections (map, connList->p);
-            *i = *i + numReachableHunterRail (connListTwo, distance - 1, map, parent, connList->p, i, places);       
-        }
-        connList = connList->next;
-    }
-    return *i;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-// Finds the locations able to be reached by the hunter from a specific 
-// place given that certain modes of transport are not available.
-// Presents these locations in an array.
-void fillHunterReachByTypeArray (ConnList connListDup, bool road, bool rail, 
-                        bool boat, PlaceId *reachable, PlaceId from, 
-                        int numMoves, Map map, int j) 
-{    
-	int k = 1;
-    ConnList connList = connListDup;	
-	while (connListDup != NULL && k < j) {
-		if (connListDup->type == ROAD && road == true) { //road
-			reachable[k] = connListDup->p;
-			k++;
-		} else if (connListDup->type == BOAT && boat == true) { ///boat
-			reachable[k] = connListDup->p;
-			k++;
-		}
-		connListDup = connListDup->next;
-	}
-    
-    if ( rail == true) { // if the Hunter can travel by rail
-        bool places[NUM_REAL_PLACES];
-        for (int m = 0; m < NUM_REAL_PLACES; m++) {
-            places[m] = false;
-        }
-        fillReachableHunterRail (connList, numMoves, map, NOWHERE, from, reachable, &k, places);
-    } 
-}
-
-
-
-
-
-
-
-// Finds the locations that can be reached by rail for a certain Hunter
-// given that various different distances can be travelled by rail.
-// Adds these locations to an array
-void fillReachableHunterRail (ConnList connList, int numMoves, Map map,
-                                PlaceId GrandParent, PlaceId parent,
-                                PlaceId *reachable, int *i, bool *places)          
-{ 
-    if (numMoves == 0) return; //base case
-
-    while (connList != NULL) {
-        if (connList->type == RAIL && connList->p != GrandParent && places[connList->p] == false ) {
-			places[connList->p] = true;
-            reachable[*i] = connList->p;
-            ConnList connListTwo = MapGetConnections (map, connList->p);
-            *i = *i + 1;
-			fillReachableHunterRail (connListTwo, numMoves - 1, map, parent, connList->p, reachable , i, places);
-
-        }
-        connList = connList->next;
-    } 
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
