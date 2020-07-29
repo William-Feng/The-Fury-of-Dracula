@@ -383,7 +383,7 @@ void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city) {
 
 // Adds connections to the reachable array which satisfy transport type
 void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
-                   bool road, bool rail, bool boat, int *numReturnedLocs, PlaceId *reachable)
+                bool road, bool rail, bool boat, int *numReturnedLocs, PlaceId *reachable)
 {
     // Add current location
     if (player == PLAYER_DRACULA && from == ST_JOSEPH_AND_ST_MARY) return;
@@ -411,7 +411,7 @@ void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
 
 // Unchecked:
 
-//Convert a pastPlay into an abbreviation for a place
+// Convert a pastPlay into an abbreviation for a place
 char *playToPlcAbbrev (char *play, int index) 
 {
     char *abbrev = malloc (3 * sizeof(char));
@@ -484,14 +484,12 @@ int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health)
 }
 
 
-//Determines if Dracula's move in the pastPlays string was a double back move.
+// Determines if Dracula's move in the pastPlays string was a double back move.
 bool isDoubleBackMove (char *pastPlays, int index) 
 {
     if (pastPlays[index] != 'D') return false;
-    if (pastPlays[index + 1] < '1' || pastPlays[index + 1] > '5' ) { //ensures 
-    // that the char following 'D' is a number between 1 and 5
-        return false;
-    }
+    //e nsure that the char following 'D' is a number between 1 and 5
+    if (pastPlays[index + 1] < '1' || pastPlays[index + 1] > '5' ) return false;
     return true;
     
 }
@@ -556,12 +554,11 @@ int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths)
 
 // Determines if hunter stays in the same location between sucessive turns 
 // Hunter should not attempt to move to another location by rail.
-bool hunterRest (GameView gv, int location) // need to also make sure that the hunter doesnt TRY to go anywhere by rail even thhough doesnt move . (idk how to do this....)
+// need to also make sure that the hunter doesnt TRY to go anywhere by rail even thhough doesnt move . (idk how to do this....)
+bool hunterRest (GameView gv, int location)
 {   
     if (location - 40 < 0) return false;
     if (gv->pastPlays[location] != gv->pastPlays[location - 40]) return false; 
-    if (gv->pastPlays[location + 1] != gv->pastPlays[location + 1 - 40]) {
-        return false; 
-    }
+    if (gv->pastPlays[location + 1] != gv->pastPlays[location + 1 - 40]) return false;
     return true; 
 }
