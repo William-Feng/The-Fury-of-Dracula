@@ -54,7 +54,6 @@ bool isHideMove(char *pastPlays, int location);
 int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
 
 
-
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -72,7 +71,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 void GvFree(GameView gv)
 {
-    // TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     free (gv->pastPlays);
     MapFree (gv->map);
     free (gv);
@@ -443,9 +441,8 @@ int healthDracula (GameView gv, Player player, int numTurns)
         // For Normal Moves,
         char *abbrev = playToPlcAbbrev(gv->pastPlays, (strtElmt * 8) + increment + 1);
         health = isPlaceSeaOrCastle (abbrev, health);
-
         
-        //For Double Back Moves
+        // For Double Back Moves
         if (isDoubleBackMove (gv->pastPlays, (strtElmt * 8) + increment + 1)) { // test for double back
             int p = gv->pastPlays[(strtElmt * 8) + increment + 2] - 48;
             char *abbrvtn = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - (p * 40));
