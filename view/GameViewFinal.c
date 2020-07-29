@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -29,7 +28,6 @@ struct gameView {
     Map map;
 };
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Function prototypes
 
@@ -41,6 +39,11 @@ int min(int a, int b);
 int roundsPlayed(GameView gv, Player player);
 // Extract location for a specified move
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
+// Appends a city to a PlaceId array if it is unique
+void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city);
+// Adds connections to the reachable array which satisfy transport type
+void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
+                  bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -83,7 +86,24 @@ Player GvGetPlayer(GameView gv)
 int GvGetScore(GameView gv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	int score = GAME_START_SCORE;
+	// For each round
+	for (Round round = 0; round < GvGetRound(gv); round++) {
+		/* NOTE EDGE CASES NOT IMPLEMENTED YET */
+		// Check player death
+		for (Player player = PLAYER_LORD_GODALMING; player <= PLAYER_MINA_HARKER; player++) {
+			// Player has gone in current round
+			if ((round * 40 + player * 8 + 7) <= strlen(gv->pastPlays) &&
+				healthHunter(gv, player, round) <= 0)
+				score -= SCORE_LOSS_HUNTER_HOSPITAL;
+		}
+		// Check dracula turn
+		if ((round * 40 + 4 * 8) < strlen(gv->pastPlays)) score -= SCORE_LOSS_DRACULA_TURN;
+		// Check vampire mature
+		
+	}
+
+	return score;
 }
 
 int GvGetHealth(GameView gv, Player player)
@@ -194,18 +214,22 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	return (player == PLAYER_DRACULA) ?
+	GvGetReachableByType(gv, player, round, from, true, false, true, numReturnedLocs):
+	GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+    PlaceId *reachable = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+    assert(reachable != NULL);
+    *numReturnedLocs = 0;
+    int numRailMoves = (rail) ? (round + player) % 4 : 0;
+    addReachable(gv, player, from, numRailMoves, road, rail, boat,
+                 numReturnedLocs, reachable);
+    return reachable;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -215,20 +239,23 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 // Helper Functions
 
-
+// Returns the higher of two integers
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
+// Returns the lower of two integers
 int min(int a, int b) {
     return (a > b) ? b : a;
 }
 
+// Calculates how many rounds a player has played
 int roundsPlayed(GameView gv, Player player) {
     // Add one if player has already gone in current turn
     return (player < GvGetPlayer(gv)) ? GvGetRound(gv) + 1 : GvGetRound(gv);
 }
 
+// Extract location for a specified move
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
     // Hunters
     if (player != PLAYER_DRACULA) {
@@ -272,4 +299,39 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
 	if (!found) return UNKNOWN_PLACE;
 	else if (move == TELEPORT) return CASTLE_DRACULA;
 	else return move;
+}
+
+// Appends a city to a PlaceId array if it is unique
+void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city) {
+    // Check Unique
+    for (int i = 0; i < *numReturnedLocs; i++)
+        if (reachable[i] == city) return;
+    // Append if unique
+    reachable[*numReturnedLocs] = city;
+    (*numReturnedLocs)++;
+}
+
+
+// Adds connections to the reachable array which satisfy transport type
+void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
+                   bool road, bool rail, bool boat, int *numReturnedLocs, PlaceId *reachable)
+{
+    // Add current location
+    arrayUniqueAppend(reachable, numReturnedLocs, from);
+    // Extract Connections
+    ConnList connections = MapGetConnections(gv->map, from);
+    for (ConnList c = connections; c != NULL; c = c->next) {
+        if (player == PLAYER_DRACULA && c->p == ST_JOSEPH_AND_ST_MARY) continue;
+        // Add unique wanted roads/boats
+        if ((road == true && c->type == ROAD) || (boat == true && c->type == BOAT))
+            arrayUniqueAppend(reachable, numReturnedLocs, c->p);
+        // Unique Rail
+        if (rail == true && numRailMoves > 0 && c->type == RAIL) {
+            arrayUniqueAppend(reachable, numReturnedLocs, c->p);
+            // Further extraction for rail (recursion)
+            if (numRailMoves > 1)
+                addReachable(gv, player, c->p, numRailMoves - 1, false, true, false,
+                                   numReturnedLocs, reachable);
+        }
+    }
 }
