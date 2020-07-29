@@ -97,42 +97,29 @@ Player GvGetPlayer(GameView gv)
 
 int GvGetScore(GameView gv)
 {
-	if (GvGetRound(gv) == 0) {
-		return GAME_START_SCORE;
-	}
-
 	int score = GAME_START_SCORE;
-
-	// decreases by 1 each time Dracula finishes his turn
-	score = score - GvGetRound(gv) * SCORE_LOSS_DRACULA_TURN;
-
-        // decreases by 6 each time a hunter loses all life points and teleported
-	// to St Joseph and St Mary
-	for (int i = 0; i < NUM_PLAYERS - 1; i++) {
-		if (GvGetHealth(gv, i) <= 0) {
-			score -= SCORE_LOSS_HUNTER_HOSPITAL;
+	// For each round
+	for (Round round = 0; round <= GvGetRound(gv); round++) {
+		/* NOTE EDGE CASES NOT IMPLEMENTED YET */
+		// Check player death
+		for (Player player = PLAYER_LORD_GODALMING; player <= PLAYER_MINA_HARKER; player++) {
+			// Player has gone in current round
+			if ((round * 40 + player * 8 + 7) <= strlen(gv->pastPlays) &&
+				healthHunter(gv, player, round) <= 0)
+				score -= SCORE_LOSS_HUNTER_HOSPITAL;
 		}
+		// Check dracula turn
+		if ((round * 40 + 4 * 8) < strlen(gv->pastPlays)) score -= SCORE_LOSS_DRACULA_TURN;
+
+		// Check vampire mature
+		if ((round * 40 + 4 * 8) < strlen(gv->pastPlays)) {
+            		if (gv->pastPlays[round * 40 + 4 * 8 + 5] == 'V') score -= SCORE_LOSS_VAMPIRE_MATURES;
+        	}
+
+		
 	}
 
-	// decreases by 13 each time a vampire matures (falls off the trail)
-	int index = ((strlen(gv->pastPlays) + 1) / 40 - 1) * 40 
-    + 38 - 1;
-        // If finding the vampire index in the first turn
-	if (index < 0) index = 37;
-	
-	for (int i = 0; i < strlen(gv->pastPlays) % 40; i++) {
-		if (gv->pastPlays[index] == 'V') {
-			score -= SCORE_LOSS_VAMPIRE_MATURES;
-		}
-		index -= 40;
-	}
-
-	// If score reaches zero, Dracula has won
-	if (score == 0) {
-		// game lost
-	}
-
-	return score; 
+	return score;
 }
 
 int GvGetHealth(GameView gv, Player player)
