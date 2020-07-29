@@ -20,47 +20,54 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
-#include "Queue.h"
 
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
+/////////////////////
+// HunterView ADT //
+///////////////////
 
 struct hunterView {
 	GameView gv;
 	char *pastPlays;
+	PlaceId *shortestSpecifiedPath;
 };
 
-// // Queue
-// typedef struct queueNode {
-// 	PlaceId city;
-// 	struct queueNode *next;
-// } QueueNode;
-
-// typedef struct queueRep {
-// 	QueueNode *head;
-// 	QueueNode *tail;
-// } QueueRep;
-
-// typedef QueueRep *Queue;
-
-// Queue newQueue();
-
-// void enQueue(Queue q, PlaceId city);
-
-// PlaceId deQueue(Queue q);
-
-// void dropQueue(Queue q);
-
-// void showQueue(Queue q);
-
-// bool queueIsEmpty(Queue q);
+// Calculates how many rounds a player has played
+static int roundsPlayed(HunterView gv, Player player);
 
 
-static int roundsPlayed(HunterView gv, Player player) { //same as FindNumMoves
-    // Add one to round if player has already gone in current turn
-    return (player < HvGetPlayer(gv)) ? HvGetRound(gv) + 1 : HvGetRound(gv);
-}
+////////////////
+// Queue ADT //
+//////////////
+
+typedef struct queueNode {
+	PlaceId city;
+	struct queueNode *next;
+} QueueNode;
+
+typedef struct queueRep {
+	QueueNode *head;
+	QueueNode *tail;
+} QueueRep;
+
+typedef QueueRep *Queue;
+
+/** Creates a new queue. */
+Queue newQueue(void);
+
+/** Adds a PlaceId to the queue. */
+void enQueue(Queue q, PlaceId city);
+
+/** Removes and returns the first PlaceId from the queue. */
+PlaceId deQueue(Queue q);
+
+/** Frees memory used by the queue. */
+void dropQueue(Queue q);
+
+/** Displays the queue. */
+void showQueue(Queue q);
+
+/** Checks whether the queue is empty or not. */
+bool queueIsEmpty(Queue q);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -76,13 +83,13 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	}
 	new->gv = GvNew(pastPlays, messages);
 	new->pastPlays = strdup(pastPlays);
+	new->shortestSpecifiedPath = NULL;
 	
 	return new;
 }
 
 void HvFree(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GvFree(hv->gv);
 	free(hv->pastPlays);
 	free(hv);
@@ -126,21 +133,19 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	// Check Rounds
 	*round = 0;
-	// return GvGetPlayerLocation(hv->gv, PLAYER_DRACULA);
-
-	// Rounds
 	Round i = HvGetRound(hv) - 1;
 	while (i >= 0) {
-		// Extract Move
+		// Extract move
 		char abbrev[3] = {0};
 		abbrev[0] = hv->pastPlays[i * 40 + 32 + 1];
 		abbrev[1] = hv->pastPlays[i * 40 + 32 + 2];
 		abbrev[2] = '\0';
 		PlaceId move = placeAbbrevToId(abbrev);
-
+		
 		if (placeIsReal(move)) {
+			// Location found
 			*round = i;
 			return move;
 		} else if (move == DOUBLE_BACK_2) {
@@ -151,8 +156,8 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 			i -= 4;
 		} else if (move == DOUBLE_BACK_5) {
 			i -= 5;
-		// HIDE, DOUBLE_BACK_1, unknown place
 		} else {
+			// HIDE, DOUBLE_BACK_1, unknown place
 			i -= 1;
 		}
 	}
@@ -231,6 +236,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		(*pathLength)++;
 	}
 	(*pathLength)--;
+	free(visited);
 	
 	// Flip array to be from src to dest
 	for (int i = 0; i < *pathLength/2; i++) {
@@ -239,8 +245,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		path[*pathLength - 1 - i] = temp;
 	}
 
-	// Add to ADT?
-	free(visited);
+	// Add to ADT
+	hv->shortestSpecifiedPath = path;
 	return path;
 }
 
@@ -266,7 +272,6 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-	// player has already played in current round
 	return GvGetReachable(hv->gv, player, roundsPlayed(hv, player),
 						  HvGetPlayerLocation(hv, player), numReturnedLocs);
 }
@@ -283,4 +288,74 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+/////////////////////
+// HunterView ADT //
+///////////////////
+
+// Calculates how many rounds a player has played
+static int roundsPlayed(HunterView gv, Player player) {
+    // Add one to round if player has already gone in current turn
+    return (player < HvGetPlayer(gv)) ? HvGetRound(gv) + 1 : HvGetRound(gv);
+}
+
+
+////////////////
+// Queue ADT //
+//////////////
+
+/** Creates a new queue. */
+Queue newQueue(void) {
+	QueueRep *q = malloc(sizeof(*q));
+	assert(q != NULL);
+	q->head = q->tail = NULL;
+	return q;
+}
+
+/** Adds a PlaceId to the queue. */
+void enQueue(Queue q, PlaceId city) {
+	assert(q != NULL);
+
+	QueueNode *newNode = malloc(sizeof(*newNode));
+	assert(newNode != NULL);
+	newNode->city = city;
+	newNode->next = NULL;
+
+	if (q->head == NULL) q->head = newNode;
+	if (q->tail != NULL) q->tail->next = newNode;
+	q->tail = newNode;
+}
+
+/** Removes and returns the first PlaceId from the queue. */
+PlaceId deQueue(Queue q) {
+	assert(q != NULL);
+	assert(q->head != NULL);
+	PlaceId city = q->head->city;
+	QueueNode *remove = q->head;
+	q->head = remove->next;
+	if (q->head == NULL) q->tail = NULL;
+	free(remove);
+	return city;
+}
+
+/** Frees memory used by the queue. */
+void dropQueue(Queue q) {
+    assert(q != NULL);
+    for (QueueNode *curr = q->head, *next; curr != NULL; curr = next) {
+        next = curr->next;
+        free(curr);
+    }
+    free(q);
+}
+
+/** Displays the queue. */
+void showQueue(Queue q) {
+	printf("[ ");
+	for (QueueNode *curr = q->head; curr; curr=curr->next)
+		printf("%d ", curr->city);
+	printf("]\n");
+}
+
+/** Checks whether the queue is empty or not. */
+bool queueIsEmpty(Queue q) {
+	return q->head == NULL;
+}
