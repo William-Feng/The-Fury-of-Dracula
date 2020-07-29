@@ -197,9 +197,9 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
             } else {
 				(*numTraps)--;
 				char location[3];
-				location[2] = '\0';
 				location[0] = gv->pastPlays[index - 2];
 				location[1] = gv->pastPlays[index - 1];
+                location[2] = '\0';
 				PlaceId loc = placeAbbrevToId(location);
 				for (int j = 0; j < *numTraps; j++) {
 					if (trapLocations[j] == loc && j != *numTraps - 1) {
