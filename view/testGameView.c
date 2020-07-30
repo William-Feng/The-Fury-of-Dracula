@@ -316,6 +316,68 @@ int main(void)
 	}
 	
 	{///////////////////////////////////////////////////////////////////
+		// new
+		printf("Testing trap locations after two of them are destroyed\n");
+		
+		char *trail =
+			"GVI.... SGE.... HGE.... MGE.... DBC.V.. "
+			"GBD.... SGE.... HGE.... MGE.... DKLT... "
+			"GSZ.... SGE.... HGE.... MGE.... DGAT... "
+			"GBE.... SGE.... HGE.... MGE.... DCNT... "
+			"GKLT... SCNT... HGE.... MGE....";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) ==
+				GAME_START_HUNTER_LIFE_POINTS - LIFE_LOSS_TRAP_ENCOUNTER);
+		assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == KLAUSENBURG);
+		assert(GvGetVampireLocation(gv) == BUCHAREST);
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 1);
+		sortPlaces(traps, numTraps);
+		assert(traps[0] == GALATZ);
+		free(traps);
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// new
+		printf("Testing trap locations after one falls off the trail\n");
+		
+		char *trail =
+			"GED.... SGE.... HZU.... MCA.... DCF.V.. "
+			"GMN.... SCFVD.. HGE.... MLS.... DBOT... "
+			"GLO.... SMR.... HCF.... MMA.... DTOT... "
+			"GPL.... SMS.... HMR.... MGR.... DBAT... "
+			"GLO.... SBATD.. HMS.... MMA.... DSRT... "
+			"GPL.... SSJ.... HBA.... MGR.... DALT... "
+			"GPL.... SSJ.... HBA.... MGR.... DMAT.V. "
+			"GLO.... SBE.... HMS.... MMATD.. DGRT.M.";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 4);
+		sortPlaces(traps, numTraps);
+
+		assert(traps[0] == ALICANTE);
+		assert(traps[1] == GRANADA); 
+		assert(traps[2] == SARAGOSSA);
+		assert(traps[3] == TOULOUSE);
+
+		free(traps); 
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
 	
 		printf("Testing a vampire maturing\n");
 		
