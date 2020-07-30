@@ -230,7 +230,6 @@ static bool inArray(PlaceId *array, int arrSize, PlaceId find)
     return false;
 }
 
-
 // Extract location for a specified move
 static PlaceId extractLocation(DraculaView dv, PlaceId move, Round round)
 {

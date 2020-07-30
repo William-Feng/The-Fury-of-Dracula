@@ -107,7 +107,7 @@ int GvGetScore(GameView gv)
         healthHunter(gv, player, roundsPlayed(gv, player), &playerDeaths);
         score -= SCORE_LOSS_HUNTER_HOSPITAL * playerDeaths;
     }
-	return score;
+	return max(score, 0);
 }
 
 int GvGetHealth(GameView gv, Player player)
@@ -139,7 +139,6 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
         return location;
     }
 }
-
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
@@ -197,8 +196,8 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
         // Remove traps that have left the trail
         if (roundsPlayed(gv, PLAYER_DRACULA) - 1 >= round &&
             gv->pastPlays[round * 40 + 37] == 'M') {
-            PlaceId move = getPlayerMove(gv, PLAYER_DRACULA, round - 6);
-            PlaceId location = extractLocation(gv, PLAYER_DRACULA, move, round - 6);
+            PlaceId move = getPlayerMove(gv, PLAYER_DRACULA, round - TRAIL_SIZE);
+            PlaceId location = extractLocation(gv, PLAYER_DRACULA, move, round - TRAIL_SIZE);
             removeLocation(trapLocations, numTraps, location);
         }
     }
@@ -414,6 +413,8 @@ static int healthHunter(GameView gv, Player player, int numTurns, int *numDeaths
     int health = GAME_START_HUNTER_LIFE_POINTS;
 
     for (int j = 0; j < numTurns; j++) {
+        // Revive
+        if (health <= 0) health = GAME_START_HUNTER_LIFE_POINTS;
         // Rest
         if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
             // Hunters have a maximum health
@@ -430,8 +431,6 @@ static int healthHunter(GameView gv, Player player, int numTurns, int *numDeaths
         }
         // Deaths
         if (health <= 0) {
-            // Respawn
-            if (j != numTurns - 1) health = GAME_START_HUNTER_LIFE_POINTS;
             if (numDeaths != NULL) (*numDeaths)++;
         }
         incre += 40;
@@ -458,7 +457,6 @@ static void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId 
     reachable[*numReturnedLocs] = city;
     (*numReturnedLocs)++;
 }
-
 
 // Adds connections to the reachable array which satisfy transport type
 static void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
