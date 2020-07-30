@@ -36,6 +36,10 @@ static int min(int a, int b);
 static int roundsPlayed(GameView gv, Player player);
 // Extracts player move in a specific round
 static PlaceId getPlayerMove(GameView gv, Player player, Round round);
+// Checks the special moves that Dracula can do
+static PlaceId checkSpecialMoves(GameView gv, PlaceId loc, int index);
+// Helper function for converting part of the pastPlays string into a location string
+char *place (GameView gv, int index);
 // Extract location for a specified move
 static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
 // Returns health of Dracula
@@ -49,6 +53,7 @@ static void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId 
 // Adds connections to the reachable array which satisfy transport type
 static void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
                   bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
+
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -169,47 +174,53 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 { 
-	PlaceId *trapLocations = malloc(18 * sizeof(PlaceId));
-    if (trapLocations == NULL) {
-        fprintf(stderr, "Failed to allocate memory!\n");
-        exit(EXIT_FAILURE);
-	}
-    *numTraps = 0;
+	int traps = 0;
 	int index = 3;
-	
-	// For each player
-    for (int i = 0; i < strlen(gv->pastPlays) / 8; i++) {
+	PlaceId *trapLocations = malloc(sizeof(PlaceId*));
+	for (int i = 0; i <= strlen(gv->pastPlays) / 8; i++) {
 		if (gv->pastPlays[index] == 'T') {
-			// Dracula's Trap Encounter
-            if (gv->pastPlays[index - 3] == 'D') {
-                char move[3];
-				move[0] = gv->pastPlays[index - 2];
-				move[1] = gv->pastPlays[index - 1];
-                move[2] = '\0';
-                PlaceId loc = placeAbbrevToId(move);
-                trapLocations[*numTraps] = extractLocation(gv, PLAYER_DRACULA, loc, i/5);
-				(*numTraps)++;
-			// Hunter's Trap Encounter
-            } else {
-				(*numTraps)--;
-				char location[3];
-				location[0] = gv->pastPlays[index - 2];
-				location[1] = gv->pastPlays[index - 1];
-                location[2] = '\0';
-				PlaceId loc = placeAbbrevToId(location);
-				for (int j = 0; j < *numTraps; j++) {
-					if (trapLocations[j] == loc && j != *numTraps - 1) {
-						trapLocations[j] = trapLocations[*numTraps];
-						break;
-					}
+			if (gv->pastPlays[index - 3] == 'D') {
+                		// Dracula has placed a trap at the location
+				PlaceId loc = placeAbbrevToId(place(gv, index));
+               			if (!placeIsSea(loc)) trapLocations[traps] = checkSpecialMoves(gv, loc, index);
+				traps++;
+			} else if (gv->pastPlays[index - 3] != 'D') {
+                		// A hunter has encountered a trap
+                		PlaceId loc = placeAbbrevToId(place(gv, index));
+                		int j;
+				for (j = 0; j < traps; j++) {
+                    			if (trapLocations[j] == loc) break;
 				}
-			} 
 
+                		for (int k = j; k < traps - 1; k++) {
+                    			trapLocations[k] = trapLocations[k + 1];
+               			}
+               			traps--;
+			} 
 		}
+
+        // Check if a trap has fallen off the trail
+		if (gv->pastPlays[index - 3] == 'D' && gv->pastPlays[index + 2] == 'M') {
+			int numLocs;
+			bool canFree = false;
+			PlaceId *trail = GvGetLastLocations(gv, PLAYER_DRACULA, TRAIL_SIZE + 1, &numLocs, &canFree);
+			PlaceId remLoc = trail[0];
+			assert(trail[0] == BORDEAUX);
+			int j;
+			for (j = 0; j < traps; j++) {
+				if (trapLocations[j] == remLoc) break;
+			}
+
+		    	for (int k = j; k < traps - 1; k++) {
+				trapLocations[k] = trapLocations[k + 1];
+		    	}
+		    	traps--; 
+		} 
 		index += 8;
 	}
 
-	return trapLocations; 
+	*numTraps = traps;
+	return trapLocations; 	
 }
 
 ////////////////////////////////////////////////////////////////////////
