@@ -15,9 +15,11 @@
 
 void decideDraculaMove(DraculaView dv)
 {
+	
 	// Prevent dying scenario
 	
 	
-	// TODO: Replace this with something better!
-	registerBestPlay("CD", "Mwahahahaha");
+	
+	PlaceId move = DOUBLE_BACK_1;
+	registerBestPlay((char *)placeIdToAbbrev(move), "Mwahahahaha");
 }
