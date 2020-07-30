@@ -25,6 +25,8 @@ struct draculaView {
 	GameView gv;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// Function prototypes
 
 // Checks if a PlaceId is already in the array
 static bool inArray(PlaceId *array, int arrSize, PlaceId find);
