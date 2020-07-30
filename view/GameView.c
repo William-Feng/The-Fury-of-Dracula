@@ -36,10 +36,10 @@ static int min(int a, int b);
 static int roundsPlayed(GameView gv, Player player);
 // Extracts player move in a specific round
 static PlaceId getPlayerMove(GameView gv, Player player, Round round);
-// Helper function for converting part of the pastPlays string into a location string
-char *place (GameView gv, int index);
 // Extract location for a specified move
 static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
+// Remove a specified location from an array
+static void removeLocation(PlaceId *array, int *arrSize, PlaceId location);
 // Returns health of Dracula
 static int healthDracula (GameView gv, Player player, int numTurns);
 // Returns health of a hunter
@@ -51,7 +51,6 @@ static void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId 
 // Adds connections to the reachable array which satisfy transport type
 static void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
                   bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
-
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -108,7 +107,6 @@ int GvGetScore(GameView gv)
         healthHunter(gv, player, roundsPlayed(gv, player), &playerDeaths);
         score -= SCORE_LOSS_HUNTER_HOSPITAL * playerDeaths;
     }
-
 	return score;
 }
 
@@ -172,55 +170,39 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 { 
-    // extractLocation(GameView gv, Player player, PlaceId move, Round round)
-	int traps = 0;
-	int index = 3;
-	PlaceId *trapLocations = malloc(sizeof(PlaceId*));
-	for (int i = 0; i <= strlen(gv->pastPlays) / 8; i++) {
-		if (gv->pastPlays[index] == 'T') {
-			if (gv->pastPlays[index - 3] == 'D') {
-                // Dracula has placed a trap at the location
-				PlaceId loc = placeAbbrevToId(place(gv, index));
-               	if (!placeIsSea(loc)) trapLocations[traps] = extractLocation(gv, PLAYER_DRACULA, loc, i / 5);
-				traps++;
-			} else if (gv->pastPlays[index - 3] != 'D') {
-                // A hunter has encountered a trap
-                PlaceId loc = placeAbbrevToId(place(gv, index));
-                int j;
-				for (j = 0; j < traps; j++) {
-                    if (trapLocations[j] == loc) break;
-				}
-
-                for (int k = j; k < traps - 1; k++) {
-                    trapLocations[k] = trapLocations[k + 1];
-               	}
-               	traps--;
-			} 
-		}
-
-        // Check if a trap has fallen off the trail
-		if (gv->pastPlays[index - 3] == 'D' && gv->pastPlays[index + 2] == 'M') {
-			int numLocs;
-			bool canFree = false;
-			PlaceId *trail = GvGetLastLocations(gv, PLAYER_DRACULA, TRAIL_SIZE + 1, &numLocs, &canFree);
-			PlaceId remLoc = trail[0];
-			assert(trail[0] == BORDEAUX);
-			int j;
-			for (j = 0; j < traps; j++) {
-				if (trapLocations[j] == remLoc) break;
-			}
-
-		    for (int k = j; k < traps - 1; k++) {
-				trapLocations[k] = trapLocations[k + 1];
-		    }
-		    traps--; 
-		} 
-		index += 8;
+    PlaceId *trapLocations = malloc(GvGetRound(gv) * sizeof(PlaceId));
+    if (trapLocations == NULL) {
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
 	}
+    *numTraps = 0;
 
-	*numTraps = traps;
+    for (Round round = 0; round <= GvGetRound(gv); round++) {
+        // Add Dracula-placed traps
+        if (roundsPlayed(gv, PLAYER_DRACULA) - 1 >= round &&
+            gv->pastPlays[round * 40 + 35] == 'T') {
+            PlaceId move = getPlayerMove(gv, PLAYER_DRACULA, round);
+            trapLocations[*numTraps] = extractLocation(gv, PLAYER_DRACULA, move, round);
+            (*numTraps)++;
+        }
+        // Remove encountered traps
+        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+            if (roundsPlayed(gv, player) - 1 < round) continue;
+            for (int encounter = 3; encounter < 7; encounter++)
+                if (gv->pastPlays[round * 40 + player * 8 + encounter] == 'T') {
+                    PlaceId move = getPlayerMove(gv, player, round);
+                    removeLocation(trapLocations, numTraps, move);
+                }
+        }
+        // Remove traps that have left the trail
+        if (roundsPlayed(gv, PLAYER_DRACULA) - 1 >= round &&
+            gv->pastPlays[round * 40 + 37] == 'M') {
+            PlaceId move = getPlayerMove(gv, PLAYER_DRACULA, round - 6);
+            PlaceId location = extractLocation(gv, PLAYER_DRACULA, move, round - 6);
+            removeLocation(trapLocations, numTraps, location);
+        }
+    }
 	return trapLocations; 	
-}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -339,15 +321,6 @@ static PlaceId getPlayerMove(GameView gv, Player player, Round round)
     return placeAbbrevToId(move);
 }
 
-// Helper function for converting part of the pastPlays string into a location string
-char *place (GameView gv, int index) {
-	char *location = malloc(3 * sizeof(char));
-	location[2] = '\0';
-	location[0] = gv->pastPlays[index - 2];
-	location[1] = gv->pastPlays[index - 1];
-    return location;
-}
-
 // Extract location for a specified move
 static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
 {
@@ -395,8 +368,21 @@ static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round r
 	else return move;
 }
 
+// Remove a specified location from an array
+static void removeLocation(PlaceId *array, int *arrSize, PlaceId location)
+{
+    // Find index to be removed
+    int i;
+    for (i = 0; i < *arrSize; i++)
+        if (array[i] == location) break;
+    (*arrSize)--;
+    // Swap all elements from this index onwards with its successor
+    for (int j = i; j < *arrSize; j++)
+        array[j] = array[j + 1];
+}
+
 // Finding the health of a Dracula
-static int healthDracula (GameView gv, Player player, int numTurns) 
+static int healthDracula(GameView gv, Player player, int numTurns) 
 {
     int health = GAME_START_BLOOD_POINTS;
     for (Round round = 0; round <= GvGetRound(gv); round++) {
@@ -421,7 +407,7 @@ static int healthDracula (GameView gv, Player player, int numTurns)
 }
 
 // Finds the Health of a Hunter given the pastPlays string
-static int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths) 
+static int healthHunter(GameView gv, Player player, int numTurns, int *numDeaths) 
 {
     int strtElmt = player;
     int incre = 0;
@@ -454,7 +440,7 @@ static int healthHunter (GameView gv, Player player, int numTurns, int *numDeath
 }
 
 // Determines if hunter stays in the same location between sucessive turns
-static bool hunterRest (GameView gv, int location)
+static bool hunterRest(GameView gv, int location)
 {   
     if (location - 40 < 0) return false;
     if (gv->pastPlays[location] != gv->pastPlays[location - 40]) return false; 

@@ -211,10 +211,12 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	return (player == PLAYER_DRACULA) ?
-	DvWhereCanIGoByType(dv, road, boat, numReturnedLocs) :
-	GvGetReachableByType(dv->gv, player, DvGetRound(dv), DvGetPlayerLocation(dv, player),
-						 road, rail, boat, numReturnedLocs);
+	if (player == PLAYER_DRACULA)
+		return DvWhereCanIGoByType(dv, road, boat, numReturnedLocs);
+	else
+		return GvGetReachableByType(dv->gv, player, DvGetRound(dv),
+						 			DvGetPlayerLocation(dv, player),
+									road, rail, boat, numReturnedLocs);
 }
 
 ////////////////////////////////////////////////////////////////////////
