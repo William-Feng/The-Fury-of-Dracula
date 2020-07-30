@@ -34,24 +34,21 @@ int max(int a, int b);
 int min(int a, int b);
 // Calculates how many rounds a player has played
 static int roundsPlayed(GameView gv, Player player);
+// Extracts player move in a specific round
+PlaceId getPlayerMove(GameView gv, Player player, Round round);
 // Extract location for a specified move
 PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
+// Returns health of Dracula
+int healthDracula (GameView gv, Player player, int numTurns);
+// Returns health of a hunter
+int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
+// Helper function for healthHunter
+bool hunterRest (GameView gv, int location);
 // Appends a city to a PlaceId array if it is unique
 void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city);
 // Adds connections to the reachable array which satisfy transport type
 void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
                   bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
-
-// Unchecked
-bool vampireHunterEncounter (GameView gv, int location);
-bool hunterRest (GameView gv, int location);
-int healthDracula (GameView gv, Player player, int numTurns);
-char *playToPlcAbbrev (char *play, int location);
-int isPlaceSeaOrCastle (char *abbrev, int health);
-int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health);
-bool isDoubleBackMove (char *pastPlays, int index);
-bool isHideMove(char *pastPlays, int location);
-int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -114,12 +111,10 @@ int GvGetScore(GameView gv)
 
 int GvGetHealth(GameView gv, Player player)
 {
-    // get number of turns
     Round numTurns = roundsPlayed(gv, player);
-
-    if (player == PLAYER_DRACULA) { //player is Dracula
+    if (player == PLAYER_DRACULA) {
         return healthDracula (gv, player, numTurns);
-    } else { // If player is Hunter
+    } else {
         return healthHunter (gv, player, numTurns, NULL);
     }
 }
@@ -144,6 +139,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
     }
 }
 
+
 PlaceId GvGetVampireLocation(GameView gv)
 {
     PlaceId location = NOWHERE;
@@ -153,11 +149,8 @@ PlaceId GvGetVampireLocation(GameView gv)
         // Check for Dracula-spawned vampire
         if (roundsPlayed(gv, PLAYER_DRACULA) > round &&
             gv->pastPlays[round * 40 + 32 + 4] == 'V') {
-            char move[3];
-            move[0] = gv->pastPlays[round * 40 + 32 + 1];
-            move[1] = gv->pastPlays[round * 40 + 32 + 2];
-            move[2] = '\0';
-            location = extractLocation(gv, PLAYER_DRACULA, placeAbbrevToId(move), round);
+            PlaceId move = getPlayerMove(gv, PLAYER_DRACULA, round);
+            location = extractLocation(gv, PLAYER_DRACULA, move, round);
         }
         // Check if hunters have vanquished the vampire
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
@@ -227,7 +220,6 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
     return GvGetLastMoves(gv, player, numMoves, numReturnedMoves, canFree);
 }
 
-
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
@@ -242,14 +234,9 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
     int finalMove = roundsPlayed(gv, player);
     int firstMove = max(finalMove - numMoves, 0);
     int moveCounter = 0;
-    for (int round = firstMove; round < finalMove; round++) {
-        // Extract location for player within round
-        char abbrev[3] = {0};
-        abbrev[0] = gv->pastPlays[round * 40 + player * 8 + 1];
-        abbrev[1] = gv->pastPlays[round * 40 + player * 8 + 2];
-        abbrev[2] = '\0';
-        // Append to moves array
-        moves[moveCounter] = placeAbbrevToId(abbrev);
+    for (Round round = firstMove; round < finalMove; round++) {
+        // Append move to moves array
+        moves[moveCounter] = getPlayerMove(gv, player, round);
         moveCounter++;
     }
     
@@ -308,23 +295,37 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 // Your own interface functions
 
 // Returns the higher of two integers
-int max(int a, int b) {
+int max(int a, int b)
+{
     return (a > b) ? a : b;
 }
 
 // Returns the lower of two integers
-int min(int a, int b) {
+int min(int a, int b)
+{
     return (a > b) ? b : a;
 }
 
 // Calculates how many rounds a player has played
-static int roundsPlayed(GameView gv, Player player) {
+static int roundsPlayed(GameView gv, Player player)
+{
     // Add one to round if player has already gone in current turn
     return (player < GvGetPlayer(gv)) ? GvGetRound(gv) + 1 : GvGetRound(gv);
 }
 
+// Extracts move of a player in a specific round
+PlaceId getPlayerMove(GameView gv, Player player, Round round)
+{
+    char move[3];
+    move[0] = gv->pastPlays[round * 40 + player * 8 + 1];
+    move[1] = gv->pastPlays[round * 40 + player * 8 + 2];
+    move[2] = '\0';
+    return placeAbbrevToId(move);
+}
+
 // Extract location for a specified move
-PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
+PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
+{
     // Hunters
     if (player != PLAYER_DRACULA) {
 		// Health up to turn
@@ -369,9 +370,76 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round) {
 	else return move;
 }
 
+// Finding the health of a Dracula
+int healthDracula (GameView gv, Player player, int numTurns) 
+{
+    int health = GAME_START_BLOOD_POINTS;
+    for (Round round = 0; round <= GvGetRound(gv); round++) {
+        // Check Dracula location
+        if (roundsPlayed(gv, PLAYER_DRACULA) > round) {
+            PlaceId move = getPlayerMove(gv, PLAYER_DRACULA, round);
+            PlaceId loc = extractLocation(gv, PLAYER_DRACULA, move, round);
+            if (loc == CASTLE_DRACULA) health += LIFE_GAIN_CASTLE_DRACULA;
+            if (placeIsSea(loc)) health -= LIFE_LOSS_SEA;
+        }    
+        // Check hunter encounters
+        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+            if (roundsPlayed(gv, player) - 1 < round) continue;
+            // Check encounters
+            for (int encounter = 3; encounter < 7; encounter++) {
+                if (gv->pastPlays[round * 40 + player * 8 + encounter] == 'D')
+                    health -= LIFE_LOSS_HUNTER_ENCOUNTER;
+            }
+        }
+    }
+    return max(health, 0);
+}
+
+// Finds the Health of a Hunter given the pastPlays string
+int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths) 
+{
+    int strtElmt = player;
+    int incre = 0;
+    int health = GAME_START_HUNTER_LIFE_POINTS;
+
+    for (int j = 0; j < numTurns; j++) {
+        // Rest
+        if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
+            // Hunters have a maximum health
+            health = min(health + LIFE_GAIN_REST, GAME_START_HUNTER_LIFE_POINTS);
+        }
+        // Encounters
+        for (int i = 0; i < 4; i++) { // could separate this bit into a function
+            if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
+                health -= LIFE_LOSS_TRAP_ENCOUNTER;
+            } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
+                // encounter dracula
+                health -= LIFE_LOSS_DRACULA_ENCOUNTER;
+            } 
+        }
+        // Deaths
+        if (health <= 0) {
+            // Respawn
+            if (j != numTurns - 1) health = GAME_START_HUNTER_LIFE_POINTS;
+            if (numDeaths != NULL) (*numDeaths)++;
+        }
+        incre += 40;
+    }
+    return max(health, 0);
+}
+
+// Determines if hunter stays in the same location between sucessive turns
+bool hunterRest (GameView gv, int location)
+{   
+    if (location - 40 < 0) return false;
+    if (gv->pastPlays[location] != gv->pastPlays[location - 40]) return false; 
+    if (gv->pastPlays[location + 1] != gv->pastPlays[location + 1 - 40]) return false;
+    return true; 
+}
 
 // Appends a city to a PlaceId array if it is unique
-void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city) {
+void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city)
+{
     // Check Unique
     for (int i = 0; i < *numReturnedLocs; i++)
         if (reachable[i] == city) return;
@@ -404,161 +472,4 @@ void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
                              numReturnedLocs, reachable);
         }
     }
-}
-
-
-
-
-// Unchecked:
-
-// Convert a pastPlay into an abbreviation for a place
-char *playToPlcAbbrev (char *play, int index) 
-{
-    char *abbrev = malloc (3 * sizeof(char));
-    abbrev[0] = play[index];
-    abbrev[1] = play[index + 1];
-    abbrev[2] = '\0';
-    return abbrev;
-}
-
-
-// Finding the health of a Dracula
-int healthDracula (GameView gv, Player player, int numTurns) 
-{
-    int strtElmt = player;
-    int increment = 0;
-    int health = GAME_START_BLOOD_POINTS;
-
-    for (int i = 0; i < numTurns; i++) {
-        // For Normal Moves,
-        char *abbrev = playToPlcAbbrev(gv->pastPlays, (strtElmt * 8) + increment + 1);
-        health = isPlaceSeaOrCastle (abbrev, health);
-        
-        // For Double Back Moves
-        if (isDoubleBackMove (gv->pastPlays, (strtElmt * 8) + increment + 1)) { // test for double back
-            int p = gv->pastPlays[(strtElmt * 8) + increment + 2] - 48;
-            char *abbrvtn = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - (p * 40));
-            health = isPlaceSeaOrCastle (abbrvtn, health);
-        } 
-        
-        // For HideMoves
-        else if (isHideMove(gv->pastPlays, (strtElmt * 8) + increment + 1)) {
-            char *plcAbbrev = playToPlcAbbrev (gv->pastPlays,((strtElmt * 8) + increment + 1) - 40 );
-            health = isPlaceSeaOrCastle (plcAbbrev, health);
-        }
-
-        if (vampireHunterEncounter(gv, (((strtElmt + 1 ) * 8) + increment))) { // encounters a hunter
-            health = health - LIFE_LOSS_HUNTER_ENCOUNTER;
-        } 
-        increment = increment + 40;
-    }
-
-    if (health < 0) return 0;
-    return health;
-}
-
-
-// The wrapper function
-// Determine if an abbreviation corresponds to a Sea or castle or neither. 
-// It also calculates the new health for Dracula due to his location.
-int isPlaceSeaOrCastle (char *abbrev, int health) 
-{ 
-    PlaceId pid = placeAbbrevToId (abbrev);
-    PlaceType pType = placeIdToType (pid);
-    health = doIsPlaceSeaOrCastle(pid, pType, health);
-    free(abbrev);
-    return health;
-}
-
-
-// Determine if an abbreviation corresponds to a Sea or castle or neither. 
-// It also calculates the new health for Dracula due to his location.
-int doIsPlaceSeaOrCastle(PlaceId pid, PlaceType pType, int health) 
-{
-    if (pType == SEA) { // place is sea
-        health = health - LIFE_LOSS_SEA;    
-    } else if (pid == CASTLE_DRACULA) { // in castle dracula
-        health = health + LIFE_GAIN_CASTLE_DRACULA;
-    }  
-    return health;
-}
-
-
-// Determines if Dracula's move in the pastPlays string was a double back move.
-bool isDoubleBackMove (char *pastPlays, int index) 
-{
-    if (pastPlays[index] != 'D') return false;
-    //e nsure that the char following 'D' is a number between 1 and 5
-    if (pastPlays[index + 1] < '1' || pastPlays[index + 1] > '5' ) return false;
-    return true;
-    
-}
-
-
-// Determines if Dracula's move in the pastPlays string was a hide move.
-bool isHideMove(char *pastPlays, int location) 
-{
-    if (pastPlays[location] != 'H') return false;
-    if (pastPlays[location] != 'I') return false;
-        return true;
-}
-
-
-// Determines whether Vampire and Hunter encounters each other from the past plays
-// string.
-bool vampireHunterEncounter (GameView gv, int location) 
-{
-    Player currPlayer = GvGetPlayer(gv);
-    for(int i = 0; i < currPlayer; i++) {   
-        if (gv->pastPlays[location + (8 * i) + 4] == 'D') { // vampire encountered
-            return true;
-        }
-    }
-    return false;
-}
-
-
-// Finds the Health of a Hunter given the pastPlays string
-int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths) 
-{
-    int strtElmt = player;
-    int incre = 0;
-    int health = GAME_START_HUNTER_LIFE_POINTS;
-
-    for (int j = 0; j < numTurns; j++) {
-        // Rest
-        if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
-            // Hunters have a maximum health
-            health = min (health + LIFE_GAIN_REST, GAME_START_HUNTER_LIFE_POINTS);
-        }
-        // Encounters
-        for (int i = 0; i < 4; i++) { // could separate this bit into a function
-            if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
-                health -= LIFE_LOSS_TRAP_ENCOUNTER;
-            } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
-                // encounter dracula
-                health -= LIFE_LOSS_DRACULA_ENCOUNTER;
-            } 
-        }
-        // Deaths
-        if (health <= 0) {
-            if (j != numTurns - 1) health = GAME_START_HUNTER_LIFE_POINTS;
-            if (numDeaths != NULL) (*numDeaths)++;
-        }
-        incre = incre + 40;
-    }
-    if (health < 0) health = 0;
-    return health;
-}
-
-
-// Determines if hunter stays in the same location between sucessive turns 
-// Hunter should not attempt to move to another location by rail.
-// need to also make sure that the hunter doesnt TRY to go anywhere by rail even thhough doesnt move . (idk how to do this....)
-bool hunterRest (GameView gv, int location)
-{   
-    if (location - 40 < 0) return false;
-    if (gv->pastPlays[location] != gv->pastPlays[location - 40]) return false; 
-    if (gv->pastPlays[location + 1] != gv->pastPlays[location + 1 - 40]) return false;
-    return true; 
 }

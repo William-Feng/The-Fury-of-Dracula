@@ -296,7 +296,8 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 ///////////////////
 
 // Calculates how many rounds a player has played
-static int roundsPlayed(HunterView gv, Player player) {
+static int roundsPlayed(HunterView gv, Player player)
+{
     // Add one to round if player has already gone in current turn
     return (player < HvGetPlayer(gv)) ? HvGetRound(gv) + 1 : HvGetRound(gv);
 }
@@ -307,7 +308,8 @@ static int roundsPlayed(HunterView gv, Player player) {
 //////////////
 
 /** Creates a new queue. */
-Queue newQueue(void) {
+Queue newQueue(void)
+{
 	QueueRep *q = malloc(sizeof(*q));
 	assert(q != NULL);
 	q->head = q->tail = NULL;
@@ -315,7 +317,8 @@ Queue newQueue(void) {
 }
 
 /** Adds a PlaceId to the queue. */
-void enQueue(Queue q, PlaceId city) {
+void enQueue(Queue q, PlaceId city)
+{
 	assert(q != NULL);
 
 	QueueNode *newNode = malloc(sizeof(*newNode));
@@ -329,7 +332,8 @@ void enQueue(Queue q, PlaceId city) {
 }
 
 /** Removes and returns the first PlaceId from the queue. */
-PlaceId deQueue(Queue q) {
+PlaceId deQueue(Queue q)
+{
 	assert(q != NULL);
 	assert(q->head != NULL);
 	PlaceId city = q->head->city;
@@ -341,7 +345,8 @@ PlaceId deQueue(Queue q) {
 }
 
 /** Frees memory used by the queue. */
-void dropQueue(Queue q) {
+void dropQueue(Queue q)
+{
     assert(q != NULL);
     for (QueueNode *curr = q->head, *next; curr != NULL; curr = next) {
         next = curr->next;
@@ -351,7 +356,8 @@ void dropQueue(Queue q) {
 }
 
 /** Displays the queue. */
-void showQueue(Queue q) {
+void showQueue(Queue q)
+{
 	printf("[ ");
 	for (QueueNode *curr = q->head; curr; curr=curr->next)
 		printf("%d ", curr->city);
@@ -359,6 +365,7 @@ void showQueue(Queue q) {
 }
 
 /** Checks whether the queue is empty or not. */
-bool queueIsEmpty(Queue q) {
+bool queueIsEmpty(Queue q)
+{
 	return q->head == NULL;
 }
