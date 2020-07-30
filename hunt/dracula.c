@@ -15,6 +15,9 @@
 
 void decideDraculaMove(DraculaView dv)
 {
+	// Prevent dying scenario
+	
+	
 	// TODO: Replace this with something better!
 	registerBestPlay("CD", "Mwahahahaha");
 }

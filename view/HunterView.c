@@ -29,7 +29,6 @@ struct hunterView {
 	GameView gv;
 	char *pastPlays;
 	Message *messages;
-	PlaceId *shortestSpecifiedPath;
 };
 
 // Calculates how many rounds a player has played
@@ -93,8 +92,6 @@ HunterView HvNew(char *pastPlays, Message messages[])
         exit(EXIT_FAILURE);
 	}
     for (int i = 0; i < numPastPlays; i++) strcpy(new->messages[i], messages[i]);
-	// Store calls for HvGetShortestPath
-	new->shortestSpecifiedPath = NULL;
 	return new;
 }
 
@@ -144,32 +141,32 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// Check Rounds
+	// Check rounds
 	*round = 0;
-	Round i = HvGetRound(hv) - 1;
-	while (i >= 0) {
+	Round r = HvGetRound(hv) - 1;
+	while (r >= 0) {
 		// Extract move
 		char move[3] = {0};
-		move[0] = hv->pastPlays[i * 40 + 33];
-		move[1] = hv->pastPlays[i * 40 + 34];
+		move[0] = hv->pastPlays[r * 40 + 33];
+		move[1] = hv->pastPlays[r * 40 + 34];
 		move[2] = '\0';
 		PlaceId location = placeAbbrevToId(move);
 		
 		if (placeIsReal(location)) {
 			// Location found
-			*round = i;
+			*round = r;
 			return location;
 		} else if (location == DOUBLE_BACK_2) {
-			i -= 2;
+			r -= 2;
 		} else if (location == DOUBLE_BACK_3) {
-			i -= 3;
+			r -= 3;
 		} else if (location == DOUBLE_BACK_4) {
-			i -= 4;
+			r -= 4;
 		} else if (location == DOUBLE_BACK_5) {
-			i -= 5;
+			r -= 5;
 		} else {
 			// HIDE, DOUBLE_BACK_1, unknown place
-			i -= 1;
+			r -= 1;
 		}
 	}
 
@@ -184,9 +181,9 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	
 	// Visited array for storing predecessor city
-	PlaceId visited[NUM_REAL_PLACES] = {-1};
+	PlaceId visited[NUM_REAL_PLACES] = {0};
 	// Array for storing which round a city would be visited
-	PlaceId visitedRound[NUM_REAL_PLACES] = {-1};
+	PlaceId visitedRound[NUM_REAL_PLACES] = {0};
 
 	// Initialisation
 	for (int i = 0; i < MAX_REAL_PLACE; i++) {
@@ -255,8 +252,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		path[*pathLength - 1 - i] = temp;
 	}
 
-	// Add to ADT
-	hv->shortestSpecifiedPath = path;
 	return path;
 }
 
