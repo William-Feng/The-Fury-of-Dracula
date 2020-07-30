@@ -170,7 +170,10 @@ PlaceId GvGetVampireLocation(GameView gv)
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 { 
 	PlaceId *trapLocations = malloc(18 * sizeof(PlaceId));
-    assert(trapLocations);
+    if (trapLocations == NULL) {
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
+	}
     *numTraps = 0;
 	int index = 3;
 	
@@ -226,8 +229,8 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	// Allocate memory for the array
 	PlaceId *moves = malloc(numMoves * sizeof(PlaceId));
 	if (moves == NULL) {
-        	fprintf(stderr, "Failed to allocate memory!\n");
-        	exit(EXIT_FAILURE);
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
 	}
 
 	// Determine the bounds for the loop
@@ -273,9 +276,8 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-	return (player == PLAYER_DRACULA) ?
-	GvGetReachableByType(gv, player, round, from, true, false, true, numReturnedLocs):
-	GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
+	bool rail = (player == PLAYER_DRACULA) ? false : true;
+    return GvGetReachableByType(gv, player, round, from, true, rail, true, numReturnedLocs);
 }
 
 PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
@@ -283,7 +285,10 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               bool boat, int *numReturnedLocs)
 {
     PlaceId *reachable = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-    assert(reachable != NULL);
+    if (reachable == NULL) {
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
+	}
     *numReturnedLocs = 0;
     int numRailMoves = (rail) ? (round + player) % 4 : 0;
     addReachable(gv, player, from, numRailMoves, road, rail, boat,

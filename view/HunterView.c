@@ -88,6 +88,10 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	// Store messages
     int numPastPlays = (strlen(pastPlays) + 1) / 8;
     new->messages = malloc(numPastPlays * sizeof(Message));
+	if (new->messages == NULL) {
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
+	}
     for (int i = 0; i < numPastPlays; i++) strcpy(new->messages[i], messages[i]);
 	// Store calls for HvGetShortestPath
 	new->shortestSpecifiedPath = NULL;
@@ -230,7 +234,10 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 	// Add to path, traversing through the visited array
 	PlaceId *path = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	assert(path != NULL);
+	if (path == NULL) {
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
+	}
 	PlaceId city = dest;
 	path[0] = dest;
 	*pathLength = 1;
@@ -311,7 +318,10 @@ static int roundsPlayed(HunterView gv, Player player)
 Queue newQueue(void)
 {
 	QueueRep *q = malloc(sizeof(*q));
-	assert(q != NULL);
+	if (q == NULL) {
+        fprintf(stderr, "Failed to create Queue!\n");
+        exit(EXIT_FAILURE);
+	}
 	q->head = q->tail = NULL;
 	return q;
 }
@@ -322,7 +332,10 @@ void enQueue(Queue q, PlaceId city)
 	assert(q != NULL);
 
 	QueueNode *newNode = malloc(sizeof(*newNode));
-	assert(newNode != NULL);
+	if (newNode == NULL) {
+        fprintf(stderr, "Failed to allocate memory!\n");
+        exit(EXIT_FAILURE);
+	}
 	newNode->city = city;
 	newNode->next = NULL;
 
