@@ -340,7 +340,7 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
 	bool found = false;
 	int playerIndex = round * 40 + player * 8;
 	while (!found && playerIndex >= 0) {
-		// Loop until location is not a move (placeIsReal ignores unknown)
+		// Loop until move is a location (placeIsReal ignores unknown)
 		if (move != HIDE && move != DOUBLE_BACK_1 && move != DOUBLE_BACK_2 &&
 			move != DOUBLE_BACK_3 && move != DOUBLE_BACK_4 &&
 			move != DOUBLE_BACK_5) {
