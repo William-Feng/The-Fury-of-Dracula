@@ -133,13 +133,13 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			// Check DOUBLE_BACK
 			if (doublebackInTrail(trailMoves, numMoves)) continue;
 			for (PlaceId move = DOUBLE_BACK_1; move <= DOUBLE_BACK_5; move++) {
-                // Invalid move, or already in array
-                if (DvGetRound(dv) - (move - DOUBLE_BACK_1) <= 0 ||
-					inArray(trailMoves, numMoves, move))
-					continue;
-                // Add to validMoves
-				validMoves[*numReturnedMoves] = move;
-				(*numReturnedMoves)++;
+                // Valid special move
+				if (DvGetRound(dv) - (move - DOUBLE_BACK_1) > 0 &&
+					!inArray(trailMoves, numMoves, move)) {
+					// Add to validMoves
+					validMoves[*numReturnedMoves] = move;
+					(*numReturnedMoves)++;
+				}
             }
         }
     }
