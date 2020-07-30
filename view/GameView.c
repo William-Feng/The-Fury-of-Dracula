@@ -188,9 +188,7 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
             if (roundsPlayed(gv, player) - 1 < round) continue;
             // Retrieve health at start of turn
-            int playerHealth;
-            if (round == 0) playerHealth = GAME_START_HUNTER_LIFE_POINTS;
-            else playerHealth = healthHunter(gv, player, round, NULL);
+            int playerHealth = healthHunter(gv, player, round, NULL);
             // Check encounters
             for (int encounter = 3; encounter < 7; encounter++) {
                 // Ignore future encounters if player died first
