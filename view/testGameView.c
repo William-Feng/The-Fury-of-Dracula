@@ -378,6 +378,35 @@ int main(void)
 	}
 	
 	{///////////////////////////////////////////////////////////////////
+		// new 
+		printf("Testing multiple traps at the same location\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DZU.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DSTT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1T...";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+		// assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == STRASBOURG);
+		assert(GvGetVampireLocation(gv) == ZURICH);
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 3);
+		sortPlaces(traps, numTraps);
+
+		assert(traps[0] == STRASBOURG);
+		assert(traps[1] == STRASBOURG); 
+		assert(traps[2] == STRASBOURG);
+
+		free(traps);  
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
 	
 		printf("Testing a vampire maturing\n");
 		
