@@ -16,11 +16,16 @@
 void decideHunterMove(HunterView hv)
 {
 	// Round round = HvGetRound(hv); Player player = HvGetPlayer(hv);
+	// int health = HvGetHealth(hv, player);
 	// int numRailMoves = (round + player) % 4;
 	// bool rail = (numRailMoves != 0);
 	// int numReturnedLocs = 0;
 	// PlaceId *reachable = HvWhereCanIGoByType(hv, true, rail, true, &numReturnedLocs);
 	// Or if can travel by rail, prioritise rail by having road/boat false?
+
+	// PlaceId currentLocation = HvGetPlayerLocation(hv, player);
+	// if (health <= 0) currentLocation = ST_JOSEPH_AND_ST_MARY;	
+
 
 	PlaceId move = CASTLE_DRACULA;
 	registerBestPlay((char *)placeIdToAbbrev(move), "Have we nothing Toulouse?");
