@@ -339,6 +339,37 @@ static PlaceId getPlayerMove(GameView gv, Player player, Round round)
     return placeAbbrevToId(move);
 }
 
+// Checks the special moves that Dracula can do
+PlaceId checkSpecialMoves(GameView gv, PlaceId loc, int index) {
+	char newLoc[3];
+	newLoc[2] = '\0';
+	
+	if (loc == HIDE) {
+		newLoc[0] = gv->pastPlays[index - 2 - 40];
+		newLoc[1] = gv->pastPlays[index - 1 - 40];
+	} else if (loc >= DOUBLE_BACK_1 && loc <= DOUBLE_BACK_5) {
+        // number of locations that Dracula has gone back 
+		int doubleBack = loc - 107 + 5; 
+		newLoc[0] = gv->pastPlays[index - 2 - doubleBack * 40];
+		newLoc[1] = gv->pastPlays[index - 1 - doubleBack * 40];
+	} else if (loc == TELEPORT) {
+		// can you place traps at Castle Dracula?
+	} else {
+		return loc;
+	}
+
+	return placeAbbrevToId(newLoc);
+}
+
+// Helper function for converting part of the pastPlays string into a location string
+char *place (GameView gv, int index) {
+	char *location = malloc(3 * sizeof(char));
+	location[2] = '\0';
+	location[0] = gv->pastPlays[index - 2];
+	location[1] = gv->pastPlays[index - 1];
+    return location;
+}
+
 // Extract location for a specified move
 static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
 {
