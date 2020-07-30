@@ -43,7 +43,7 @@ static void removeLocation(PlaceId *array, int *arrSize, PlaceId location);
 // Returns health of Dracula
 static int healthDracula (GameView gv, Player player, int numTurns);
 // Returns health of a hunter
-static int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
+static int healthHunter (GameView gv, Player player, int numTurns);
 // Helper function for healthHunter
 static bool hunterRest (GameView gv, int location);
 // Appends a city to a PlaceId array if it is unique
@@ -95,17 +95,19 @@ Player GvGetPlayer(GameView gv)
 int GvGetScore(GameView gv)
 {
 	int score = GAME_START_SCORE;
-    // Dracula Turns
-    score -= SCORE_LOSS_DRACULA_TURN * roundsPlayed(gv, PLAYER_DRACULA);
-    // Vampire Mature
-    for (Round round = 0; round < roundsPlayed(gv, PLAYER_DRACULA); round++) {
+    for (Round round = 0; round <= GvGetRound(gv); round++) {
+        // Hunter deaths
+        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
+            if (roundsPlayed(gv, player) > round && healthHunter(gv, player, round + 1) <= 0)
+                score -= SCORE_LOSS_HUNTER_HOSPITAL;
+        if (score <= 0) break;
+        // Dracula turn
+        if (roundsPlayed(gv, PLAYER_DRACULA) - 1 < round) continue;
+        score -= SCORE_LOSS_DRACULA_TURN;
+        if (score <= 0) break;
+        // Vampire mature
         if (gv->pastPlays[round * 40 + 32 + 5] == 'V') score -= SCORE_LOSS_VAMPIRE_MATURES;
-    }
-    // Hunter Deaths
-    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-        int playerDeaths = 0;
-        healthHunter(gv, player, roundsPlayed(gv, player), &playerDeaths);
-        score -= SCORE_LOSS_HUNTER_HOSPITAL * playerDeaths;
+        if (score <= 0) break;
     }
 	return max(score, 0);
 }
@@ -116,7 +118,7 @@ int GvGetHealth(GameView gv, Player player)
     if (player == PLAYER_DRACULA) {
         return healthDracula (gv, player, numTurns);
     } else {
-        return healthHunter (gv, player, numTurns, NULL);
+        return healthHunter (gv, player, numTurns);
     }
 }
 
@@ -188,7 +190,7 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
             if (roundsPlayed(gv, player) - 1 < round) continue;
             // Retrieve health at start of turn
-            int playerHealth = healthHunter(gv, player, round, NULL);
+            int playerHealth = healthHunter(gv, player, round);
             // Check encounters
             for (int encounter = 3; encounter < 7; encounter++) {
                 // Ignore future encounters if player died first
@@ -413,14 +415,14 @@ static int healthDracula(GameView gv, Player player, int numTurns)
 }
 
 // Finds the Health of a Hunter given the pastPlays string
-static int healthHunter(GameView gv, Player player, int numTurns, int *numDeaths) 
+static int healthHunter(GameView gv, Player player, int numTurns) 
 {
     int strtElmt = player;
     int incre = 0;
     int health = GAME_START_HUNTER_LIFE_POINTS;
 
     for (int j = 0; j < numTurns; j++) {
-        // Revive
+        // Revive upon death
         if (health <= 0) health = GAME_START_HUNTER_LIFE_POINTS;
         // Rest
         if (hunterRest(gv, (strtElmt * 8) + 1 + incre)) { 
@@ -435,10 +437,6 @@ static int healthHunter(GameView gv, Player player, int numTurns, int *numDeaths
                 // encounter dracula
                 health -= LIFE_LOSS_DRACULA_ENCOUNTER;
             } 
-        }
-        // Deaths
-        if (health <= 0) {
-            if (numDeaths != NULL) (*numDeaths)++;
         }
         incre += 40;
     }
