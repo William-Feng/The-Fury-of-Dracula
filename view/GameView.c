@@ -29,25 +29,25 @@ struct gameView {
 // Function prototypes
 
 // Returns the higher of two integers
-int max(int a, int b);
+static int max(int a, int b);
 // Returns the lower of two integers
-int min(int a, int b);
+static int min(int a, int b);
 // Calculates how many rounds a player has played
 static int roundsPlayed(GameView gv, Player player);
 // Extracts player move in a specific round
-PlaceId getPlayerMove(GameView gv, Player player, Round round);
+static PlaceId getPlayerMove(GameView gv, Player player, Round round);
 // Extract location for a specified move
-PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
+static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
 // Returns health of Dracula
-int healthDracula (GameView gv, Player player, int numTurns);
+static int healthDracula (GameView gv, Player player, int numTurns);
 // Returns health of a hunter
-int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
+static int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths);
 // Helper function for healthHunter
-bool hunterRest (GameView gv, int location);
+static bool hunterRest (GameView gv, int location);
 // Appends a city to a PlaceId array if it is unique
-void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city);
+static void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city);
 // Adds connections to the reachable array which satisfy transport type
-void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
+static void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
                   bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
 
 
@@ -300,13 +300,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 // Your own interface functions
 
 // Returns the higher of two integers
-int max(int a, int b)
+static int max(int a, int b)
 {
     return (a > b) ? a : b;
 }
 
 // Returns the lower of two integers
-int min(int a, int b)
+static int min(int a, int b)
 {
     return (a > b) ? b : a;
 }
@@ -319,7 +319,7 @@ static int roundsPlayed(GameView gv, Player player)
 }
 
 // Extracts move of a player in a specific round
-PlaceId getPlayerMove(GameView gv, Player player, Round round)
+static PlaceId getPlayerMove(GameView gv, Player player, Round round)
 {
     char move[3];
     move[0] = gv->pastPlays[round * 40 + player * 8 + 1];
@@ -329,7 +329,7 @@ PlaceId getPlayerMove(GameView gv, Player player, Round round)
 }
 
 // Extract location for a specified move
-PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
+static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
 {
     // Hunters
     if (player != PLAYER_DRACULA) {
@@ -376,7 +376,7 @@ PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
 }
 
 // Finding the health of a Dracula
-int healthDracula (GameView gv, Player player, int numTurns) 
+static int healthDracula (GameView gv, Player player, int numTurns) 
 {
     int health = GAME_START_BLOOD_POINTS;
     for (Round round = 0; round <= GvGetRound(gv); round++) {
@@ -401,7 +401,7 @@ int healthDracula (GameView gv, Player player, int numTurns)
 }
 
 // Finds the Health of a Hunter given the pastPlays string
-int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths) 
+static int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths) 
 {
     int strtElmt = player;
     int incre = 0;
@@ -434,7 +434,7 @@ int healthHunter (GameView gv, Player player, int numTurns, int *numDeaths)
 }
 
 // Determines if hunter stays in the same location between sucessive turns
-bool hunterRest (GameView gv, int location)
+static bool hunterRest (GameView gv, int location)
 {   
     if (location - 40 < 0) return false;
     if (gv->pastPlays[location] != gv->pastPlays[location - 40]) return false; 
@@ -443,7 +443,7 @@ bool hunterRest (GameView gv, int location)
 }
 
 // Appends a city to a PlaceId array if it is unique
-void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city)
+static void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city)
 {
     // Check Unique
     for (int i = 0; i < *numReturnedLocs; i++)
@@ -455,7 +455,7 @@ void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city)
 
 
 // Adds connections to the reachable array which satisfy transport type
-void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
+static void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
                 bool road, bool rail, bool boat, int *numReturnedLocs, PlaceId *reachable)
 {
     // Add current location
