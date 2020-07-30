@@ -187,11 +187,20 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
         // Remove encountered traps
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
             if (roundsPlayed(gv, player) - 1 < round) continue;
-            for (int encounter = 3; encounter < 7; encounter++)
+            // Retrieve health at start of turn
+            int playerHealth;
+            if (round == 0) playerHealth = GAME_START_HUNTER_LIFE_POINTS;
+            else playerHealth = healthHunter(gv, player, round, NULL);
+            // Check encounters
+            for (int encounter = 3; encounter < 7; encounter++) {
+                // Ignore future encounters if player died first
+                if (playerHealth <= 0) break;
                 if (gv->pastPlays[round * 40 + player * 8 + encounter] == 'T') {
                     PlaceId move = getPlayerMove(gv, player, round);
                     removeLocation(trapLocations, numTraps, move);
+                    playerHealth -= LIFE_LOSS_TRAP_ENCOUNTER;
                 }
+            }  
         }
         // Remove traps that have left the trail
         if (roundsPlayed(gv, PLAYER_DRACULA) - 1 >= round &&

@@ -149,23 +149,23 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	Round i = HvGetRound(hv) - 1;
 	while (i >= 0) {
 		// Extract move
-		char abbrev[3] = {0};
-		abbrev[0] = hv->pastPlays[i * 40 + 32 + 1];
-		abbrev[1] = hv->pastPlays[i * 40 + 32 + 2];
-		abbrev[2] = '\0';
-		PlaceId move = placeAbbrevToId(abbrev);
+		char move[3] = {0};
+		move[0] = hv->pastPlays[i * 40 + 33];
+		move[1] = hv->pastPlays[i * 40 + 34];
+		move[2] = '\0';
+		PlaceId location = placeAbbrevToId(move);
 		
-		if (placeIsReal(move)) {
+		if (placeIsReal(location)) {
 			// Location found
 			*round = i;
-			return move;
-		} else if (move == DOUBLE_BACK_2) {
+			return location;
+		} else if (location == DOUBLE_BACK_2) {
 			i -= 2;
-		} else if (move == DOUBLE_BACK_3) {
+		} else if (location == DOUBLE_BACK_3) {
 			i -= 3;
-		} else if (move == DOUBLE_BACK_4) {
+		} else if (location == DOUBLE_BACK_4) {
 			i -= 4;
-		} else if (move == DOUBLE_BACK_5) {
+		} else if (location == DOUBLE_BACK_5) {
 			i -= 5;
 		} else {
 			// HIDE, DOUBLE_BACK_1, unknown place
