@@ -76,7 +76,6 @@ bool queueIsEmpty(Queue q);
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	HunterView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
