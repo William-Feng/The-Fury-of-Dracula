@@ -389,7 +389,7 @@ int main(void)
 		
 		Message messages[24] = {};
 		GameView gv = GvNew(trail, messages);
-		// assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == STRASBOURG);
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == STRASBOURG);
 		assert(GvGetVampireLocation(gv) == ZURICH);
 		int numTraps = 0;
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
@@ -584,6 +584,33 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
+
+	{
+		// Test Dracula Death
+		printf("Testing Dracula death\n");
+		char *trail =
+			"GKL.... SKL.... HGA.... MGA.... DCD.V.. "
+			"GCDVD.. SCDD... HCDD... MCDD... DKLT... "
+			"GKLTD..";
+		Message messages[] = {};
+		GameView gv = GvNew(trail, messages);
+		assert(GvGetScore(gv) == 358);
+		assert(GvGetRound(gv) == 2);
+		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 0);
+		assert(GvGetPlayerLocation(gv, PLAYER_LORD_GODALMING) == ST_JOSEPH_AND_ST_MARY);
+		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == 5);
+		assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == CASTLE_DRACULA);
+		assert(GvGetHealth(gv, PLAYER_VAN_HELSING) == 5);
+		assert(GvGetPlayerLocation(gv, PLAYER_VAN_HELSING) == CASTLE_DRACULA);
+		assert(GvGetHealth(gv, PLAYER_MINA_HARKER) == 5);
+		assert(GvGetPlayerLocation(gv, PLAYER_MINA_HARKER) == CASTLE_DRACULA);
+		assert(GvGetHealth(gv, PLAYER_DRACULA) == 0);
+
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+	
+	
 
 	return EXIT_SUCCESS;
 }
