@@ -7,6 +7,8 @@
 // 2018-12-31   v2.0    Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
 //
+// This was created by JAWA on 31/07/2020.
+//
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
@@ -36,9 +38,9 @@ static int min(int a, int b);
 static int roundsPlayed(GameView gv, Player player);
 // Extracts player move in a specific round
 static PlaceId getPlayerMove(GameView gv, Player player, Round round);
-// Extract location for a specified move
+// Extracts location for a specified move
 static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round);
-// Remove a specified location from an array
+// Removes a specified location from an array
 static void removeLocation(PlaceId *array, int *arrSize, PlaceId location);
 // Returns health of Dracula
 static int healthDracula (GameView gv, Player player, int numTurns);
@@ -50,7 +52,7 @@ static bool hunterRest (GameView gv, int location);
 static void arrayUniqueAppend(PlaceId *reachable, int *numReturnedLocs, PlaceId city);
 // Adds connections to the reachable array which satisfy transport type
 static void addReachable(GameView gv, Player player, PlaceId from, int numRailMoves,
-                  bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
+                bool road, bool rail, bool boat,int *numReturnedLocs, PlaceId *reachable);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -85,10 +87,9 @@ Round GvGetRound(GameView gv)
 
 Player GvGetPlayer(GameView gv)
 {
-    // strlen() % 40 indicates how far across each round.
-    // adding one before dividing by eight signifies
-    // the player for the next turn.
-    // this % 5 makes player 5 loop back to player 0.
+    // strlen() % 40 indicates how far across each round
+    // Add one before dividing by eight to signify the player for next turn
+    // % 5 to make player 5 loop back to player 0
     return (((strlen(gv->pastPlays) % 40) + 1) / 8) % 5;
 }
 
@@ -96,16 +97,16 @@ int GvGetScore(GameView gv)
 {
 	int score = GAME_START_SCORE;
     for (Round round = 0; round <= GvGetRound(gv); round++) {
-        // Hunter deaths
+        // Hunter dies
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
             if (roundsPlayed(gv, player) > round && healthHunter(gv, player, round + 1) <= 0)
                 score -= SCORE_LOSS_HUNTER_HOSPITAL;
         if (score <= 0) break;
-        // Dracula turn
+        // Dracula's turn
         if (roundsPlayed(gv, PLAYER_DRACULA) - 1 < round) continue;
         score -= SCORE_LOSS_DRACULA_TURN;
         if (score <= 0) break;
-        // Vampire mature
+        // Vampire matures
         if (gv->pastPlays[round * 40 + 32 + 5] == 'V') score -= SCORE_LOSS_VAMPIRE_MATURES;
         if (score <= 0) break;
     }
@@ -116,16 +117,17 @@ int GvGetHealth(GameView gv, Player player)
 {
     Round numTurns = roundsPlayed(gv, player);
     if (player == PLAYER_DRACULA) {
-        return healthDracula (gv, player, numTurns);
+        return healthDracula(gv, player, numTurns);
     } else {
-        return healthHunter (gv, player, numTurns);
+        return healthHunter(gv, player, numTurns);
     }
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
     // Retrieve the last location using GvGetLastLocations
-	int numLocs = 0; bool canFree = true;
+	int numLocs = 0;
+    bool canFree = true;
     PlaceId *locations = GvGetLastLocations(gv, player, 1, &numLocs, &canFree);
     PlaceId location = locations[0];
     free(locations);
@@ -329,7 +331,7 @@ static PlaceId getPlayerMove(GameView gv, Player player, Round round)
     return placeAbbrevToId(move);
 }
 
-// Extract location for a specified move
+// Extracts location for a specified move
 static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round round)
 {
     // Hunters
@@ -376,10 +378,10 @@ static PlaceId extractLocation(GameView gv, Player player, PlaceId move, Round r
 	else return move;
 }
 
-// Remove a specified location from an array
+// Removes a specified location from an array
 static void removeLocation(PlaceId *array, int *arrSize, PlaceId location)
 {
-    // Find index to be removed
+    // Find index of element to be removed
     int i;
     for (i = 0; i < *arrSize; i++)
         if (array[i] == location) break;
@@ -389,7 +391,7 @@ static void removeLocation(PlaceId *array, int *arrSize, PlaceId location)
         array[j] = array[j + 1];
 }
 
-// Finding the health of a Dracula
+// Finds the health of Dracula
 static int healthDracula(GameView gv, Player player, int numTurns) 
 {
     int health = GAME_START_BLOOD_POINTS;
@@ -430,11 +432,12 @@ static int healthHunter(GameView gv, Player player, int numTurns)
             health = min(health + LIFE_GAIN_REST, GAME_START_HUNTER_LIFE_POINTS);
         }
         // Encounters
-        for (int i = 0; i < 4; i++) { // could separate this bit into a function
-            if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') { // trap
+        for (int i = 0; i < 4; i++) {
+            if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'T') {
+                // Trap
                 health -= LIFE_LOSS_TRAP_ENCOUNTER;
             } else if (gv->pastPlays[(strtElmt * 8) + 3 + incre + i] == 'D') { 
-                // encounter dracula
+                // Dracula
                 health -= LIFE_LOSS_DRACULA_ENCOUNTER;
             } 
         }
