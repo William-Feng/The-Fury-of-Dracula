@@ -7,6 +7,8 @@
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10	v3.0	Team Dracula <cs2521@cse.unsw.edu.au>
 //
+// This was created by JAWA on 31/07/2020.
+//
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
@@ -30,7 +32,7 @@ struct draculaView {
 
 // Checks if a PlaceId is already in the array
 static bool inArray(PlaceId *array, int arrSize, PlaceId find);
-// Extract location for a specified move
+// Extracts location for a specified move
 static PlaceId extractLocation(DraculaView dv, PlaceId move, Round round);
 // Checks if there are DOUBLE_BACK moves in trail
 static bool doublebackInTrail(PlaceId *trail, int trailSize);
@@ -122,8 +124,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
             validMoves[*numReturnedMoves] = city;
             (*numReturnedMoves)++;
         // City already in trailLocations
+		// Check if special move already used
         } else {
-            // Check if special move already used //
             // Check HIDE
 			if (!inArray(trailMoves, numMoves, HIDE)) {
 				// Add to validMoves
@@ -230,7 +232,7 @@ static bool inArray(PlaceId *array, int arrSize, PlaceId find)
     return false;
 }
 
-// Extract location for a specified move
+// Extracts location for a specified move
 static PlaceId extractLocation(DraculaView dv, PlaceId move, Round round)
 {
 	bool found = false;
