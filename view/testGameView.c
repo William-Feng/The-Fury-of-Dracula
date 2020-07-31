@@ -315,8 +315,9 @@ int main(void)
 		printf("Test passed!\n");
 	}
 	
+	// NEW TESTS
 	{///////////////////////////////////////////////////////////////////
-		// new
+
 		printf("Testing trap locations after two of them are destroyed\n");
 		
 		char *trail =
@@ -540,7 +541,7 @@ int main(void)
 		
 		Message messages[24] = {};
 		GameView gv = GvNew(trail, messages);
-		
+
 		assert(GvGetVampireLocation(gv) == NOWHERE);
 		int numTraps = 0;
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
