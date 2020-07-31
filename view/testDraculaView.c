@@ -197,10 +197,37 @@ int main(void)
 		printf("Test passed!\n");
 		// DvFree(dv);
 	}
+	
+	{///////////////////////////////////////////////////////////////////
+		// Dracula's only move is TELEPORT
+		printf("Test for DvWhereCanIGoByType 3\n");
 
+		char *trail =
+		    "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+		    "GSW.... SLS.... HMR.... MHA.... DJMT... "
+		    "GSW.... SLS.... HMR.... MHA.... DD1T... "
+		    "GSW.... SLS.... HMR.... MHA.... DBET... "
+		    "GSW.... SLS.... HMR.... MHA.... DKLT... "
+		    "GSW.... SLS.... HMR.... MHA.... DHIT... "
+		    "GSW.... SLS.... HMR.... MHA....";
+
+		Message messages[40] = {};
+		DraculaView dv = DvNew(trail, messages);
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanIGoByType(dv, false, false, &numLocs);
+		assert(numLocs == 1);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == CASTLE_DRACULA);
+
+		free(locs);
+
+		printf("Test passed!\n");
+		DvFree(dv);
+    	}
+	
 	{///////////////////////////////////////////////////////////////////
 		// Dracula is at sea
-		printf("Test for DvWhereCanIGo 3\n");
+		printf("Test for DvWhereCanIGo 4\n");
 		
 		char *trail =
 			"GKL.... SKL.... HGA.... MGA.... DCD.V.. "
@@ -312,7 +339,7 @@ int main(void)
 	// NEW TESTS
 	{///////////////////////////////////////////////////////////////////
 		// Max rail move is 2
-		printf("Test for DvWhereCanTheyGo 2\n");
+		printf("Test for DvWhereCanTheyGo 1\n");
 		
 		char *trail =
 			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
@@ -345,7 +372,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 		// Moving from sea
-		printf("Test for DvWhereCanTheyGo 3\n");
+		printf("Test for DvWhereCanTheyGo 2\n");
 		
 		char *trail =
 			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
@@ -384,7 +411,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 		// Maximum rail move is 3
-		printf("Test for DvWhereCanTheyGo 4\n");
+		printf("Test for DvWhereCanTheyGo 3\n");
 		
 		char *trail =
 			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
@@ -541,31 +568,6 @@ int main(void)
 		printf("Test passed!\n");
 		DvFree(dv);
 	}
-	{///////////////////////////////////////////////////////////////////
-        // Dracula's only move is TELEPORT
-        printf("Test for DvWhereCanIGoByType 3\n");
-        
-        char *trail =
-            "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
-            "GSW.... SLS.... HMR.... MHA.... DJMT... "
-            "GSW.... SLS.... HMR.... MHA.... DD1T... "
-            "GSW.... SLS.... HMR.... MHA.... DBET... "
-            "GSW.... SLS.... HMR.... MHA.... DKLT... "
-            "GSW.... SLS.... HMR.... MHA.... DHIT... "
-            "GSW.... SLS.... HMR.... MHA....";
-        
-        Message messages[40] = {};
-        DraculaView dv = DvNew(trail, messages);
-        int numLocs = -1;
-        PlaceId *locs = DvWhereCanIGoByType(dv, false, false, &numLocs);
-        assert(numLocs == 1);
-        sortPlaces(locs, numLocs);
-        assert(locs[0] == CASTLE_DRACULA);
 
-        free(locs);
-        
-        printf("Test passed!\n");
-        DvFree(dv);
-    }
 	return EXIT_SUCCESS;
 }
