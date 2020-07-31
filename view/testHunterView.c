@@ -514,10 +514,10 @@ int main(void)
         HunterView hv = HvNew(trail, messages);
         
         int numLocs = -1;
-        PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_VAN_HELSING,
+        PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_DRACULA,
                                                false, true, false, &numLocs);
         assert(numLocs == 1);
-        // assert(locs[0] == MADRID);
+        assert(locs[0] == MADRID);
         
         free(locs);
         

@@ -343,68 +343,6 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
-
-	{///////////////////////////////////////////////////////////////////
-		// new
-		printf("Testing trap locations after one falls off the trail\n");
-		
-		char *trail =
-			"GED.... SGE.... HZU.... MCA.... DCF.V.. "
-			"GMN.... SCFVD.. HGE.... MLS.... DBOT... "
-			"GLO.... SMR.... HCF.... MMA.... DTOT... "
-			"GPL.... SMS.... HMR.... MGR.... DBAT... "
-			"GLO.... SBATD.. HMS.... MMA.... DSRT... "
-			"GPL.... SSJ.... HBA.... MGR.... DALT... "
-			"GPL.... SSJ.... HBA.... MGR.... DMAT.V. "
-			"GLO.... SBE.... HMS.... MMATD.. DGRT.M.";
-		
-		Message messages[24] = {};
-		GameView gv = GvNew(trail, messages);
-		assert(GvGetVampireLocation(gv) == NOWHERE);
-		int numTraps = 0;
-		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
-		assert(numTraps == 4);
-		sortPlaces(traps, numTraps);
-
-		assert(traps[0] == ALICANTE);
-		assert(traps[1] == GRANADA); 
-		assert(traps[2] == SARAGOSSA);
-		assert(traps[3] == TOULOUSE);
-
-		free(traps); 
-		
-		GvFree(gv);
-		printf("Test passed!\n");
-	}
-	
-	{///////////////////////////////////////////////////////////////////
-		// new 
-		printf("Testing multiple traps at the same location\n");
-		
-		char *trail =
-			"GGE.... SGE.... HGE.... MGE.... DZU.V.. "
-			"GGE.... SGE.... HGE.... MGE.... DSTT... "
-			"GGE.... SGE.... HGE.... MGE.... DHIT... "
-			"GGE.... SGE.... HGE.... MGE.... DD1T...";
-		
-		Message messages[24] = {};
-		GameView gv = GvNew(trail, messages);
-		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == STRASBOURG);
-		assert(GvGetVampireLocation(gv) == ZURICH);
-		int numTraps = 0;
-		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
-		assert(numTraps == 3);
-		sortPlaces(traps, numTraps);
-
-		assert(traps[0] == STRASBOURG);
-		assert(traps[1] == STRASBOURG); 
-		assert(traps[2] == STRASBOURG);
-
-		free(traps);  
-		
-		GvFree(gv);
-		printf("Test passed!\n");
-	}
 	
 	{///////////////////////////////////////////////////////////////////
 	
@@ -584,16 +522,83 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
+	
+	// NEW TESTS
+	{///////////////////////////////////////////////////////////////////
+		
+		printf("Testing trap locations after one falls off the trail\n");
+		
+		char *trail =
+			"GED.... SGE.... HZU.... MCA.... DCF.V.. "
+			"GMN.... SCFVD.. HGE.... MLS.... DBOT... "
+			"GLO.... SMR.... HCF.... MMA.... DTOT... "
+			"GPL.... SMS.... HMR.... MGR.... DBAT... "
+			"GLO.... SBATD.. HMS.... MMA.... DSRT... "
+			"GPL.... SSJ.... HBA.... MGR.... DALT... "
+			"GPL.... SSJ.... HBA.... MGR.... DMAT.V. "
+			"GLO.... SBE.... HMS.... MMATD.. DGRT.M.";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetVampireLocation(gv) == NOWHERE);
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 4);
+		sortPlaces(traps, numTraps);
 
-	{
-		// Test Dracula Death
+		assert(traps[0] == ALICANTE);
+		assert(traps[1] == GRANADA); 
+		assert(traps[2] == SARAGOSSA);
+		assert(traps[3] == TOULOUSE);
+
+		free(traps); 
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+	
+	{///////////////////////////////////////////////////////////////////
+		
+		printf("Testing multiple traps at the same location\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DZU.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DSTT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1T...";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == STRASBOURG);
+		assert(GvGetVampireLocation(gv) == ZURICH);
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 3);
+		sortPlaces(traps, numTraps);
+
+		assert(traps[0] == STRASBOURG);
+		assert(traps[1] == STRASBOURG); 
+		assert(traps[2] == STRASBOURG);
+
+		free(traps);  
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		
 		printf("Testing Dracula death\n");
 		char *trail =
 			"GKL.... SKL.... HGA.... MGA.... DCD.V.. "
 			"GCDVD.. SCDD... HCDD... MCDD... DKLT... "
 			"GKLTD..";
+		
 		Message messages[] = {};
 		GameView gv = GvNew(trail, messages);
+
 		assert(GvGetScore(gv) == 358);
 		assert(GvGetRound(gv) == 2);
 		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == 0);
@@ -609,8 +614,6 @@ int main(void)
 		GvFree(gv);
 		printf("Test passed!\n");
 	}
-	
-	
 
 	return EXIT_SUCCESS;
 }
