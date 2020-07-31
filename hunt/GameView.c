@@ -291,6 +291,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
         exit(EXIT_FAILURE);
 	}
     *numReturnedLocs = 0;
+    if (player == PLAYER_DRACULA) rail = false;
     int numRailMoves = (rail) ? (round + player) % 4 : 0;
     addReachable(gv, player, from, numRailMoves, road, rail, boat,
                  numReturnedLocs, reachable);
