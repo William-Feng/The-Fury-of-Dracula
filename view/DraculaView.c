@@ -30,10 +30,14 @@ struct draculaView {
 ///////////////////////////////////////////////////////////////////////////////
 // Function prototypes
 
+// Returns the higher of two integers
+static int max(int a, int b);
 // Checks if a PlaceId is already in the array
 static bool inArray(PlaceId *array, int arrSize, PlaceId find);
 // Extracts location for a specified move
 static PlaceId extractLocation(DraculaView dv, PlaceId move, Round round);
+// Returns Dracula's location at specified round
+static PlaceId getLocationAtRound(DraculaView dv, Round round);
 // Checks if there are DOUBLE_BACK moves in trail
 static bool doublebackInTrail(PlaceId *trail, int trailSize);
 
@@ -129,17 +133,21 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
         // City already in trailLocations
 		// Check if special move already used
         } else {
-            // Check HIDE
-			if (!placeIsSea(city) && !inArray(trailMoves, numMoves, HIDE)) {
+			// Check HIDE - valid, city would be adjacent, not type sea, not in trail and unique
+			if (DvGetRound(dv) > 0 && (getLocationAtRound(dv, DvGetRound(dv) - 1) == city) &&
+				!placeIsSea(city) && !inArray(trailMoves, numMoves, HIDE) &&
+				!inArray(validMoves, *numReturnedMoves, city)) {
 				// Add to validMoves
 				validMoves[*numReturnedMoves] = HIDE;
             	(*numReturnedMoves)++;
 			}
-			// Check DOUBLE_BACK
+			// Check DOUBLE_BACK moves
 			if (doublebackInTrail(trailMoves, numMoves)) continue;
 			for (PlaceId move = DOUBLE_BACK_1; move <= DOUBLE_BACK_5; move++) {
-                // Valid special move
+                // DOUBLE_BACK - valid, city would be adjacent, not in trail and unique
+				Round roundDbMove = DvGetRound(dv) - max(move - DOUBLE_BACK_1 + 1, 1);
 				if (DvGetRound(dv) - (move - DOUBLE_BACK_1) > 0 &&
+					(getLocationAtRound(dv, roundDbMove) == city) &&
 					!inArray(trailMoves, numMoves, move) &&
 					!inArray(validMoves, *numReturnedMoves, move)) {
 					// Add to validMoves
@@ -236,6 +244,12 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
+// Returns the higher of two integers
+static int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
 // Checks if a PlaceId is already in the array
 static bool inArray(PlaceId *array, int arrSize, PlaceId find)
 {
@@ -283,6 +297,15 @@ static PlaceId extractLocation(DraculaView dv, PlaceId move, Round round)
 	if (!found) return UNKNOWN_PLACE;
 	else if (move == TELEPORT) return CASTLE_DRACULA;
 	else return move;
+}
+
+// Returns Dracula's location at specified round
+static PlaceId getLocationAtRound(DraculaView dv, Round round) {
+	char move[3];
+	move[0] = dv->pastPlays[round * 40 + 33];
+	move[1] = dv->pastPlays[round * 40 + 34];
+	move[2] = '\0';
+	return extractLocation(dv, placeAbbrevToId(move), round);
 }
 
 // Checks if there are DOUBLE_BACK moves in trail

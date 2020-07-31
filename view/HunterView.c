@@ -156,18 +156,24 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 		
 		if (placeIsReal(location)) {
 			// Location found
-			*round = r;
+			// Retain round of DOUBLE_BACK
+			if (*round <= r) *round = r;
 			return location;
 		} else if (location == DOUBLE_BACK_2) {
+			*round = r;
 			r -= 2;
 		} else if (location == DOUBLE_BACK_3) {
+			*round = r;
 			r -= 3;
 		} else if (location == DOUBLE_BACK_4) {
+			*round = r;
 			r -= 4;
 		} else if (location == DOUBLE_BACK_5) {
+			*round = r;
 			r -= 5;
 		} else {
 			// HIDE, DOUBLE_BACK_1, unknown place
+			if (location == HIDE || DOUBLE_BACK_1) *round = r;
 			r -= 1;
 		}
 	}
