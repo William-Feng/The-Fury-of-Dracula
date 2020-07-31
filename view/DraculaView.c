@@ -146,7 +146,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			for (PlaceId move = DOUBLE_BACK_1; move <= DOUBLE_BACK_5; move++) {
                 // DOUBLE_BACK - valid, city would be adjacent, not in trail and unique
 				Round roundDbMove = DvGetRound(dv) - max(move - DOUBLE_BACK_1 + 1, 1);
-				if (DvGetRound(dv) - (move - DOUBLE_BACK_1) > 0 &&
+				if (roundDbMove >= 0 &&
 					(getLocationAtRound(dv, roundDbMove) == city) &&
 					!inArray(trailMoves, numMoves, move) &&
 					!inArray(validMoves, *numReturnedMoves, move)) {

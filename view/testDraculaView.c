@@ -569,6 +569,65 @@ int main(void)
 		printf("Test passed!\n");
 		DvFree(dv);
 	}
+	{///////////////////////////////////////////////////////////////////
+        // Dracula is at sea
+        printf("Test for DvWhereCanIGo 2\n");
+        
+        char *trail =
+            "GKL.... SKL.... HGA.... MGA.... DCD.V.. "
+            "GKL.... SKL.... HGA.... MGA.... DKLT... "
+            "GKL.... SKL.... HGA.... MGA.... DD2T... "
+            "GKL.... SKL.... HGA.... MGA.... DGAT... "
+            "GKL.... SKL.... HGA.... MGA.... DCNT... "
+            "GKL.... SKL.... HGA.... MGA.... DBST... "
+			"GKL....";
+        
+        Message messages[40] = {};
+        DraculaView dv = DvNew(trail, messages);
+
+        int numLocs = -1;
+        PlaceId *locs = DvGetValidMoves(dv, &numLocs);
+        assert(numLocs == 2);
+        sortPlaces(locs, numLocs);
+        assert(locs[0] == IONIAN_SEA);
+        assert(locs[1] == VARNA);
+
+        free(locs);
+        
+        printf("Test passed!\n");
+        DvFree(dv);
+    }
+
+	{///////////////////////////////////////////////////////////////////
+        // Dracula is at sea
+        printf("Test for DvWhereCanIGo 2\n");
+        
+        char *trail =
+            "GKL.... SKL.... HGA.... MGA.... DKL.V.. "
+            "GKL.... SKL.... HGA.... MGA.... DCDT... "
+            "GKL.... SKL.... HGA.... MGA.... DHIT... "
+            "GKL.... SKL.... HGA.... MGA.... DGAT... "
+            "GKL.... SKL.... HGA.... MGA.... DCNT... "
+            "GKL.... SKL.... HGA.... MGA.... DBST... "
+			"GKL....";
+        
+        Message messages[40] = {};
+        DraculaView dv = DvNew(trail, messages);
+
+        int numLocs = -1;
+        PlaceId *locs = DvGetValidMoves(dv, &numLocs);
+        assert(numLocs == 4);
+        sortPlaces(locs, numLocs);
+        assert(locs[0] == IONIAN_SEA);
+        assert(locs[1] == VARNA);
+		assert(locs[2] == DOUBLE_BACK_1);
+		assert(locs[3] == DOUBLE_BACK_2);
+
+        free(locs);
+        
+        printf("Test passed!\n");
+        DvFree(dv);
+    }
 	
 	return EXIT_SUCCESS;
 }
