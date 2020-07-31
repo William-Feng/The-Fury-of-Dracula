@@ -130,7 +130,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		// Check if special move already used
         } else {
             // Check HIDE
-			if (!inArray(trailMoves, numMoves, HIDE)) {
+			if (!placeIsSea(city) && !inArray(trailMoves, numMoves, HIDE)) {
 				// Add to validMoves
 				validMoves[*numReturnedMoves] = HIDE;
             	(*numReturnedMoves)++;
