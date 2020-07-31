@@ -140,7 +140,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			for (PlaceId move = DOUBLE_BACK_1; move <= DOUBLE_BACK_5; move++) {
                 // Valid special move
 				if (DvGetRound(dv) - (move - DOUBLE_BACK_1) > 0 &&
-					!inArray(trailMoves, numMoves, move)) {
+					!inArray(trailMoves, numMoves, move) &&
+					!inArray(validMoves, *numReturnedMoves, move)) {
 					// Add to validMoves
 					validMoves[*numReturnedMoves] = move;
 					(*numReturnedMoves)++;

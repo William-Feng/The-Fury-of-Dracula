@@ -178,7 +178,7 @@ int main(void)
 			"GSW.... SLS.... HMR.... MHA.... DHIT... "
 			"GSW.... SLS.... HMR.... MHA....";
 		
-		Message messages[40] = {};
+		Message messages[29] = {};
 		DraculaView dv = DvNew(trail, messages);
 		// BE, CD, BC, GA, SZ, KL, BD
 		int numLocs = -1;
@@ -195,7 +195,7 @@ int main(void)
 		free(locs);
 		
 		printf("Test passed!\n");
-		// DvFree(dv);
+		DvFree(dv);
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ int main(void)
 			"GKL.... SKL.... HGA.... MGA.... DCNT... "
 			"GKL.... SKL.... HGA.... MGA.... DBST...";
 		
-		Message messages[40] = {};
+		Message messages[30] = {};
 		DraculaView dv = DvNew(trail, messages);
 
 		int numLocs = -1;
@@ -239,7 +239,7 @@ int main(void)
 			"GGE.... SGE.... HGE.... MGE.... DHIT... "
 			"GGE.... SGE.... HGE.... MGE.... DCNT...";
 		
-		Message messages[24] = {};
+		Message messages[25] = {};
 		DraculaView dv = DvNew(trail, messages);
 		// VR, GA
 		int numLocs = -1;
@@ -267,7 +267,7 @@ int main(void)
 			"GSW.... SLS.... HMR.... MHA.... DHIT... "
 			"GSW.... SLS.... HMR.... MHA....";
 		
-		Message messages[40] = {};
+		Message messages[29] = {};
 		DraculaView dv = DvNew(trail, messages);
 		int numLocs = -1;
 		PlaceId *locs = DvWhereCanIGoByType(dv, false, false, &numLocs);
@@ -294,7 +294,7 @@ int main(void)
 			"GKL.... SKL.... HGA.... MGA.... DCNT... "
 			"GKL.... SKL.... HGA.... MGA.... DBST...";
 		
-		Message messages[40] = {};
+		Message messages[30] = {};
 		DraculaView dv = DvNew(trail, messages);
 		
 		int numLocs = -1;
@@ -320,7 +320,7 @@ int main(void)
 			"GED.... SBO.... HLI.... MPR.... DKLT... "
 			"GLV.... SNA.... HNU....";
 
-		Message messages[24] = { };
+		Message messages[18] = { };
 		DraculaView dv = DvNew(trail, messages);
 		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == PRAGUE);
 		assert(DvGetRound(dv) == 3);
@@ -357,7 +357,7 @@ int main(void)
 			"GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
 			"GTS.... SRO.... HBC.... MCNTD..";
 
-		Message messages[40] = { };
+		Message messages[39] = { };
 		DraculaView dv = DvNew(trail, messages);
 		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == TYRRHENIAN_SEA);
 		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == ROME);
@@ -394,7 +394,7 @@ int main(void)
 			"GIR.... SPA.... HPR.... MKLT... DHIT... "
 			"GAO.... SST.... HSZ.... MBC....";
 
-		Message messages[40] = { };
+		Message messages[29] = { };
 		DraculaView dv = DvNew(trail, messages);
 		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == ATLANTIC_OCEAN);
 		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == STRASBOURG);
@@ -439,7 +439,7 @@ int main(void)
 			"GED.... SBO.... HLI.... MPR.... DKLT... "
 			"GLV.... SNA.... HNU....";
 
-		Message messages[24] = { };
+		Message messages[18] = { };
 		DraculaView dv = DvNew(trail, messages);
 		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == PRAGUE);
 		assert(DvGetRound(dv) == 3);
@@ -473,7 +473,7 @@ int main(void)
 			"GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
 			"GTS.... SRO.... HBC.... MCNTD..";
 
-		Message messages[40] = { };
+		Message messages[39] = { };
 		DraculaView dv = DvNew(trail, messages);
 		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == TYRRHENIAN_SEA);
 		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == ROME);
@@ -511,7 +511,7 @@ int main(void)
 			"GIR.... SPA.... HPR.... MKLT... DHIT... "
 			"GAO.... SST.... HSZ.... MBC....";
 
-		Message messages[40] = { };
+		Message messages[29] = { };
 		DraculaView dv = DvNew(trail, messages);
 		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == ATLANTIC_OCEAN);
 		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == STRASBOURG);
@@ -554,7 +554,7 @@ int main(void)
             "GSW.... SLS.... HMR.... MHA.... DHIT... "
             "GSW.... SLS.... HMR.... MHA....";
         
-        Message messages[40] = {};
+        Message messages[39] = {};
         DraculaView dv = DvNew(trail, messages);
         int numLocs = -1;
         PlaceId *locs = DvWhereCanIGoByType(dv, false, false, &numLocs);
