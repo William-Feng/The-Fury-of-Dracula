@@ -7,6 +7,8 @@
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
 //
+// This was created by JAWA on 31/07/2020.
+//
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
@@ -51,22 +53,22 @@ typedef struct queueRep {
 
 typedef QueueRep *Queue;
 
-/** Creates a new queue. */
+/* Creates a new queue. */
 Queue newQueue(void);
 
-/** Adds a PlaceId to the queue. */
+/* Adds a PlaceId to the queue. */
 void enQueue(Queue q, PlaceId city);
 
-/** Removes and returns the first PlaceId from the queue. */
+/* Removes and returns the first PlaceId from the queue. */
 PlaceId deQueue(Queue q);
 
-/** Frees memory used by the queue. */
+/* Frees memory used by the queue. */
 void dropQueue(Queue q);
 
-/** Displays the queue. */
+/* Displays the queue. */
 void showQueue(Queue q);
 
-/** Checks whether the queue is empty or not. */
+/* Checks whether the queue is empty or not. */
 bool queueIsEmpty(Queue q);
 
 
@@ -309,7 +311,7 @@ static int roundsPlayed(HunterView gv, Player player)
 // Queue ADT //
 //////////////
 
-/** Creates a new queue. */
+/* Creates a new queue. */
 Queue newQueue(void)
 {
 	QueueRep *q = malloc(sizeof(*q));
@@ -321,11 +323,10 @@ Queue newQueue(void)
 	return q;
 }
 
-/** Adds a PlaceId to the queue. */
+/* Adds a PlaceId to the queue. */
 void enQueue(Queue q, PlaceId city)
 {
 	assert(q != NULL);
-
 	QueueNode *newNode = malloc(sizeof(*newNode));
 	if (newNode == NULL) {
         fprintf(stderr, "Failed to allocate memory!\n");
@@ -339,7 +340,7 @@ void enQueue(Queue q, PlaceId city)
 	q->tail = newNode;
 }
 
-/** Removes and returns the first PlaceId from the queue. */
+/* Removes and returns the first PlaceId from the queue. */
 PlaceId deQueue(Queue q)
 {
 	assert(q != NULL);
@@ -352,7 +353,7 @@ PlaceId deQueue(Queue q)
 	return city;
 }
 
-/** Frees memory used by the queue. */
+/* Frees memory used by the queue. */
 void dropQueue(Queue q)
 {
     assert(q != NULL);
@@ -363,7 +364,7 @@ void dropQueue(Queue q)
     free(q);
 }
 
-/** Displays the queue. */
+/* Displays the queue. */
 void showQueue(Queue q)
 {
 	printf("[ ");
@@ -372,7 +373,7 @@ void showQueue(Queue q)
 	printf("]\n");
 }
 
-/** Checks whether the queue is empty or not. */
+/* Checks whether the queue is empty or not. */
 bool queueIsEmpty(Queue q)
 {
 	return q->head == NULL;
