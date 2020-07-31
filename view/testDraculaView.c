@@ -139,7 +139,7 @@ int main(void)
 	}
 	
 	{///////////////////////////////////////////////////////////////////
-	
+		// There is already a DOUBLE_BACK move in his trail
 		printf("Test for DvWhereCanIGo 1\n");
 		
 		char *trail =
@@ -166,5 +166,406 @@ int main(void)
 		DvFree(dv);
 	}
 
+	// NEW TESTS
+	{///////////////////////////////////////////////////////////////////
+		printf("Test for DvWhereCanIGo 2\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GSW.... SLS.... HMR.... MHA.... DJMT... "
+			"GSW.... SLS.... HMR.... MHA.... DSZT... "
+			"GSW.... SLS.... HMR.... MHA.... DKLT... "
+			"GSW.... SLS.... HMR.... MHA.... DHIT... "
+			"GSW.... SLS.... HMR.... MHA....";
+		
+		Message messages[40] = {};
+		DraculaView dv = DvNew(trail, messages);
+		// BE, CD, BC, GA, SZ, KL, BD
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanIGo(dv, &numLocs);
+		assert(numLocs == 7);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BELGRADE);
+		assert(locs[1] == BUCHAREST);
+		assert(locs[2] == BUDAPEST);
+		assert(locs[3] == CASTLE_DRACULA); 
+		assert(locs[4] == GALATZ); 
+		assert(locs[5] == KLAUSENBURG); 
+		assert(locs[6] == SZEGED); 
+		free(locs);
+		
+		printf("Test passed!\n");
+		// DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Dracula is at sea
+		printf("Test for DvWhereCanIGo 3\n");
+		
+		char *trail =
+			"GKL.... SKL.... HGA.... MGA.... DCD.V.. "
+			"GKL.... SKL.... HGA.... MGA.... DKLT... "
+			"GKL.... SKL.... HGA.... MGA.... DCDT... "
+			"GKL.... SKL.... HGA.... MGA.... DGAT... "
+			"GKL.... SKL.... HGA.... MGA.... DCNT... "
+			"GKL.... SKL.... HGA.... MGA.... DBST...";
+		
+		Message messages[40] = {};
+		DraculaView dv = DvNew(trail, messages);
+
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanIGo(dv, &numLocs);
+		assert(numLocs == 4);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BLACK_SEA);
+		assert(locs[1] == CONSTANTA);
+		assert(locs[2] == IONIAN_SEA);
+		assert(locs[3] == VARNA); 
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// There is already a DOUBLE_BACK move in his trail
+		// He cannot go by boat
+		printf("Test for DvWhereCanIGoByType 1\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DKL.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DD1T... "
+			"GGE.... SGE.... HGE.... MGE.... DBCT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DCNT...";
+		
+		Message messages[24] = {};
+		DraculaView dv = DvNew(trail, messages);
+		// VR, GA
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanIGoByType(dv, true, false, &numLocs);
+		assert(numLocs == 2);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == GALATZ);
+		assert(locs[1] == VARNA);
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	// NEW TESTS
+	{///////////////////////////////////////////////////////////////////
+		// Dracula's only move is D1
+		printf("Test for DvWhereCanIGoByType 2\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GSW.... SLS.... HMR.... MHA.... DJMT... "
+			"GSW.... SLS.... HMR.... MHA.... DSZT... "
+			"GSW.... SLS.... HMR.... MHA.... DKLT... "
+			"GSW.... SLS.... HMR.... MHA.... DHIT... "
+			"GSW.... SLS.... HMR.... MHA....";
+		
+		Message messages[40] = {};
+		DraculaView dv = DvNew(trail, messages);
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanIGoByType(dv, false, false, &numLocs);
+		assert(numLocs == 1);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == KLAUSENBURG);
+
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Dracula is at sea
+		// His only allowed moves are by road
+		printf("Test for DvWhereCanIGoByType 3\n");
+		
+		char *trail =
+			"GKL.... SKL.... HGA.... MGA.... DCD.V.. "
+			"GKL.... SKL.... HGA.... MGA.... DKLT... "
+			"GKL.... SKL.... HGA.... MGA.... DCDT... "
+			"GKL.... SKL.... HGA.... MGA.... DGAT... "
+			"GKL.... SKL.... HGA.... MGA.... DCNT... "
+			"GKL.... SKL.... HGA.... MGA.... DBST...";
+		
+		Message messages[40] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanIGoByType(dv, true, false, &numLocs);
+		assert(numLocs == 1);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BLACK_SEA);
+
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	// NEW TESTS
+	{///////////////////////////////////////////////////////////////////
+		// Max rail move is 2
+		printf("Test for DvWhereCanTheyGo 2\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GLO.... SAL.... HCO.... MBR.... DBET... "
+			"GED.... SBO.... HLI.... MPR.... DKLT... "
+			"GLV.... SNA.... HNU....";
+
+		Message messages[24] = { };
+		DraculaView dv = DvNew(trail, messages);
+		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == PRAGUE);
+		assert(DvGetRound(dv) == 3);
+
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGo(dv, PLAYER_MINA_HARKER, &numLocs);
+		assert(numLocs == 8);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BERLIN);
+		assert(locs[1] == BUDAPEST);
+		assert(locs[2] == HAMBURG);
+		assert(locs[3] == LEIPZIG);
+		assert(locs[4] == NUREMBURG);
+		assert(locs[5] == PRAGUE);
+		assert(locs[6] == VENICE);
+		assert(locs[7] == VIENNA);
+		free(locs); 
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Moving from sea
+		printf("Test for DvWhereCanTheyGo 3\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GLO.... SAL.... HCO.... MBR.... DBET... "
+			"GED.... SBO.... HLI.... MPR.... DKLT... "
+			"GLV.... SNA.... HNU.... MBD.... DCDT... "
+			"GIR.... SPA.... HPR.... MKLT... DHIT... "
+			"GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+			"GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+			"GTS.... SRO.... HBC.... MCNTD..";
+
+		Message messages[40] = { };
+		DraculaView dv = DvNew(trail, messages);
+		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == TYRRHENIAN_SEA);
+		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == ROME);
+		assert(DvGetPlayerLocation(dv, PLAYER_VAN_HELSING) == BUCHAREST);
+		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == CONSTANTA);
+		assert(DvGetRound(dv) == 7);
+
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGo(dv, PLAYER_LORD_GODALMING, &numLocs);
+		assert(numLocs == 7);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == CAGLIARI);
+		assert(locs[1] == GENOA);
+		assert(locs[2] == IONIAN_SEA);
+		assert(locs[3] == MEDITERRANEAN_SEA);
+		assert(locs[4] == NAPLES);
+		assert(locs[5] == ROME);
+		assert(locs[6] == TYRRHENIAN_SEA);
+		free(locs); 
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Maximum rail move is 3
+		printf("Test for DvWhereCanTheyGo 4\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GLO.... SAL.... HCO.... MBR.... DBET... "
+			"GED.... SBO.... HLI.... MPR.... DKLT... "
+			"GLV.... SNA.... HNU.... MBD.... DCDT... "
+			"GIR.... SPA.... HPR.... MKLT... DHIT... "
+			"GAO.... SST.... HSZ.... MBC....";
+
+		Message messages[40] = { };
+		DraculaView dv = DvNew(trail, messages);
+		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == ATLANTIC_OCEAN);
+		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == STRASBOURG);
+		assert(DvGetPlayerLocation(dv, PLAYER_VAN_HELSING) == SZEGED);
+		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == BUCHAREST);
+		assert(DvGetRound(dv) == 5);
+		
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGo(dv, PLAYER_VAN_HELSING, &numLocs);
+		assert(numLocs == 15);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BELGRADE);
+		assert(locs[1] == BUCHAREST);
+		assert(locs[2] == BUDAPEST);
+		assert(locs[3] == CONSTANTA);
+		assert(locs[4] == GALATZ);
+		assert(locs[5] == KLAUSENBURG);
+		assert(locs[6] == PRAGUE);
+		assert(locs[7] == SALONICA); 
+		assert(locs[8] == SOFIA); 
+		assert(locs[9] == ST_JOSEPH_AND_ST_MARY); 
+		assert(locs[10] == SZEGED); 
+		assert(locs[11] == VARNA); 
+		assert(locs[12] == VENICE); 
+		assert(locs[13] == VIENNA); 
+		assert(locs[14] == ZAGREB); 
+
+		free(locs); 
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Max rail move is 2
+		// only possible move is by road
+		printf("Test for DvWhereCanTheyGoByType 1\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GLO.... SAL.... HCO.... MBR.... DBET... "
+			"GED.... SBO.... HLI.... MPR.... DKLT... "
+			"GLV.... SNA.... HNU....";
+
+		Message messages[24] = { };
+		DraculaView dv = DvNew(trail, messages);
+		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == PRAGUE);
+		assert(DvGetRound(dv) == 3);
+
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGoByType(dv, PLAYER_MINA_HARKER, true, false, false, &numLocs);
+		assert(numLocs == 4);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BERLIN);
+		assert(locs[1] == NUREMBURG);
+		assert(locs[2] == PRAGUE);
+		assert(locs[3] == VIENNA);
+		free(locs); 
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Moving from sea
+		// Only possible move is by boat
+		printf("Test for DvWhereCanTheyGoByType 2\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GLO.... SAL.... HCO.... MBR.... DBET... "
+			"GED.... SBO.... HLI.... MPR.... DKLT... "
+			"GLV.... SNA.... HNU.... MBD.... DCDT... "
+			"GIR.... SPA.... HPR.... MKLT... DHIT... "
+			"GAO.... SST.... HSZ.... MCDTTD. DGAT... "
+			"GMS.... SFL.... HKL.... MSZ.... DCNT.V. "
+			"GTS.... SRO.... HBC.... MCNTD..";
+
+		Message messages[40] = { };
+		DraculaView dv = DvNew(trail, messages);
+		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == TYRRHENIAN_SEA);
+		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == ROME);
+		assert(DvGetPlayerLocation(dv, PLAYER_VAN_HELSING) == BUCHAREST);
+		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == CONSTANTA);
+		assert(DvGetRound(dv) == 7);
+
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGoByType(dv, PLAYER_LORD_GODALMING, false, false, true, &numLocs);
+		assert(numLocs == 7);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == CAGLIARI);
+		assert(locs[1] == GENOA);
+		assert(locs[2] == IONIAN_SEA);
+		assert(locs[3] == MEDITERRANEAN_SEA);
+		assert(locs[4] == NAPLES);
+		assert(locs[5] == ROME);
+		assert(locs[6] == TYRRHENIAN_SEA);
+		free(locs); 
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// Maximum rail move is 3
+		// Only possible move type is by rail.
+		printf("Test for DvWhereCanTheyGoByType 3\n");
+		
+		char *trail =
+			"GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+			"GLO.... SAL.... HCO.... MBR.... DBET... "
+			"GED.... SBO.... HLI.... MPR.... DKLT... "
+			"GLV.... SNA.... HNU.... MBD.... DCDT... "
+			"GIR.... SPA.... HPR.... MKLT... DHIT... "
+			"GAO.... SST.... HSZ.... MBC....";
+
+		Message messages[40] = { };
+		DraculaView dv = DvNew(trail, messages);
+		assert(DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING) == ATLANTIC_OCEAN);
+		assert(DvGetPlayerLocation(dv, PLAYER_DR_SEWARD) == STRASBOURG);
+		assert(DvGetPlayerLocation(dv, PLAYER_VAN_HELSING) == SZEGED);
+		assert(DvGetPlayerLocation(dv, PLAYER_MINA_HARKER) == BUCHAREST);
+		assert(DvGetRound(dv) == 5);
+		
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGoByType(dv, PLAYER_VAN_HELSING, false, true, false, &numLocs);
+		assert(numLocs == 12);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == BELGRADE);
+		assert(locs[1] == BUCHAREST);
+		assert(locs[2] == BUDAPEST);
+		assert(locs[3] == CONSTANTA);
+		assert(locs[4] == GALATZ);
+		assert(locs[5] == PRAGUE);
+		assert(locs[6] == SALONICA); 
+		assert(locs[7] == SOFIA); 
+		assert(locs[8] == SZEGED); 
+		assert(locs[9] == VARNA); 
+		assert(locs[10] == VENICE); 
+		assert(locs[11] == VIENNA);  
+
+		free(locs); 
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+	{///////////////////////////////////////////////////////////////////
+        // Dracula's only move is TELEPORT
+        printf("Test for DvWhereCanIGoByType 3\n");
+        
+        char *trail =
+            "GSW.... SLS.... HMR.... MHA.... DSJ.V.. "
+            "GSW.... SLS.... HMR.... MHA.... DJMT... "
+            "GSW.... SLS.... HMR.... MHA.... DD1T... "
+            "GSW.... SLS.... HMR.... MHA.... DBET... "
+            "GSW.... SLS.... HMR.... MHA.... DKLT... "
+            "GSW.... SLS.... HMR.... MHA.... DHIT... "
+            "GSW.... SLS.... HMR.... MHA....";
+        
+        Message messages[40] = {};
+        DraculaView dv = DvNew(trail, messages);
+        int numLocs = -1;
+        PlaceId *locs = DvWhereCanIGoByType(dv, false, false, &numLocs);
+        assert(numLocs == 1);
+        sortPlaces(locs, numLocs);
+        assert(locs[0] == CASTLE_DRACULA);
+
+        free(locs);
+        
+        printf("Test passed!\n");
+        DvFree(dv);
+    }
 	return EXIT_SUCCESS;
 }

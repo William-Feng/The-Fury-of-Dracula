@@ -106,7 +106,10 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
     
     // Create valid moves array
     PlaceId *validMoves = malloc((numReachable + 6) * sizeof(PlaceId));
-    assert(validMoves);
+    if (validMoves == NULL) {
+		fprintf(stderr, "Couldn't allocate memory\n");
+		exit(EXIT_FAILURE);
+	}
     *numReturnedMoves = 0;
 
     // Find trail
@@ -172,7 +175,10 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 
     // Create valid locations array
     PlaceId *validLocations = malloc(numValidMoves * sizeof(PlaceId));
-    assert(validLocations);
+    if (validLocations == NULL) {
+		fprintf(stderr, "Couldn't allocate DraculaView\n");
+		exit(EXIT_FAILURE);
+	}
     *numReturnedLocs = 0;
 
     // Get specified connections
@@ -194,8 +200,13 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                 validLocations[*numReturnedLocs] = location;
                 (*numReturnedLocs)++;
             }
-
         }
+    }
+
+	// Teleport case
+    if (*numReturnedLocs == 0) {
+        validLocations[*numReturnedLocs] = CASTLE_DRACULA;
+        (*numReturnedLocs)++;
     }
 
 	free(validMoves);
