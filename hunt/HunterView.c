@@ -7,101 +7,51 @@
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
 //
-// This was created by JAWA on 31/07/2020.
-//
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
-
-/////////////////////
-// HunterView ADT //
-///////////////////
+// add your own #includes here
+#include "Queue.h"
+#include "utils.h"
 
 struct hunterView {
 	GameView gv;
-	char *pastPlays;
-	Message *messages;
+	Map map;
 };
 
-// Calculates how many rounds a player has played
-static int roundsPlayed(HunterView gv, Player player);
-
-
-////////////////
-// Queue ADT //
-//////////////
-
-typedef struct queueNode {
-	PlaceId city;
-	struct queueNode *next;
-} QueueNode;
-
-typedef struct queueRep {
-	QueueNode *head;
-	QueueNode *tail;
-} QueueRep;
-
-typedef QueueRep *Queue;
-
-/* Creates a new queue. */
-Queue newQueue(void);
-
-/* Adds a PlaceId to the queue. */
-void enQueue(Queue q, PlaceId city);
-
-/* Removes and returns the first PlaceId from the queue. */
-PlaceId deQueue(Queue q);
-
-/* Frees memory used by the queue. */
-void dropQueue(Queue q);
-
-/* Displays the queue. */
-void showQueue(Queue q);
-
-/* Checks whether the queue is empty or not. */
-bool queueIsEmpty(Queue q);
-
+static PlaceId *hunterBfs(HunterView hv, Player hunter, PlaceId src,
+                          Round r);
+static Round playerNextRound(HunterView hv, Player player);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	HunterView new = malloc(sizeof(*new));
-	if (new == NULL) {
+	HunterView hv = malloc(sizeof(*hv));
+	if (hv == NULL) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
-	// Create GameView
-	new->gv = GvNew(pastPlays, messages);
-	// Store pastPlays
-	new->pastPlays = strdup(pastPlays);
-	// Store messages
-    int numPastPlays = (strlen(pastPlays) + 1) / 8;
-    new->messages = malloc(numPastPlays * sizeof(Message));
-	if (new->messages == NULL) {
-        fprintf(stderr, "Failed to allocate memory!\n");
-        exit(EXIT_FAILURE);
-	}
-    for (int i = 0; i < numPastPlays; i++) strcpy(new->messages[i], messages[i]);
-	return new;
+	
+	hv->gv = GvNew(pastPlays, messages);
+	hv->map = MapNew();
+	return hv;
 }
 
 void HvFree(HunterView hv)
 {
 	GvFree(hv->gv);
-	free(hv->pastPlays);
-	free(hv->messages);
+	MapFree(hv->map);
 	free(hv);
 }
 
@@ -143,126 +93,92 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// Check rounds
-	*round = 0;
-	Round r = HvGetRound(hv) - 1;
-	while (r >= 0) {
-		// Extract move
-		char move[3] = {0};
-		move[0] = hv->pastPlays[r * 40 + 33];
-		move[1] = hv->pastPlays[r * 40 + 34];
-		move[2] = '\0';
-		PlaceId location = placeAbbrevToId(move);
-		
-		if (placeIsReal(location)) {
-			// Location found
-			// Retain round of DOUBLE_BACK
-			if (*round <= r) *round = r;
-			return location;
-		} else if (location == DOUBLE_BACK_2) {
-			*round = r;
-			r -= 2;
-		} else if (location == DOUBLE_BACK_3) {
-			*round = r;
-			r -= 3;
-		} else if (location == DOUBLE_BACK_4) {
-			*round = r;
-			r -= 4;
-		} else if (location == DOUBLE_BACK_5) {
-			*round = r;
-			r -= 5;
-		} else {
-			// HIDE, DOUBLE_BACK_1
-			if (location == HIDE || location == DOUBLE_BACK_1) *round = r;
-			// Unknown place
-			else *round = 0;
-			r -= 1;
+	int numLocs = 0;
+	bool canFree = false;
+	PlaceId *locs = GvGetLocationHistory(hv->gv, PLAYER_DRACULA,
+	                                     &numLocs, &canFree);
+	PlaceId location = NOWHERE;
+	for (Round i = numLocs - 1; i >= 0; i--) {
+		if (placeIsReal(locs[i])) {
+			location = locs[i];
+			*round = i;
+			break;
 		}
 	}
-
-	// Not found yet
-	return NOWHERE;
+	
+	if (canFree) free(locs);
+	return location;
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	// Breadth First Search Implementation
+	Round r = playerNextRound(hv, hunter);
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	PlaceId *pred = hunterBfs(hv, hunter, src, r);
 	
-	// Visited array for storing predecessor city
-	PlaceId visited[NUM_REAL_PLACES] = {0};
-	// Array for storing which round a city would be visited
-	PlaceId visitedRound[NUM_REAL_PLACES] = {0};
-
-	// Initialisation
-	for (int i = 0; i < MAX_REAL_PLACE; i++) {
-		// Mark unvisited
-		visited[i] = -1;
-		visitedRound[i] = -1;
+	// One pass to get the path length
+	int dist = 0;
+	PlaceId curr = dest;
+	while (curr != src) {
+		dist++;
+		curr = pred[curr];
 	}
-	bool found = false;
-	visited[src] = src;
-	visitedRound[src] = roundsPlayed(hv, hunter);
+	
+	PlaceId *path = malloc(dist * sizeof(PlaceId));
+	// Another pass to copy the path in
+	int i = dist - 1;
+	curr = dest;
+	while (curr != src) {
+		path[i] = curr;
+		curr = pred[curr];
+		i--;
+	}
+	
+	free(pred);
+	*pathLength = dist;
+	return path;
+}
 
-	// Queue Implementation
-	Queue q = newQueue();
-	enQueue(q, src);
-	while (!found && !queueIsEmpty(q)) {
-		PlaceId city = deQueue(q);
-		if (city == dest) {
-			found = true;
-		} else {
-			int numReachable = 0;
-			PlaceId *reachableFromCity = GvGetReachable(hv->gv, hunter, visitedRound[city],
-														city, &numReachable);
-			// For each of the reachable cities
-			for (int j = 0; j < numReachable; j++) {
-				PlaceId reachableCity = reachableFromCity[j];
-				// If reachable city is unvisited
-				if (placeIsReal(reachableCity) && visited[reachableCity] == -1) {
-					// Update predecessor city
-					visited[reachableCity] = city;
-					// Update which round the city would be visited
-					visitedRound[reachableCity] = visitedRound[city] + 1;
-					enQueue(q, reachableCity);
-				}
+/**
+ * Performs a BFS for the given hunter starting at `src`, assuming the
+ * round is `r`. Returns a predecessor array.
+ */
+PlaceId *hunterBfs(HunterView hv, Player hunter, PlaceId src, Round r) {
+	PlaceId *pred = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	placesFill(pred, NUM_REAL_PLACES, -1);
+	pred[src] = src;
+	
+	Queue q1 = QueueNew(); // current round locations
+	Queue q2 = QueueNew(); // next round locations
+	
+	QueueEnqueue(q1, src);
+	while (!(QueueIsEmpty(q1) && QueueIsEmpty(q2))) {
+		PlaceId curr = QueueDequeue(q1);
+		int numReachable = 0;
+		PlaceId *reachable = GvGetReachable(hv->gv, hunter, r, curr,
+		                                    &numReachable);
+		
+		for (int i = 0; i < numReachable; i++) {
+			if (pred[reachable[i]] == -1) {
+				pred[reachable[i]] = curr;
+				QueueEnqueue(q2, reachable[i]);
 			}
-			free(reachableFromCity);
+		}
+		free(reachable);
+		
+		// When we've exhausted the current round's locations, advance
+		// to the next round and swap the queues (so the next round's
+		// locations becomes the current round's locations)
+		if (QueueIsEmpty(q1)) {
+			Queue tmp = q1; q1 = q2; q2 = tmp; // swap queues
+			r++;
 		}
 	}
-	dropQueue(q);
-
-	// No path found
-	if (found == false) {
-		*pathLength = 0;
-		return NULL;
-	}
-
-	// Add to path, traversing through the visited array
-	PlaceId *path = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	if (path == NULL) {
-        fprintf(stderr, "Failed to allocate memory!\n");
-        exit(EXIT_FAILURE);
-	}
-	PlaceId city = dest;
-	path[0] = dest;
-	*pathLength = 1;
-	while (city < MAX_REAL_PLACE && city != src) {
-		path[*pathLength] = visited[city];
-		city = visited[city];
-		(*pathLength)++;
-	}
-	(*pathLength)--;
 	
-	// Flip array to be from src to dest
-	for (int i = 0; i < *pathLength/2; i++) {
-		PlaceId temp = path[i];
-		path[i] = path[*pathLength - 1 - i];
-		path[*pathLength - 1 - i] = temp;
-	}
-
-	return path;
+	QueueDrop(q1);
+	QueueDrop(q2);
+	return pred;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -270,119 +186,53 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	Player player = HvGetPlayer(hv);
-	return GvGetReachable(hv->gv, player, HvGetRound(hv),
-						  HvGetPlayerLocation(hv, player), numReturnedLocs);
+	return HvWhereCanIGoByType(hv, true, true, true, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-	Player player = HvGetPlayer(hv);
-	return GvGetReachableByType(hv->gv, player, HvGetRound(hv),
-						  		HvGetPlayerLocation(hv, player), road, rail, boat,
-								numReturnedLocs);
+	return HvWhereCanTheyGoByType(hv, HvGetPlayer(hv), road, rail,
+	                              boat, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-	return GvGetReachable(hv->gv, player, roundsPlayed(hv, player),
-						  HvGetPlayerLocation(hv, player), numReturnedLocs);
+	return HvWhereCanTheyGoByType(hv, player, true, true, true,
+	                              numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	return GvGetReachableByType(hv->gv, player, roundsPlayed(hv, player),
-						  		HvGetPlayerLocation(hv, player), road, rail, boat,
-								numReturnedLocs);
+	Round round = playerNextRound(hv, player);
+	
+	PlaceId location = GvGetPlayerLocation(hv->gv, player);
+	
+	// If the given player hasn't made a move or the given player is
+	// Dracula and his location hasn't been revealed, return NULL
+	if (round == 0 || !placeIsReal(location)) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
+	
+	return GvGetReachableByType(hv->gv, player, round, location, road,
+	                            rail, boat, numReturnedLocs);
+}
+
+////////////////////////////////////////////////////////////////////////
+// Helper functions
+
+/**
+ * Gets the round number of the player's next move
+ */
+static Round playerNextRound(HunterView hv, Player player) {
+	return HvGetRound(hv) + (player < HvGetPlayer(hv) ? 1 : 0);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-/////////////////////
-// HunterView ADT //
-///////////////////
-
-// Calculates how many rounds a player has played
-static int roundsPlayed(HunterView gv, Player player)
-{
-    // Add one to round if player has already gone in current turn
-    return (player < HvGetPlayer(gv)) ? HvGetRound(gv) + 1 : HvGetRound(gv);
-}
-
-
-////////////////
-// Queue ADT //
-//////////////
-
-/* Creates a new queue. */
-Queue newQueue(void)
-{
-	QueueRep *q = malloc(sizeof(*q));
-	if (q == NULL) {
-        fprintf(stderr, "Failed to create Queue!\n");
-        exit(EXIT_FAILURE);
-	}
-	q->head = q->tail = NULL;
-	return q;
-}
-
-/* Adds a PlaceId to the queue. */
-void enQueue(Queue q, PlaceId city)
-{
-	assert(q != NULL);
-	QueueNode *newNode = malloc(sizeof(*newNode));
-	if (newNode == NULL) {
-        fprintf(stderr, "Failed to allocate memory!\n");
-        exit(EXIT_FAILURE);
-	}
-	newNode->city = city;
-	newNode->next = NULL;
-
-	if (q->head == NULL) q->head = newNode;
-	if (q->tail != NULL) q->tail->next = newNode;
-	q->tail = newNode;
-}
-
-/* Removes and returns the first PlaceId from the queue. */
-PlaceId deQueue(Queue q)
-{
-	assert(q != NULL);
-	assert(q->head != NULL);
-	PlaceId city = q->head->city;
-	QueueNode *remove = q->head;
-	q->head = remove->next;
-	if (q->head == NULL) q->tail = NULL;
-	free(remove);
-	return city;
-}
-
-/* Frees memory used by the queue. */
-void dropQueue(Queue q)
-{
-    assert(q != NULL);
-    for (QueueNode *curr = q->head, *next; curr != NULL; curr = next) {
-        next = curr->next;
-        free(curr);
-    }
-    free(q);
-}
-
-/* Displays the queue. */
-void showQueue(Queue q)
-{
-	printf("[ ");
-	for (QueueNode *curr = q->head; curr; curr=curr->next)
-		printf("%d ", curr->city);
-	printf("]\n");
-}
-
-/* Checks whether the queue is empty or not. */
-bool queueIsEmpty(Queue q)
-{
-	return q->head == NULL;
-}
+// TODO
