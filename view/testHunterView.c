@@ -364,7 +364,35 @@ int main(void)
         HvFree(hv);
         printf("Test passed!\n");
     }
-    
+
+    // NEW TESTS
+
+    {///////////////////////////////////////////////////////////////////
+        
+        printf("Testing shortest path 2\n");
+        
+        char *trail =
+            "GGR.... SDU.... HMS.... MTO.... DS?T.... "
+            "GGR.... SIR.... HMS.... MCF.... DSAT....";
+        
+        Message messages[10] = {};
+        HunterView hv = HvNew(trail, messages);
+        
+        {
+            printf("\tClermont-Ferrand -> Le Havre (Mina Harker, Round 2)\n");
+            int pathLength = -1;
+            PlaceId *path = HvGetShortestPathTo(hv, PLAYER_MINA_HARKER,
+                                                LE_HAVRE, &pathLength);
+            assert(pathLength == 2);
+            assert(path[0] == NANTES || path[0] == PARIS);
+            assert(path[1] == LE_HAVRE);
+            free(path);
+        }
+        
+        HvFree(hv);
+        printf("Test passed!\n");
+    }
+
     {///////////////////////////////////////////////////////////////////
     
         printf("Checking Galatz road connections "
