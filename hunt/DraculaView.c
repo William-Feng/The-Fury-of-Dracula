@@ -133,7 +133,7 @@ static void    addHideMoves(DraculaView dv, PlaceId *moves,
                             int *numReturnedMoves);
 static bool    moveIsLegal(DraculaView dv, PlaceId move);
 static bool    trailContains(DraculaView dv, PlaceId move);
-static PlaceId resolveDoubleBack(DraculaView dv, PlaceId db);
+PlaceId 	   resolveDoubleBack(DraculaView dv, PlaceId db);
 static bool    canReach(DraculaView dv, PlaceId location);
 static bool    trailContainsDoubleBack(DraculaView dv);
 static bool    isDoubleBack(PlaceId move);
@@ -228,7 +228,7 @@ static bool canReach(DraculaView dv, PlaceId location) {
 /**
  * Resolves a DOUBLE_BACK move to a place
  */
-static PlaceId resolveDoubleBack(DraculaView dv, PlaceId db) {
+PlaceId resolveDoubleBack(DraculaView dv, PlaceId db) {
 	// Get the position in the trail that the DOUBLE_BACK move refers to
 	// DOUBLE_BACK_1 => 0, DOUBLE_BACK_2 => 1, etc.
 	int pos = db - DOUBLE_BACK_1;
