@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "hunter.h"
 #include "HunterView.h"
+#include <stdio.h>
 
 void decideHunterMove(HunterView hv)
 {
@@ -24,8 +25,12 @@ void decideHunterMove(HunterView hv)
 	// Or if can travel by rail, prioritise rail by having road/boat false?
 
 	// PlaceId currentLocation = HvGetPlayerLocation(hv, player);
-	// if (health <= 0) currentLocation = ST_JOSEPH_AND_ST_MARY;	
+	// if (health <= 0) currentLocation = ST_JOSEPH_AND_ST_MARY;
 
+
+	// Vampire check
+
+	// Rest
 
 	PlaceId move = CASTLE_DRACULA;
 	registerBestPlay((char *)placeIdToAbbrev(move), "Have we nothing Toulouse?");
