@@ -14,8 +14,6 @@
 #include "Game.h"
 #include <stdio.h>
 
-// Retrieves location for DOUBLE_BACK move
-PlaceId resolveDoubleBack(DraculaView dv, PlaceId db);
 // Checks whether a hunter can reach a location
 static bool nearby(DraculaView dv, Player hunter, PlaceId dMove, bool rail);
 // Checks how many hunters can reach a location
@@ -37,10 +35,12 @@ void decideDraculaMove(DraculaView dv)
 	if (numMoves == 0 && DvGetPlayerLocation(dv, PLAYER_DRACULA) == NOWHERE) {
 		draculaMove = draculaStart(dv);
 		registerBestPlay((char *)placeIdToAbbrev(draculaMove), "Mwahahahaha");
+		free(validMoves);
 		return;
 	// Teleport as only move
 	} else if (numMoves == 0) {
 		registerBestPlay((char *)placeIdToAbbrev(draculaMove), "Mwahahahaha");
+		free(validMoves);
 		return;
 	}
 
@@ -80,6 +80,7 @@ void decideDraculaMove(DraculaView dv)
 	}
 	draculaMove = validMoves[maxIndex];
 	registerBestPlay((char *)placeIdToAbbrev(draculaMove), "Mwahahahaha");
+	free(validMoves);
 }
 
 
@@ -89,8 +90,12 @@ static bool nearby(DraculaView dv, Player hunter, PlaceId dMove, bool rail)
 	int numReturnedLocs = 0;
 	PlaceId *hunterConnections = DvWhereCanTheyGoByType(dv, hunter, true, rail, true, &numReturnedLocs);
 	for (int i = 0; i < numReturnedLocs; i++) {
-		if (hunterConnections[i] == dMove) return true;
+		if (hunterConnections[i] == dMove) {
+			free(hunterConnections);
+			return true;
+		}
 	}
+	free(hunterConnections);
 	return false;
 }
 

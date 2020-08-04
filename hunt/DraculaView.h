@@ -178,6 +178,7 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+// Retrieves location for DOUBLE_BACK move
+PlaceId resolveDoubleBack(DraculaView dv, PlaceId db);
 
 #endif // !defined(FOD__DRACULA_VIEW_H_)
