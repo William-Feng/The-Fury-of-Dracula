@@ -25,6 +25,8 @@ static PlaceId startingLocation(HunterView hv);
 static bool nearby(HunterView hv, Player hunter, PlaceId dMove, bool rail);
 // Checks how many hunters can reach a location
 static int huntersNearby(HunterView hv, PlaceId dMove, bool rail);
+// Checks if a player is able to reach a location for their next turn
+static bool reachableNextTurn(HunterView hv, Player player, PlaceId location);
 
 
 void decideHunterMove(HunterView hv)
@@ -89,13 +91,16 @@ void decideHunterMove(HunterView hv)
 	}
 
 	// Rest
-	if (health <= HEALTHTHRESHOLD) {
+	bool sacrifice = false;
+	if (draculaHealth <= 20 && (round - roundRevealed) == 1 && reachableNextTurn(hv, player, lastDraculaLocation))
+		sacrifice = true;
+	if (!sacrifice && health <= HEALTHTHRESHOLD) {
 		registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
 		return;
 	}
 
 	// General Vampire
-	if (placeIsReal(vampireLocation)) {
+	if (!sacrifice && placeIsReal(vampireLocation)) {
 		// Calculate shortest path length
 		int closestPlayer = -1; int minPathLength = 100000;
 		PlaceId shortestPathStep = NOWHERE;
@@ -222,3 +227,17 @@ static int huntersNearby(HunterView hv, PlaceId dMove, bool rail)
 		if (nearby(hv, player, dMove, rail)) hunters++;
 	return hunters;
 }
+
+// Checks if a player is able to reach a location for their next turn
+static bool reachableNextTurn(HunterView hv, Player player, PlaceId location)
+{
+	int numReturnedLocs = 0;
+	PlaceId *reachable = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
+	for (int i = 0; i < numReturnedLocs; i++)
+		if (reachable[i] == location) {
+			free(reachable);
+			return true;
+		}
+	free(reachable);
+	return false;
+} 
