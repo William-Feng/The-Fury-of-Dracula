@@ -55,13 +55,15 @@ void decideDraculaMove(DraculaView dv)
 		// DOUBLE_BACK move
 		else if (!placeIsReal(move)) location = resolveDoubleBack(dv, move);
 
-		// Weight 1: Number of hunters that can reach that location
+		// Weight 1: Number of hunters that can reach that location on their next turn
 		int numHunters = huntersNearby(dv, location);
 		moveWeight[i] -= 50 * numHunters;
 
 		// Extra weighting if hunter already at location
-		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
-			if (DvGetPlayerLocation(dv, player) == location) moveWeight[i] -= 100;
+		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+			PlaceId hunterLocation = DvGetPlayerLocation(dv, player);
+			if (hunterLocation == location && !placeIsSea(hunterLocation)) moveWeight[i] -= 200;
+		}
 
 		// Check death condition
 		if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER && location != CASTLE_DRACULA)

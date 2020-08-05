@@ -19,6 +19,8 @@
 
 // Returns a starting location for a player
 static PlaceId startingLocation(HunterView hv);
+// Returns number of hunters at location
+static int numHuntersAtLocation(HunterView hv, PlaceId location);
 
 
 void decideHunterMove(HunterView hv)
@@ -145,7 +147,7 @@ void decideHunterMove(HunterView hv)
 		return;
 	}
 
-	// Send nearest player towards CD if Dracula's health is low
+	// Send nearest player towards CD if Dracula's health is low and noone is there
 	if (draculaHealth <= 20) {
 		Player closestPlayer = 0; int minPathLength = 100000;
 		PlaceId shortestPathStep = NOWHERE;
@@ -160,7 +162,7 @@ void decideHunterMove(HunterView hv)
 			}
 			free(path);
 		}
-		if (player == closestPlayer && minPathLength != 0) {
+		if (player == closestPlayer && minPathLength != 0 && numHuntersAtLocation(hv, CASTLE_DRACULA) == 0) {
 			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
 			return;
 		}
@@ -191,4 +193,12 @@ static PlaceId startingLocation(HunterView hv) {
         default:
 			return NOWHERE;
     }
+}
+
+// Returns number of hunters at location
+static int numHuntersAtLocation(HunterView hv, PlaceId location) {
+	int numHunters = 0;
+	for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
+		if (HvGetPlayerLocation(hv, player) == location) numHunters++;
+	return numHunters;
 }
