@@ -122,7 +122,7 @@ static PlaceId draculaStart(DraculaView dv)
 	for (int i = 0; i < 4; i++) {
 		PlaceId option = options[i];
 		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-			if (!nearby(dv, player, option, false)) return option;
+			if (!nearby(dv, player, option, true)) return option;
 			weight[i] += huntersNearby(dv, option, true);
 		}
 	}
