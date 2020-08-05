@@ -254,6 +254,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+
 
 #endif // !defined (FOD__GAME_VIEW_H_)

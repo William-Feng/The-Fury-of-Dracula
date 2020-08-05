@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "hunter.h"
 #include "HunterView.h"
+#include <stdio.h>
 
 #define HEALTHTHRESHOLD 3
 
@@ -116,18 +117,37 @@ void decideHunterMove(HunterView hv)
 		}
 	}
 
+	bool skip = false;
 	// Dracula BFS
-	if (placeIsReal(lastDraculaLocation) && round - roundRevealed <= 4) {
+	if (move != lastDraculaLocation && placeIsReal(lastDraculaLocation) && round - roundRevealed <= 4) {
 		int pathLength = 0;
 		PlaceId *path = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLength);
-		registerBestPlay((char *)placeIdToAbbrev(path[0]), "JAWA - we don't go by the script");
+		PlaceId shortestPathStep = path[0];
 		free(path);
-		return;
+		if (pathLength != 0) {
+			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+			return;
+		} else {
+			skip = true;
+		}
 	}
 
+	// BFS to trap encounters
+	Round trapRound = -1;
+	PlaceId lastTrapLocation = recentTrapEncounter(hv, &trapRound);
+	if (!skip && lastTrapLocation != NOWHERE && placeIsReal(lastTrapLocation) && (round - trapRound) < 5) {
+		int pathLength = 0;
+		PlaceId *path = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLength);
+		PlaceId shortestPathStep = path[0];
+		free(path);
+		if (pathLength != 0) {
+			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+			return;
+		}
+	}
+	
 	// Collaborative research
-	if (round >= 6 && (round - roundRevealed > 5 || !placeIsReal(lastDraculaLocation) ||
-		(nextMaturity - round) == 6)) {
+	if (!skip && round >= 6 && (!placeIsReal(lastDraculaLocation) || (nextMaturity - round) == 6)) {
 		registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
 		return;
 	}
@@ -152,9 +172,12 @@ void decideHunterMove(HunterView hv)
 	}
 
 	// Default movement - surround location
-	PlaceId *reachableNoRail = HvWhereCanTheyGoByType(hv, player, true, false, true, &numReturnedLocs);
-	registerBestPlay((char *)placeIdToAbbrev(reachableNoRail[player%4]), "JAWA - we don't go by the script");
-	free(reachableNoRail);
+	bool boat = (placeIsSea(HvGetPlayerLocation(hv, PLAYER_DRACULA))) ? true : false;
+	if (placeIsSea(move)) boat = true;
+	PlaceId *generalReachable = HvWhereCanTheyGoByType(hv, player, true, true, boat, &numReturnedLocs);
+	int index = (round * (player + 1)) % numReturnedLocs;
+	registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
+	free(generalReachable);
 	return;
 }
 
@@ -171,7 +194,8 @@ static PlaceId startingLocation(HunterView hv) {
             return SARAGOSSA;
         case PLAYER_MINA_HARKER:
             return ZAGREB;
-        default: return NOWHERE;
+        default:
+			return NOWHERE;
     }
 }
 

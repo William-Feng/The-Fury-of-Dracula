@@ -57,7 +57,11 @@ void decideDraculaMove(DraculaView dv)
 
 		// Weight 1: Number of hunters that can reach that location
 		int numHunters = huntersNearby(dv, location, true);
-		moveWeight[i] -= 5 * numHunters;
+		moveWeight[i] -= 50 * numHunters;
+
+		// Extra weighting if hunter already at location
+		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
+			if (DvGetPlayerLocation(dv, player) == location) moveWeight[i] -= 100;
 
 		// Check death condition
 		if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER && location != CASTLE_DRACULA)
@@ -69,6 +73,7 @@ void decideDraculaMove(DraculaView dv)
 
 		// Weight 3: Prefer moves to CD if low
 		if (draculaHealth <= 20 && location == CASTLE_DRACULA) moveWeight[i] += 10;
+		// printf("Move: %d, numHunters: %d, Weight: %d\n", move, numHunters, moveWeight[i]);
 	}
 
 	// Select max weight

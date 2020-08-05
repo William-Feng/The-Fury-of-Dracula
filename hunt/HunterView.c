@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Game.h"
 #include "GameView.h"
@@ -26,11 +27,13 @@
 struct hunterView {
 	GameView gv;
 	Map map;
+	char *pastPlays;
 };
 
 static PlaceId *hunterBfs(HunterView hv, Player hunter, PlaceId src,
                           Round r);
 static Round playerNextRound(HunterView hv, Player player);
+static int max(int a, int b);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -45,6 +48,7 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	
 	hv->gv = GvNew(pastPlays, messages);
 	hv->map = MapNew();
+	hv->pastPlays = strdup(pastPlays);
 	return hv;
 }
 
@@ -52,6 +56,7 @@ void HvFree(HunterView hv)
 {
 	GvFree(hv->gv);
 	MapFree(hv->map);
+	free(hv->pastPlays);
 	free(hv);
 }
 
@@ -232,7 +237,34 @@ static Round playerNextRound(HunterView hv, Player player) {
 	return HvGetRound(hv) + (player < HvGetPlayer(hv) ? 1 : 0);
 }
 
+// Returns the higher of two integers
+static int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
 // TODO
+
+PlaceId recentTrapEncounter(HunterView hv, Round *trapRound) {
+	Round round = HvGetRound(hv);
+	Round start = max(round - 6, 0);
+	for (Round r = round - 1; r >= start; r--) {
+		for (Player p = PLAYER_LORD_GODALMING; p < PLAYER_DRACULA; p++) {
+			for (int encounter = 3; encounter <= 7; encounter++) {
+				if (hv->pastPlays[r * 40 + p * 8 + encounter] == 'T') {
+					char loc[3];
+					loc[0] = hv->pastPlays[r * 40 + p * 8 + 1];
+					loc[1] = hv->pastPlays[r * 40 + p * 8 + 2];
+					loc[2] = '\0';
+					*trapRound = r;
+					return placeAbbrevToId(loc);
+				}
+			}
+		}
+	}
+	return NOWHERE;
+}

@@ -60,7 +60,7 @@ typedef DraculaView View;
 # define decideMove decideDraculaMove
 # define ViewFree DvFree
 
-# define xPastPlays "GGE.... SGE.... HGE.... MGE.... DST.V.. GGE.... SGE.... HGE.... MGE...."
+# define xPastPlays "GKL.... SST.... HSR.... MZA.... DHA.V.. GBE.... SCO.... HBO.... MJM.... DNS.... GBE.... SCO.... HSR.... MSJ.... DEDT... GBE.... SFR.... HTO.... MJM.... DMNT... GBE.... SST.... HCF.... MJM.... DLVT... GBE.... SNU.... HMR.... MBE.... DSWT... GBE.... SNU.... HMR.... MBE.... DLOT.V. GBE.... SLI.... HCF.... MBE.... DPLT... GBE.... SFR.... HGE.... MSJ.... DEC..M. GBE.... SST.... HCF.... MJM.... DLET.M. GBE.... SCO.... HTO.... MBE.... DNAT.M. GBE.... SHA.... HSR.... MJM.... DCFT.M. GBE.... SBR.... HMA.... MSJ.... DGET.M. GBE.... SHA.... HSN.... MJM.... DMR.VM. GBE.... SHA.... HLS.... MJM.... DGOT... GBE.... SLI.... HMA.... MBE.... DFLT.M. GBE.... SLI.... HMA.... MSZ.... DROT.M. GBE.... SNU.... HSR.... MJM.... DBIT.M. GBE.... SFR.... HBA.... MZA.... DNPT.M. GBE.... SST.... HTO.... MMU.... DTS..V. GBE.... SFR.... HSR.... MVE.... DCGT.M. GBE.... SFR.... HAL.... MMU.... DD1T.M. GBE.... SLI.... HAL.... MNU.... DHIT.M. GBE.... SNU.... HMA.... MNU.... DMS..M. GBE.... SFR.... HSR.... MFR.... DAO..M. GBE.... SCO.... HBA.... MCO.... DCAT... GBE.... SLI.... HSR.... MBU.... DGR.VM. GBE.... SHA.... HSR.... MLE.... DD1T.M. GBE.... SBR.... HAL.... MBU...."
 # define xMsgs { "", "", "", "" }
 
 #else
