@@ -185,11 +185,11 @@ static PlaceId startingLocation(HunterView hv) {
         case PLAYER_LORD_GODALMING:
             return KLAUSENBURG;
         case PLAYER_DR_SEWARD:
-            return STRASBOURG;
+            return BRUSSELS;
         case PLAYER_VAN_HELSING:
             return SARAGOSSA;
         case PLAYER_MINA_HARKER:
-            return ZAGREB;
+            return VENICE;
         default:
 			return NOWHERE;
     }
