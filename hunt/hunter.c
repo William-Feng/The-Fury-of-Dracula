@@ -112,7 +112,6 @@ void decideHunterMove(HunterView hv)
 		}
 	}
 
-	bool skip = false;
 	// Dracula BFS
 	if (move != lastDraculaLocation && placeIsReal(lastDraculaLocation) && round - roundRevealed <= 4) {
 		int pathLength = 0;
@@ -122,15 +121,13 @@ void decideHunterMove(HunterView hv)
 		if (pathLength != 0) {
 			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
 			return;
-		} else {
-			skip = true;
 		}
 	}
 
 	// BFS to trap encounters
 	Round trapRound = -1;
 	PlaceId lastTrapLocation = recentTrapEncounter(hv, &trapRound);
-	if (!skip && lastTrapLocation != NOWHERE && placeIsReal(lastTrapLocation) && (round - trapRound) < 5) {
+	if (lastTrapLocation != NOWHERE && placeIsReal(lastTrapLocation) && (round - trapRound) < 5) {
 		int pathLength = 0;
 		PlaceId *path = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLength);
 		PlaceId shortestPathStep = path[0];
@@ -142,7 +139,7 @@ void decideHunterMove(HunterView hv)
 	}
 	
 	// Collaborative research
-	if (!skip && round >= 6 && (!placeIsReal(lastDraculaLocation) || (nextMaturity - round) == 6)) {
+	if (round >= 6 && (!placeIsReal(lastDraculaLocation) || (nextMaturity - round) == 6)) {
 		registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
 		return;
 	}
@@ -169,7 +166,7 @@ void decideHunterMove(HunterView hv)
 	}
 
 	// Default movement - surround location
-	PlaceId *generalReachable = HvWhereCanTheyGoByType(hv, player, true, true, true, &numReturnedLocs);
+	PlaceId *generalReachable = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
 	int index = (round * (player + 1)) % numReturnedLocs;
 	if (generalReachable[index] == move) index = (index + 1) % numReturnedLocs;
 	registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");

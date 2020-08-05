@@ -77,7 +77,7 @@ void decideDraculaMove(DraculaView dv)
 
 		// Check death condition
 		if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER && location != CASTLE_DRACULA)
-			moveWeight[i] -= 100;
+			moveWeight[i] -= 100000;
 
 		// Weight 2: Type of move
 		if (!placeIsReal(move)) moveWeight[i] -= 2;
@@ -92,13 +92,13 @@ void decideDraculaMove(DraculaView dv)
 		free(currPath);	free(newPath);
 		
 		// Low health
-		if (draculaHealth <= 25) {
+		if (draculaHealth <= 25 && numHuntersNotReachable > 1) {
 			// If move takes you closer to CASTLE_DRACULA
 			if (pathLengthNew < pathLengthCurr && draculaHealth > 20) moveWeight[i] += 15;
 			else if (pathLengthNew < pathLengthCurr) moveWeight[i] += 25;
 		
 		// Gain extra health if safe
-		} else if (numHuntersNotReachable > 2) {
+		} else if (draculaHealth > 25 && numHuntersNotReachable > 2) {
 			moveWeight[i] += 3;
 		}
 	}
@@ -173,7 +173,7 @@ static PlaceId draculaStart(DraculaView dv)
 		PlaceId option = options[i];
 		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
 			bool twiceReachable = reachableInTwoTurns(dv, option, player, 0);
-			if (!nearby(dv, player, option) && !twiceReachable) return option;
+			if (!twiceReachable) return option;
 			weight[i] += huntersNearby(dv, option);
 			weight[i] += (twiceReachable) ? 2 : 0;
 		}
