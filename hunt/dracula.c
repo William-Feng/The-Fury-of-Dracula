@@ -15,9 +15,9 @@
 #include <stdio.h>
 
 // Checks whether a hunter can reach a location
-static bool nearby(DraculaView dv, Player hunter, PlaceId dMove, bool rail);
+static bool nearby(DraculaView dv, Player hunter, PlaceId dMove);
 // Checks how many hunters can reach a location
-static int huntersNearby(DraculaView dv, PlaceId dMove, bool rail);
+static int huntersNearby(DraculaView dv, PlaceId dMove);
 // Decide starting move
 static PlaceId draculaStart(DraculaView dv);
 
@@ -56,7 +56,7 @@ void decideDraculaMove(DraculaView dv)
 		else if (!placeIsReal(move)) location = resolveDoubleBack(dv, move);
 
 		// Weight 1: Number of hunters that can reach that location
-		int numHunters = huntersNearby(dv, location, true);
+		int numHunters = huntersNearby(dv, location);
 		moveWeight[i] -= 50 * numHunters;
 
 		// Extra weighting if hunter already at location
@@ -90,10 +90,10 @@ void decideDraculaMove(DraculaView dv)
 
 
 // Checks whether a hunter can reach a location
-static bool nearby(DraculaView dv, Player hunter, PlaceId dMove, bool rail)
+static bool nearby(DraculaView dv, Player hunter, PlaceId dMove)
 {
 	int numReturnedLocs = 0;
-	PlaceId *hunterConnections = DvWhereCanTheyGoByType(dv, hunter, true, rail, true, &numReturnedLocs);
+	PlaceId *hunterConnections = DvWhereCanTheyGo(dv, hunter, &numReturnedLocs);
 	for (int i = 0; i < numReturnedLocs; i++) {
 		if (hunterConnections[i] == dMove) {
 			free(hunterConnections);
@@ -105,11 +105,11 @@ static bool nearby(DraculaView dv, Player hunter, PlaceId dMove, bool rail)
 }
 
 // Checks how many hunters can reach a location
-static int huntersNearby(DraculaView dv, PlaceId dMove, bool rail)
+static int huntersNearby(DraculaView dv, PlaceId dMove)
 {
 	int hunters = 0;
 	for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
-		if (nearby(dv, player, dMove, rail)) hunters++;
+		if (nearby(dv, player, dMove)) hunters++;
 	return hunters;
 }
 
@@ -122,8 +122,8 @@ static PlaceId draculaStart(DraculaView dv)
 	for (int i = 0; i < 4; i++) {
 		PlaceId option = options[i];
 		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-			if (!nearby(dv, player, option, true)) return option;
-			weight[i] += huntersNearby(dv, option, true);
+			if (!nearby(dv, player, option)) return option;
+			weight[i] += huntersNearby(dv, option);
 		}
 	}
 	// If all starting options are reachable - select min of weights

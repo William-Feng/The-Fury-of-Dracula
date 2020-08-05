@@ -165,10 +165,9 @@ void decideHunterMove(HunterView hv)
 	}
 
 	// Default movement - surround location
-	bool boat = (placeIsSea(HvGetPlayerLocation(hv, PLAYER_DRACULA))) ? true : false;
-	if (placeIsSea(move)) boat = true;
-	PlaceId *generalReachable = HvWhereCanTheyGoByType(hv, player, true, true, boat, &numReturnedLocs);
+	PlaceId *generalReachable = HvWhereCanTheyGoByType(hv, player, true, true, true, &numReturnedLocs);
 	int index = (round * (player + 1)) % numReturnedLocs;
+	if (generalReachable[index] == move) index = (index + 1) % numReturnedLocs;
 	registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
 	free(generalReachable);
 	return;
