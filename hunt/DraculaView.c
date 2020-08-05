@@ -19,6 +19,7 @@
 #include "GameView.h"
 #include "Map.h"
 // add your own #includes here
+#include "Queue.h"
 #include "utils.h"
 
 struct draculaView {
@@ -352,4 +353,69 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 PlaceId DvWhereAmI(DraculaView dv)
 {
 	return DvGetPlayerLocation(dv, PLAYER_DRACULA);
+}
+
+PlaceId *DvShortestPathTo(DraculaView dv, PlaceId src, PlaceId dest, int *pathLength)
+{
+	// Predecessor array
+	PlaceId pred[NUM_REAL_PLACES] = {0};
+	for (int i = 0; i < NUM_REAL_PLACES; i++)
+		pred[i] = -1;
+	pred[src] = src;
+	
+	Queue q1 = QueueNew(); // current round locations
+	Queue q2 = QueueNew(); // next round locations
+
+	QueueEnqueue(q1, src);
+	while (!(QueueIsEmpty(q1) && QueueIsEmpty(q2))) {
+		PlaceId curr = QueueDequeue(q1);
+		int numReachable = 0;
+		PlaceId *reachable = GvGetReachable(dv->gv, PLAYER_DRACULA, -1, curr,
+		                                    &numReachable);
+		
+		for (int i = 0; i < numReachable; i++) {
+			if (pred[reachable[i]] == -1) {
+				pred[reachable[i]] = curr;
+				QueueEnqueue(q2, reachable[i]);
+			}
+		}
+		free(reachable);
+		
+		// When we've exhausted the current round's locations, advance
+		// to the next round and swap the queues (so the next round's
+		// locations becomes the current round's locations)
+		if (QueueIsEmpty(q1)) {
+			Queue tmp = q1; q1 = q2; q2 = tmp; // swap queues
+		}
+	}
+
+	QueueDrop(q1);
+	QueueDrop(q2);
+
+	// Process shortest path
+	// One pass to get the path length
+	int dist = 0;
+	PlaceId curr = dest;
+	while (curr != src) {
+		dist++;
+		curr = pred[curr];
+	}
+	
+	PlaceId *path = malloc(dist * sizeof(PlaceId));
+	// Another pass to copy the path in
+	int i = dist - 1;
+	curr = dest;
+	while (curr != src) {
+		path[i] = curr;
+		curr = pred[curr];
+		i--;
+	}
+	*pathLength = dist;
+	return path;
+}
+
+// Get reachable locations
+PlaceId *DvGetReachable(DraculaView dv, Player player, Round round, PlaceId from, int *numReturnedLocs)
+{
+	return GvGetReachable(dv->gv, player, round, from, numReturnedLocs);
 }

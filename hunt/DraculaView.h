@@ -181,4 +181,9 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 // Retrieves location for DOUBLE_BACK move
 PlaceId resolveDoubleBack(DraculaView dv, PlaceId db);
 
+PlaceId *DvShortestPathTo(DraculaView dv, PlaceId src, PlaceId dest, int *pathLength);
+
+// Get reachable locations
+PlaceId *DvGetReachable(DraculaView dv, Player player, Round round, PlaceId from, int *numReturnedLocs);
+
 #endif // !defined(FOD__DRACULA_VIEW_H_)
