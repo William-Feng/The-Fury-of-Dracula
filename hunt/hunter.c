@@ -160,8 +160,10 @@ void decideHunterMove(HunterView hv)
 			}
 			free(path);
 		}
-		if (player == closestPlayer)
+		if (player == closestPlayer && minPathLength != 0) {
 			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+			return;
+		}
 	}
 
 	// Default movement - surround location
