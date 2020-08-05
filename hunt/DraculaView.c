@@ -414,7 +414,6 @@ PlaceId *DvShortestPathTo(DraculaView dv, PlaceId src, PlaceId dest, int *pathLe
 	return path;
 }
 
-// Get reachable locations
 PlaceId *DvGetReachable(DraculaView dv, Player player, Round round, PlaceId from, int *numReturnedLocs)
 {
 	return GvGetReachable(dv->gv, player, round, from, numReturnedLocs);
