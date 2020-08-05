@@ -68,7 +68,7 @@ void decideDraculaMove(DraculaView dv)
 			moveWeight[i] -= 100;
 
 		// Weight 2: Type of move
-		if (!placeIsReal(move)) moveWeight[i] -= 1;
+		if (!placeIsReal(move)) moveWeight[i] -= 2;
 		if (placeIsSea(location)) moveWeight[i] -= 1;
 
 		// Weight 3: Prefer moves to CD if low

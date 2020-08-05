@@ -215,6 +215,7 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
+// Returns most recent trap encounter
 PlaceId recentTrapEncounter(HunterView hv, Round *trapRound);
 
 #endif // !defined (FOD__HUNTER_VIEW_H_)

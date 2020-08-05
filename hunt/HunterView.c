@@ -247,8 +247,7 @@ static int max(int a, int b)
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
-
+// Returns most recent trap encounter
 PlaceId recentTrapEncounter(HunterView hv, Round *trapRound) {
 	Round round = HvGetRound(hv);
 	Round start = max(round - 6, 0);
