@@ -34,12 +34,12 @@ void decideDraculaMove(DraculaView dv)
 	// Hasn't gone yet
 	if (numMoves == 0 && DvGetPlayerLocation(dv, PLAYER_DRACULA) == NOWHERE) {
 		draculaMove = draculaStart(dv);
-		registerBestPlay((char *)placeIdToAbbrev(draculaMove), "Mwahahahaha");
+		registerBestPlay((char *)placeIdToAbbrev(draculaMove), "JAWA - we don't go by the script");
 		free(validMoves);
 		return;
 	// Teleport as only move
 	} else if (numMoves == 0) {
-		registerBestPlay((char *)placeIdToAbbrev(draculaMove), "Mwahahahaha");
+		registerBestPlay((char *)placeIdToAbbrev(draculaMove), "JAWA - we don't go by the script");
 		free(validMoves);
 		return;
 	}
@@ -79,7 +79,7 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}
 	draculaMove = validMoves[maxIndex];
-	registerBestPlay((char *)placeIdToAbbrev(draculaMove), "Mwahahahaha");
+	registerBestPlay((char *)placeIdToAbbrev(draculaMove), "JAWA - we don't go by the script");
 	free(validMoves);
 }
 

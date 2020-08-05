@@ -24,8 +24,6 @@ static PlaceId startingLocation(HunterView hv);
 static bool nearby(HunterView hv, Player hunter, PlaceId dMove, bool rail);
 // Checks how many hunters can reach a location
 static int huntersNearby(HunterView hv, PlaceId dMove, bool rail);
-// Checks if a player is able to reach a location for their next turn
-static bool reachableNextTurn(HunterView hv, Player player, PlaceId location);
 
 
 void decideHunterMove(HunterView hv)
@@ -38,11 +36,13 @@ void decideHunterMove(HunterView hv)
 	int roundRevealed = -1;
     PlaceId lastDraculaLocation = HvGetLastKnownDraculaLocation(hv, &roundRevealed);
 	int draculaHealth = HvGetHealth(hv, PLAYER_DRACULA);
+	Round previousVampireSpawn = round / 13;
+	Round nextMaturity = previousVampireSpawn + 6;
 
 	// Starting location
 	if (round == 0) {
 		move = startingLocation(hv);
-		registerBestPlay((char *)placeIdToAbbrev(move), "Have we nothing Toulouse?");
+		registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
 		return;
 	}
 	
@@ -55,7 +55,7 @@ void decideHunterMove(HunterView hv)
 		// Check winning conditions
 		if (city == lastDraculaLocation && round - roundRevealed <= 1 && placeIsReal(lastDraculaLocation) &&
 			draculaHealth <= huntersNearby(hv, lastDraculaLocation, true) * LIFE_LOSS_HUNTER_ENCOUNTER) {
-			registerBestPlay((char *)placeIdToAbbrev(city), "Have we nothing Toulouse?");
+			registerBestPlay((char *)placeIdToAbbrev(city), "JAWA - we don't go by the script");
 			free(reachable);
 			return;
 		}
@@ -66,32 +66,30 @@ void decideHunterMove(HunterView hv)
 	PlaceId vampireLocation = HvGetVampireLocation(hv);
 	if (placeIsReal(vampireLocation)) {
 		// Calculate shortest path length
-		int closestPlayer = -1; int minPathLength = 100000;
+		Player closestPlayer = -1; int minPathLength = 100000;
 		PlaceId shortestPathStep = NOWHERE;
 		for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
 			// Calculate path
 			int pathLength = 0;
 			PlaceId *path = HvGetShortestPathTo(hv, hunter, vampireLocation, &pathLength);
-			if (pathLength < minPathLength && reachableNextTurn(hv, hunter, path[0])) {
+			if (pathLength < minPathLength) {
 				closestPlayer = hunter;
 				minPathLength = pathLength;
 				shortestPathStep = path[0];
 			}
 			free(path);
 		}
-		Round previousSpawn = round / 13;
-		Round nextMaturity = previousSpawn + 6;
 		// Urgent - about to mature
 		if (shortestPathStep != NOWHERE && player == closestPlayer &&
 			(round + minPathLength) <= nextMaturity && (nextMaturity - round) <= 2) {
-			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "Have we nothing Toulouse?");
+			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
 			return;
 		}
 	}
 
 	// Rest
 	if (health <= HEALTHTHRESHOLD) {
-		registerBestPlay((char *)placeIdToAbbrev(move), "Have we nothing Toulouse?");
+		registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
 		return;
 	}
 
@@ -111,31 +109,51 @@ void decideHunterMove(HunterView hv)
 			}
 			free(path);
 		}
-		Round previousSpawn = round / 13;
-		Round nextMaturity = previousSpawn + 6;
 		if (shortestPathStep != NOWHERE && player == closestPlayer &&
 			(round + minPathLength) <= nextMaturity && (nextMaturity - round) <= 4) {
-			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "Have we nothing Toulouse?");
+			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
 			return;
 		}
 	}
 
 	// Dracula BFS
-	if (placeIsReal(lastDraculaLocation)) {
+	if (placeIsReal(lastDraculaLocation) && round - roundRevealed <= 4) {
 		int pathLength = 0;
 		PlaceId *path = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLength);
-		// Has to be reachable
-		if (reachableNextTurn(hv, player, path[0])) {
-			registerBestPlay((char *)placeIdToAbbrev(path[0]), "Have we nothing Toulouse?");
-			free(path);
-			return;
-		}
+		registerBestPlay((char *)placeIdToAbbrev(path[0]), "JAWA - we don't go by the script");
 		free(path);
+		return;
 	}
-			
-	// Default movement
+
+	// Collaborative research
+	if (round >= 6 && (round - roundRevealed > 5 || !placeIsReal(lastDraculaLocation) ||
+		(nextMaturity - round) == 6)) {
+		registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
+		return;
+	}
+
+	// Send nearest player towards CD if Dracula's health is low
+	if (draculaHealth <= 20) {
+		Player closestPlayer = 0; int minPathLength = 100000;
+		PlaceId shortestPathStep = NOWHERE;
+		for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
+			// Calculate path
+			int pathLength = 0;
+			PlaceId *path = HvGetShortestPathTo(hv, hunter, CASTLE_DRACULA, &pathLength);
+			if (pathLength < minPathLength) {
+				closestPlayer = hunter;
+				minPathLength = pathLength;
+				shortestPathStep = path[0];
+			}
+			free(path);
+		}
+		if (player == closestPlayer)
+			registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+	}
+
+	// Default movement - surround location
 	PlaceId *reachableNoRail = HvWhereCanTheyGoByType(hv, player, true, false, true, &numReturnedLocs);
-	registerBestPlay((char *)placeIdToAbbrev(reachableNoRail[0]), "Have we nothing Toulouse?");
+	registerBestPlay((char *)placeIdToAbbrev(reachableNoRail[player%4]), "JAWA - we don't go by the script");
 	free(reachableNoRail);
 	return;
 }
@@ -179,18 +197,4 @@ static int huntersNearby(HunterView hv, PlaceId dMove, bool rail)
 	for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
 		if (nearby(hv, player, dMove, rail)) hunters++;
 	return hunters;
-}
-
-// Checks if a player is able to reach a location for their next turn
-static bool reachableNextTurn(HunterView hv, Player player, PlaceId location)
-{
-	int numReturnedLocs = 0;
-	PlaceId *reachable = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
-	for (int i = 0; i < numReturnedLocs; i++)
-		if (reachable[i] == location) {
-			free(reachable);
-			return true;
-		}
-	free(reachable);
-	return false;
 }
