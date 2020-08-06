@@ -36,7 +36,7 @@ void decideHunterMove(HunterView hv)
     Round previousVampireSpawn = round / 13;
     Round nextMaturity = previousVampireSpawn + 6;
 
-    // Trap information
+    // Trap information - direction may be incorrect
     Round trapRound = -1;
     PlaceId lastTrapLocation = recentTrapEncounter(hv, &trapRound);
     if (trapRound > roundRevealed) {
@@ -174,7 +174,7 @@ void decideHunterMove(HunterView hv)
 
     // Default movement - surround location
     PlaceId *generalReachable = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
-    int index = (round * (player + 1)) % numReturnedLocs;
+	int index = (round * (player + 1)) % numReturnedLocs;
     if (generalReachable[index] == move) index = (index + 1) % numReturnedLocs;
     registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
     free(generalReachable);
