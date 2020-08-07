@@ -7,7 +7,7 @@
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10	v3.0	Team Dracula <cs2521@cse.unsw.edu.au>
 //
-// This was created by JAWA on 07/08/2020.
+// This was created by JAWA on 08/08/2020.
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -66,8 +66,9 @@ void decideDraculaMove(DraculaView dv)
 			if (DvGetPlayerLocation(dv, player) == location) moveWeight[i] -= 100;
 
 		// Check death condition
-		if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER && location != CASTLE_DRACULA)
-			moveWeight[i] -= 100;
+		if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER + (placeIsSea(location) * 2) &&
+			location != CASTLE_DRACULA)
+			moveWeight[i] -= 100000;
 
 		// Weight 2: Type of move
 		if (!placeIsReal(move)) moveWeight[i] -= 2;
@@ -77,7 +78,7 @@ void decideDraculaMove(DraculaView dv)
 		for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
 			if (DvGetPlayerLocation(dv, player) == currentLocation && placeIsSea(location)) moveWeight[i] += 4;
 
-		// Weight 3: Prefer moves to CD if low
+		// Weight 3: Prefer to move to CD if low
 		if (draculaHealth <= 10 && location == CASTLE_DRACULA) moveWeight[i] += 10;
 	}
 
