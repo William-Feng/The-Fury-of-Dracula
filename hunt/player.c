@@ -71,7 +71,7 @@ typedef HunterView View;
 # define decideMove decideHunterMove
 # define ViewFree HvFree
 
-# define xPastPlays "GEC.... SBA.... HHA.... MGA.... DDU.V.. GLE.... SBO.... HCO.... MKL.... DC?T... GBU.... SLE.... HBU.... MBC.... DS?.... GLI.... SNA.... HCO.... MSZ.... DC?T... GCO.... SBO.... HST.... MVI.... DC?T... GBU.... SMR.... HBU.... MZA.... DC?T... GBU.... SMR.... HBU.... MZA.... DC?T.V. GAM.... SMS.... HAM.... MVI.... DC?T.M. GNS.... SAO.... HNS.... MHA.... DC?T... GAO.... SGW.... HAO.... MNS.... DC?T.M. GGW.... SDU.... HGW.... MAO.... DC?T.M. GDU.... SGW.... HDU.... MGW.... DC?T.M. GGW.... SDU.... HGW.... MDU.... DC?T.M. GDU.... SGW.... HDU.... MGW.... DC?.VM. GGW.... SDU.... HGW.... MDU.... DC?T.M. GDU.... SGW.... HDU.... MGW.... DC?T.M. GGW.... SDU.... HGW.... MDU.... DC?T.M. GDU.... SGW.... HDU.... MGW.... DC?T.M. GGW...."
+# define xPastPlays "GEC.... SBA.... HHA.... MGA.... DDU.V.. GLE.... SBO.... HCO.... MKL.... DC?T... GBU.... SLE.... HBU.... MBC.... DS?.... GLI.... SNA.... HCO.... MSZ.... DC?T... GCO.... SBO.... HST.... MVI.... DC?T... GBU.... SMR.... HBU.... MZA.... DC?T... GBU.... SMR.... HBU.... MZA.... DC?T.V. GAM.... SMS.... HAM.... MVI.... DC?T.M. GNS.... SAO.... HNS.... MPR.... DC?T... GAO.... SBB.... HAO.... MVI.... DC?T.M. GBB.... SNA.... HBB.... MMU.... DC?T.M. GNA.... SBO.... HNA.... MMI.... DS?..M. GBO.... SCF.... HBO.... MNP.... DC?T.M. GCF.... SGE.... HLE.... MTS.... DD1.VM. GGE.... SGO.... HNA.... MGO.... DC?T.M. GGO.... SMR.... HBO.... MZU.... DS?..M. GMR.... SGE.... HMR.... MMI.... DC?T.M. GGE.... SFL.... HBU.... MMR.... DC?T... GFL...."
 # define xMsgs { "", "", "" }
 
 #endif

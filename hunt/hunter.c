@@ -67,26 +67,31 @@ void decideHunterMove(HunterView hv)
     free(reachable);
 
     // BFS to Dracula location if far away
-    int pathLengthD = 0;
-    PlaceId *pathD = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLengthD);
-    if (placeIsReal(lastDraculaLocation) && pathLengthD > 1 && round - roundRevealed <= 7) {
-        // Move towards Dracula
-        registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "dracula");
+    if (placeIsReal(lastDraculaLocation) && round - roundRevealed <= 7) {
+        int pathLengthD = 0;
+        PlaceId *pathD = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLengthD);
+        if (pathLengthD > 1) {
+            // Move towards Dracula
+            registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "dracula");
+            free(pathD);
+            return;
+        }
         free(pathD);
-        return;
     }
-    free(pathD);
+    
 
     // BFS to trap location if far away
-    int pathLengthT = 0;
-    PlaceId *pathT = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLengthT);
-    if (placeIsReal(lastTrapLocation) && pathLengthT > 1 && round - roundRevealed <= 7) {
-        // Move towards trap location
-        registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "trap");
+    if (placeIsReal(lastTrapLocation) && round - roundRevealed <= 7) {
+        int pathLengthT = 0;
+        PlaceId *pathT = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLengthT);
+        if (pathLengthT > 1) {
+            // Move towards trap location
+            registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "trap");
+            free(pathT);
+            return;
+        }
         free(pathT);
-        return;
     }
-    free(pathT);
 
     // Vampire
     if (placeIsReal(vampireLocation)) {
