@@ -7,7 +7,7 @@
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10	v3.0	Team Dracula <cs2521@cse.unsw.edu.au>
 //
-// This was created by JAWA on 06/08/2020
+// This was created by JAWA on 07/08/2020.
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -123,7 +123,7 @@ static int huntersNearby(DraculaView dv, PlaceId dMove)
 static PlaceId draculaStart(DraculaView dv)
 {
 	// Process options, weighted by the number of hunters that can reach that location
-	PlaceId options[4] = {ATHENS, HAMBURG, BORDEAUX, CADIZ};
+	PlaceId options[4] = {DUBLIN, ATHENS, BORDEAUX, HAMBURG};
 	int weight[4] = {0};
 	for (int i = 0; i < 4; i++) {
 		PlaceId option = options[i];
