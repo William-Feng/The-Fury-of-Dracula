@@ -21,10 +21,6 @@
 
 // Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv);
-// Returns number of hunters at location
-static int numHuntersAtLocation(HunterView hv, PlaceId location);
-// Return number of hunters who can reach a location on their next turn
-static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter);
 
 
 void decideHunterMove(HunterView hv)
@@ -43,6 +39,12 @@ void decideHunterMove(HunterView hv)
     // Extract trap location
     Round trapRound = -1;
     PlaceId lastTrapLocation = recentTrapEncounter(hv, &trapRound);
+
+    // Prefer more recent trap rounds
+    if (trapRound > roundRevealed) {
+        lastDraculaLocation = lastTrapLocation;
+        roundRevealed = trapRound;
+    }
 
     // Register starting location
     if (round == 0) {
@@ -145,44 +147,16 @@ void decideHunterMove(HunterView hv)
     }
 
     // Collaborative research - others may not also do in the same round
-    if (round >= 6 && (!placeIsReal(lastDraculaLocation) || (nextMaturity - round) == 6)) {
+    if (round >= 6 && ((!placeIsReal(lastDraculaLocation) && round - roundRevealed >= 6) || (nextMaturity - round) == 6)) {
         registerBestPlay((char *)placeIdToAbbrev(move), "zz");
         return;
     }
 
     // Default movement
-    PlaceId *generalReachable = HvWhereCanIGo(hv, &numReturnedLocs);
-    // Find minimum number 
-    int moveWeight[NUM_REAL_PLACES] = {0}; int minimumWeight = 100000;
-    for (int i = 0; i < numReturnedLocs; i++) {
-        PlaceId option = generalReachable[i];
-        moveWeight[i] = 2 * numHuntersAtLocation(hv, option);
-        moveWeight[i] += numHuntersReachable(hv, option, player);
-        if (moveWeight[i] < minimumWeight) minimumWeight = moveWeight[i];
-    }
-
-    // Select minimum weights
-    int arrSize = 0;
-    int minimumIndices[NUM_REAL_PLACES] = {0};
-    for (int i = 0; i < numReturnedLocs; i++) {
-        if (moveWeight[i] >= minimumWeight || moveWeight[i] <= minimumWeight + 2) {
-            // Append to new array of minimum weights
-            minimumIndices[arrSize] = i;
-            arrSize++;
-        }
-    }
-    int indexOfMin = rand() % arrSize;
-    // Prevent idle
-    if (arrSize == 0) {
-        registerBestPlay((char *)placeIdToAbbrev(rand() % numReturnedLocs), "no min");
-        free(generalReachable);
-        return;
-    }
-    int index = minimumIndices[indexOfMin];
-    if (generalReachable[index] == move) indexOfMin = (indexOfMin + 1) % arrSize;
-    index = minimumIndices[indexOfMin];
-    if (generalReachable[index] == move) index = rand() % numReturnedLocs;
-    registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "min");
+    PlaceId *generalReachable = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
+    int index = (round * (player + 1)) % numReturnedLocs;
+    if (generalReachable[index] == move) index = (index + 1) % numReturnedLocs;
+    registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
     free(generalReachable);
     return;
 }
@@ -205,36 +179,3 @@ static PlaceId startingLocation(HunterView hv)
             return NOWHERE;
     }
 }
-
-// Returns number of hunters at location
-static int numHuntersAtLocation(HunterView hv, PlaceId location)
-{
-    int numHunters = 0;
-    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
-        if (HvGetPlayerLocation(hv, player) == location) numHunters++;
-    return numHunters;
-}
-
-// Return number of hunters who can reach a location on their next turn
-static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter)
-{
-    int numHunters = 0;
-    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-        // Where can the other hunters go
-        if (player == hunter) continue;
-        int numReturnedLocs = 0;
-        PlaceId *playerReachable = HvWhereCanTheyGoByType(hv, player, true, false, true, &numReturnedLocs);
-        for (int i = 0; i < numReturnedLocs; i++) {
-            if (playerReachable[i] == location) {
-                numHunters++;
-                break;
-            }
-        }
-        free(playerReachable);
-    }
-    return numHunters;
-}
-
-
-
-

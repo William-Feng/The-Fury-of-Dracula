@@ -78,8 +78,7 @@ void decideDraculaMove(DraculaView dv)
 			if (DvGetPlayerLocation(dv, player) == currentLocation && placeIsSea(location)) moveWeight[i] += 4;
 
 		// Weight 3: Prefer moves to CD if low
-		if (draculaHealth <= 20 && location == CASTLE_DRACULA) moveWeight[i] += 10;
-		// printf("Move: %d, numHunters: %d, Weight: %d\n", move, numHunters, moveWeight[i]);
+		if (draculaHealth <= 10 && location == CASTLE_DRACULA) moveWeight[i] += 10;
 	}
 
 	// Select max weight
