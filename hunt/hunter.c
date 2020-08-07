@@ -19,59 +19,78 @@
 ////////////////////////////////////////////////////////////////////////
 // Function Prototypes
 
-// Returns a starting location for a player
+// Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv);
 // Returns number of hunters at location
 static int numHuntersAtLocation(HunterView hv, PlaceId location);
+// Return number of hunters who can reach a location on their next turn
+static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter);
 
 
 void decideHunterMove(HunterView hv)
 {
-    // Extract information
-    Round round = HvGetRound(hv);
-    Player player = HvGetPlayer(hv);
+    // Extract player/game state information
+    Round round = HvGetRound(hv); Player player = HvGetPlayer(hv);
     PlaceId move = HvGetPlayerLocation(hv, player);
     int health = HvGetHealth(hv, player);
+    // Extract Dracula information
     int roundRevealed = -1;
     PlaceId lastDraculaLocation = HvGetLastKnownDraculaLocation(hv, &roundRevealed);
     int draculaHealth = HvGetHealth(hv, PLAYER_DRACULA);
-    Round previousVampireSpawn = round / 13;
-    Round nextMaturity = previousVampireSpawn + 6;
-
-    // Trap information - direction may be incorrect
+    // Extract vampire location
+    Round nextMaturity = (round / 13) + 6;
+    PlaceId vampireLocation = HvGetVampireLocation(hv);
+    // Extract trap location
     Round trapRound = -1;
     PlaceId lastTrapLocation = recentTrapEncounter(hv, &trapRound);
-    if (trapRound > roundRevealed) {
-        lastDraculaLocation = lastTrapLocation;
-        roundRevealed = trapRound;
-    }
 
-    // Starting location
+    // Register starting location
     if (round == 0) {
-        move = startingLocation(hv);
-        registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
+        PlaceId loc = startingLocation(hv);
+        registerBestPlay((char *)placeIdToAbbrev(loc), "start");
         return;
     }
-    
-    // Get reachable locations
+
+    // Get reachable locations from current location
     int numReturnedLocs = 0;
     PlaceId *reachable = HvWhereCanIGo(hv, &numReturnedLocs);
 
+    // Check whether Dracula can be encountered on the next turn
     for (int i = 0; i < numReturnedLocs; i++) {
         PlaceId city = reachable[i];
-        // Check if Dracula can be definitely encountered
-        if (city == lastDraculaLocation && round - roundRevealed <= 1 && placeIsReal(lastDraculaLocation)) {
-            registerBestPlay((char *)placeIdToAbbrev(city), "JAWA - we don't go by the script");
+        if (city == lastDraculaLocation && round - roundRevealed == 1 && placeIsReal(lastDraculaLocation)) {
+            registerBestPlay((char *)placeIdToAbbrev(city), "kill");
             free(reachable);
             return;
         }
     }
     free(reachable);
 
-    // Vampire about to mature
-    PlaceId vampireLocation = HvGetVampireLocation(hv);
+    // BFS to Dracula location if far away
+    int pathLengthD = 0;
+    PlaceId *pathD = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLengthD);
+    if (placeIsReal(lastDraculaLocation) && pathLengthD > 1 && round - roundRevealed <= 7) {
+        // Move towards Dracula
+        registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "dracula");
+        free(pathD);
+        return;
+    }
+    free(pathD);
+
+    // BFS to trap location if far away
+    int pathLengthT = 0;
+    PlaceId *pathT = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLengthT);
+    if (placeIsReal(lastTrapLocation) && pathLengthT > 1 && round - roundRevealed <= 7) {
+        // Move towards trap location
+        registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "trap");
+        free(pathT);
+        return;
+    }
+    free(pathT);
+
+    // Vampire
     if (placeIsReal(vampireLocation)) {
-        // Calculate shortest path length
+        // Calculate shortest path to location
         Player closestPlayer = -1; int minPathLength = 100000;
         PlaceId shortestPathStep = NOWHERE;
         for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
@@ -85,46 +104,22 @@ void decideHunterMove(HunterView hv)
             }
             free(path);
         }
-        // Urgent - about to mature
-        if (shortestPathStep != NOWHERE && player == closestPlayer &&
-            (round + minPathLength) <= nextMaturity && (nextMaturity - round) <= 2) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+        // Noone already there
+        if (placeIsReal(shortestPathStep) && player == closestPlayer && minPathLength != 0) {
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "vampire");
             return;
         }
     }
 
     // Rest
     if (health <= 3) {
-        registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
+        registerBestPlay((char *)placeIdToAbbrev(move), "rest");
         return;
     }
 
-    // General Vampire
-    if (placeIsReal(vampireLocation)) {
-        // Calculate shortest path length
-        int closestPlayer = -1; int minPathLength = 100000;
-        PlaceId shortestPathStep = NOWHERE;
-        for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
-            // Calculate path
-            int pathLength = 0;
-            PlaceId *path = HvGetShortestPathTo(hv, hunter, vampireLocation, &pathLength);
-            if (pathLength < minPathLength) {
-                closestPlayer = hunter;
-                minPathLength = pathLength;
-                shortestPathStep = path[0];
-            }
-            free(path);
-        }
-        if (shortestPathStep != NOWHERE && player == closestPlayer &&
-            (round + minPathLength) <= nextMaturity && (nextMaturity - round) <= 4) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
-            return;
-        }
-    }
-
-    // Send nearest player towards CD if Dracula's health is low and noone is there
+    // Guard CD
     if (draculaHealth <= 20 && round % 3 == 0) {
-        Player closestPlayer = 0; int minPathLength = 100000;
+        Player closestPlayer = -1; int minPathLength = 100000;
         PlaceId shortestPathStep = NOWHERE;
         for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
             // Calculate path
@@ -137,55 +132,60 @@ void decideHunterMove(HunterView hv)
             }
             free(path);
         }
-        if (player == closestPlayer && minPathLength != 0 && numHuntersAtLocation(hv, CASTLE_DRACULA) == 0) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+        // Noone already there
+        if (placeIsReal(shortestPathStep) && player == closestPlayer && minPathLength != 0) {
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "cd");
             return;
         }
     }
 
-    // Try and overtake, not just path to destination.
-    // Dracula BFS
-    if (move != lastDraculaLocation && placeIsReal(lastDraculaLocation) && round - roundRevealed <= 6) {
-        int pathLength = 0;
-        PlaceId *path = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLength);
-        PlaceId shortestPathStep = path[0];
-        free(path);
-        if (pathLength != 0) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), (char * )placeIdToAbbrev(lastDraculaLocation));
-            return;
-        }
-    }
-
-    // BFS to trap encounters
-    if (lastTrapLocation != NOWHERE && placeIsReal(lastTrapLocation) && round - trapRound <= 6) {
-        int pathLength = 0;
-        PlaceId *path = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLength);
-        PlaceId shortestPathStep = path[0];
-        free(path);
-        if (pathLength != 0) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), (char * )placeIdToAbbrev(lastTrapLocation));
-            return;
-        }
-    }
-    
-    // Collaborative research
+    // Collaborative research - others may not also do in the same round
     if (round >= 6 && (!placeIsReal(lastDraculaLocation) || (nextMaturity - round) == 6)) {
-        registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
+        registerBestPlay((char *)placeIdToAbbrev(move), "zz");
         return;
     }
 
-    // Default movement - surround location
-    PlaceId *generalReachable = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
-    int index = (round * (player + 1)) % numReturnedLocs;
-    if (generalReachable[index] == move) index = (index + 1) % numReturnedLocs;
-    registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
+    // Default movement
+    PlaceId *generalReachable = HvWhereCanIGo(hv, &numReturnedLocs);
+    // Find minimum number 
+    int moveWeight[NUM_REAL_PLACES] = {0}; int minimumWeight = 100000;
+    for (int i = 0; i < numReturnedLocs; i++) {
+        PlaceId option = generalReachable[i];
+        moveWeight[i] = 2 * numHuntersAtLocation(hv, option);
+        moveWeight[i] += numHuntersReachable(hv, option, player);
+        if (moveWeight[i] < minimumWeight) minimumWeight = moveWeight[i];
+    }
+
+    // Select minimum weights
+    int arrSize = 0;
+    int minimumIndices[NUM_REAL_PLACES] = {0};
+    for (int i = 0; i < numReturnedLocs; i++) {
+        if (moveWeight[i] >= minimumWeight || moveWeight[i] <= minimumWeight + 2) {
+            // Append to new array of minimum weights
+            minimumIndices[arrSize] = i;
+            arrSize++;
+        }
+    }
+    int indexOfMin = rand() % arrSize;
+    // Prevent idle
+    if (arrSize == 0) {
+        registerBestPlay((char *)placeIdToAbbrev(rand() % numReturnedLocs), "no min");
+        free(generalReachable);
+        return;
+    }
+    int index = minimumIndices[indexOfMin];
+    if (generalReachable[index] == move) indexOfMin = (indexOfMin + 1) % arrSize;
+    index = minimumIndices[indexOfMin];
+    if (generalReachable[index] == move) index = rand() % numReturnedLocs;
+    registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "min");
     free(generalReachable);
     return;
 }
 
 
-// Returns a starting location for a player
-static PlaceId startingLocation(HunterView hv) {
+// Registers a starting location for a player
+static PlaceId startingLocation(HunterView hv)
+{
     Player player = HvGetPlayer(hv);
     switch (player) {
         case PLAYER_LORD_GODALMING:
@@ -202,9 +202,34 @@ static PlaceId startingLocation(HunterView hv) {
 }
 
 // Returns number of hunters at location
-static int numHuntersAtLocation(HunterView hv, PlaceId location) {
+static int numHuntersAtLocation(HunterView hv, PlaceId location)
+{
     int numHunters = 0;
     for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
         if (HvGetPlayerLocation(hv, player) == location) numHunters++;
     return numHunters;
 }
+
+// Return number of hunters who can reach a location on their next turn
+static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter)
+{
+    int numHunters = 0;
+    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+        // Where can the other hunters go
+        if (player == hunter) continue;
+        int numReturnedLocs = 0;
+        PlaceId *playerReachable = HvWhereCanTheyGoByType(hv, player, true, false, true, &numReturnedLocs);
+        for (int i = 0; i < numReturnedLocs; i++) {
+            if (playerReachable[i] == location) {
+                numHunters++;
+                break;
+            }
+        }
+        free(playerReachable);
+    }
+    return numHunters;
+}
+
+
+
+
