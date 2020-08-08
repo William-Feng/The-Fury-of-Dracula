@@ -96,10 +96,15 @@ void decideHunterMove(HunterView hv)
     free(reachable);
 
     // BFS to Dracula location if far away
-    if (placeIsReal(lastDraculaLocation) && round - roundRevealed <= 7) {
+    if (placeIsReal(lastDraculaLocation)) {
         int pathLengthD = 0;
         PlaceId *pathD = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLengthD);
-        if (pathLengthD > 1) {
+        if (pathLengthD > 3 && round - roundRevealed <= 10) {
+            // Move towards Dracula
+            registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "JAWA - we don't go by the script");
+            free(pathD);
+            return;
+        } else if (pathLengthD > 1 && round - roundRevealed <= 7) {
             // Move towards Dracula
             registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "JAWA - we don't go by the script");
             free(pathD);
@@ -109,10 +114,15 @@ void decideHunterMove(HunterView hv)
     }
 
     // BFS to trap location if far away
-    if (placeIsReal(lastTrapLocation) && round - roundRevealed <= 7) {
+    if (placeIsReal(lastTrapLocation)) {
         int pathLengthT = 0;
         PlaceId *pathT = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLengthT);
-        if (pathLengthT > 1) {
+        if (pathLengthT > 3 && round - roundRevealed <= 10) {
+            // Move towards trap location
+            registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "JAWA - we don't go by the script");
+            free(pathT);
+            return;
+        } else if (pathLengthT > 1 && round - roundRevealed <= 7) {
             // Move towards trap location
             registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "JAWA - we don't go by the script");
             free(pathT);
