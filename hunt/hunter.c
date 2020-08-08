@@ -150,26 +150,28 @@ void decideHunterMove(HunterView hv)
         return;
     }
 
-    // Guard CD
-    if (draculaHealth <= 20 && round % 3 == 0) {
-        Player closestPlayer = -1; int minPathLength = 100000;
-        PlaceId shortestPathStep = NOWHERE;
-        for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
-            // Calculate path
-            int pathLength = 0;
-            PlaceId *path = HvGetShortestPathTo(hv, hunter, CASTLE_DRACULA, &pathLength);
-            if (pathLength < minPathLength) {
-                closestPlayer = hunter;
-                minPathLength = pathLength;
-                shortestPathStep = path[0];
-            }
-            free(path);
+    // Guard CASTLE_DRACULA
+    Player closestPlayer = -1; int minPathLength = 100000;
+    PlaceId shortestPathStep = NOWHERE;
+    for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
+        // Calculate path
+        int pathLength = 0;
+        PlaceId *path = HvGetShortestPathTo(hv, hunter, CASTLE_DRACULA, &pathLength);
+        if (pathLength < minPathLength) {
+            closestPlayer = hunter;
+            minPathLength = pathLength;
+            shortestPathStep = path[0];
         }
-        // Noone already there
-        if (placeIsReal(shortestPathStep) && player == closestPlayer && minPathLength != 0) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
-            return;
-        }
+        free(path);
+    }
+    // Move towards
+    if (draculaHealth <= 25 && player == closestPlayer && minPathLength > 3) {
+        registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+        return;
+    // Noone already there
+    } else if (draculaHealth <= 20 && player == closestPlayer && minPathLength != 0 && round % 3 == 0) {
+        registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+        return;
     }
 
     // Collaborative research
@@ -213,7 +215,7 @@ void decideHunterMove(HunterView hv)
     int indexOfMin = rand() % arrSize;
     // Prevent idle
     if (arrSize == 0) {
-        registerBestPlay((char *)placeIdToAbbrev(rand() % numReturnedLocs), "no min");
+        registerBestPlay((char *)placeIdToAbbrev(rand() % numReturnedLocs), "JAWA - we don't go by the script");
         free(generalReachable);
         return;
     }
@@ -221,7 +223,7 @@ void decideHunterMove(HunterView hv)
     if (generalReachable[index] == move) indexOfMin = (indexOfMin + 1) % arrSize;
     index = minimumIndices[indexOfMin];
     if (generalReachable[index] == move) index = rand() % numReturnedLocs;
-    registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "min");
+    registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
     free(generalReachable);
     return;
 }
