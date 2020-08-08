@@ -109,7 +109,7 @@ void decideDraculaMove(DraculaView dv)
 
         // Avoid staying at CD
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 30) moveWeight[i] -= 50;
-        if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth > 20) moveWeight[i] -= 30; 
+        if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 20) moveWeight[i] -= 30; 
 
     }
 
