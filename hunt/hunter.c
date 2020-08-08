@@ -121,6 +121,28 @@ void decideHunterMove(HunterView hv)
         free(pathT);
     }
 
+    // Guard CD
+    if (draculaHealth <= 25 && round % 3 == 0) {
+        Player closestPlayer = -1; int minPathLength = 100000;
+        PlaceId shortestPathStep = NOWHERE;
+        for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
+            // Calculate path
+            int pathLength = 0;
+            PlaceId *path = HvGetShortestPathTo(hv, hunter, CASTLE_DRACULA, &pathLength);
+            if (pathLength < minPathLength) {
+                closestPlayer = hunter;
+                minPathLength = pathLength;
+                shortestPathStep = path[0];
+            }
+            free(path);
+        }
+        // Noone already there
+        if (placeIsReal(shortestPathStep) && player == closestPlayer && minPathLength != 0) {
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+            return;
+        }
+    }
+
     // Vampire
     if (placeIsReal(vampireLocation)) {
         // Calculate shortest path to location
@@ -148,28 +170,6 @@ void decideHunterMove(HunterView hv)
     if (health <= 3) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
         return;
-    }
-
-    // Guard CD
-    if (draculaHealth <= 20 && round % 3 == 0) {
-        Player closestPlayer = -1; int minPathLength = 100000;
-        PlaceId shortestPathStep = NOWHERE;
-        for (Player hunter = PLAYER_LORD_GODALMING; hunter < PLAYER_DRACULA; hunter++) {
-            // Calculate path
-            int pathLength = 0;
-            PlaceId *path = HvGetShortestPathTo(hv, hunter, CASTLE_DRACULA, &pathLength);
-            if (pathLength < minPathLength) {
-                closestPlayer = hunter;
-                minPathLength = pathLength;
-                shortestPathStep = path[0];
-            }
-            free(path);
-        }
-        // Noone already there
-        if (placeIsReal(shortestPathStep) && player == closestPlayer && minPathLength != 0) {
-            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
-            return;
-        }
     }
 
     // Collaborative research
@@ -226,20 +226,19 @@ void decideHunterMove(HunterView hv)
     return;
 }
 
-
 // Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv)
 {
     Player player = HvGetPlayer(hv);
     switch (player) {
         case PLAYER_LORD_GODALMING:
-            return ENGLISH_CHANNEL;
+            return ATLANTIC_OCEAN;
         case PLAYER_DR_SEWARD:
-            return BARCELONA;
+            return LISBON;
         case PLAYER_VAN_HELSING:
-            return HAMBURG;
+            return BORDEAUX;
         case PLAYER_MINA_HARKER:
-            return GALATZ;
+            return SOFIA;
         default:
             return NOWHERE;
     }
