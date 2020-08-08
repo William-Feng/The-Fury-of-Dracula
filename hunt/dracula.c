@@ -68,13 +68,15 @@ void decideDraculaMove(DraculaView dv)
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
             if (DvGetPlayerLocation(dv, player) == location) moveWeight[i] -= 120;
 
-        // Reachable within two turns
-        int numHuntersNotReachable = 0;
-        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-            if (!reachableInTwoTurns(dv, location, player, round))
-                numHuntersNotReachable++;
+        // Reachable within two turns (only check if location is not sea)
+        if (!placeIsSea(location)) {
+            int numHuntersNotReachable = 0;
+            for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+                if (!reachableInTwoTurns(dv, location, player, round))
+                    numHuntersNotReachable++;
+            }
+            moveWeight[i] += 8 * numHuntersNotReachable;
         }
-        moveWeight[i] += 10 * numHuntersNotReachable;
 
         // Check death condition
         if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER + (placeIsSea(location) * 2) &&
@@ -84,13 +86,19 @@ void decideDraculaMove(DraculaView dv)
         // Weight 2: Type of move
         if (!placeIsReal(move)) moveWeight[i] -= 2;
         if (placeIsSea(location)) moveWeight[i] -= 1;
+        if (draculaHealth <= 10 && placeIsSea(location)) moveWeight[i] -= 5;
+        if (draculaHealth <= 5 && placeIsSea(location)) moveWeight[i] -= 5;
         
         // Prefers to go to sea if encountered hunter
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
             if (DvGetPlayerLocation(dv, player) == currentLocation && placeIsSea(location)) moveWeight[i] += 4;
 
-        // Weight 3: Prefers to move to CD if low
-        if (draculaHealth <= 10 && location == CASTLE_DRACULA) moveWeight[i] += 10;
+        // Prefers to go to CD
+        if (location == CASTLE_DRACULA) moveWeight[i] += 7;
+        // Avoid staying at CD
+        if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 30) moveWeight[i] -= 50;
+        if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth > 20) moveWeight[i] -= 30;
+        if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth > 12) moveWeight[i] -= 20;
     }
 
     // Select max weight
@@ -157,7 +165,7 @@ static bool reachableInTwoTurns(DraculaView dv, PlaceId location, Player player,
 static PlaceId draculaStart(DraculaView dv)
 {
     // Process options, weighted by the number of hunters that can reach that location
-    PlaceId options[4] = {DUBLIN, ATHENS, BORDEAUX, HAMBURG};
+    PlaceId options[4] = {CASTLE_DRACULA, ATHENS, DUBLIN, HAMBURG};
     int weight[4] = {0};
     for (int i = 0; i < 4; i++) {
         PlaceId option = options[i];

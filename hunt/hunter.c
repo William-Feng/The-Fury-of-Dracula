@@ -179,7 +179,7 @@ void decideHunterMove(HunterView hv)
     }
 
     // Rest
-    if (health <= 3) {
+    if (health < 3) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
         return;
     }
@@ -244,11 +244,11 @@ static PlaceId startingLocation(HunterView hv)
     Player player = HvGetPlayer(hv);
     switch (player) {
         case PLAYER_LORD_GODALMING:
-            return ATLANTIC_OCEAN;
+            return EDINBURGH;
         case PLAYER_DR_SEWARD:
             return LISBON;
         case PLAYER_VAN_HELSING:
-            return BORDEAUX;
+            return VENICE;
         case PLAYER_MINA_HARKER:
             return SOFIA;
         default:
