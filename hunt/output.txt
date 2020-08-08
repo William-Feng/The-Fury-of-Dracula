@@ -1,8 +1,8 @@
-[0;36mCreated a temp directory '/tmp/tmp.OseBGY2dfe' for checking your submission[0m
-[0;36mCopying your files into '/tmp/tmp.OseBGY2dfe'[0m
+[0;36mCreated a temp directory '/tmp/tmp.frtUW1gSMp' for checking your submission[0m
+[0;36mCopying your files into '/tmp/tmp.frtUW1gSMp'[0m
 [0;36mChecking that your submission includes all the required files[0m
 [0;36mChecking that your submission does NOT include files that shouldn't be modified[0m
-[0;36mCopying our versions of files that shouldn't be modified into '/tmp/tmp.OseBGY2dfe'[0m
+[0;36mCopying our versions of files that shouldn't be modified into '/tmp/tmp.frtUW1gSMp'[0m
 [0;36mCopying in the remaining files that you weren't required to modify or submit[0m
 [0;36mCheck your Makefile for 'LIBS'[0m
 [0;36mChecking that your code compiles[0m
@@ -57,18 +57,18 @@ Running with input: "past_plays": ""
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 190,
   "move": "AO",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 181
 }
 > Game score: 366
 > Moving from: undefined
 > Life Points: 9
 > Player 0 made move:
 > +++
-  timer: 190
   move: AO
   message: JAWA - we don't go by the script
+  timer: 181
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -77,18 +77,18 @@ Running with input: "past_plays": "GAO...."
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 81,
   "move": "LS",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 190
 }
 > Game score: 366
 > Moving from: undefined
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 81
   move: LS
   message: JAWA - we don't go by the script
+  timer: 190
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -97,7 +97,7 @@ Running with input: "past_plays": "GAO.... SLS...."
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 94,
+  "timer": 196,
   "move": "BO",
   "message": "JAWA - we don't go by the script"
 }
@@ -106,7 +106,7 @@ Move:  {
 > Life Points: 9
 > Player 2 made move:
 > +++
-  timer: 94
+  timer: 196
   move: BO
   message: JAWA - we don't go by the script
 > ---
@@ -119,7 +119,7 @@ Program Output (0):
 Move:  {
   "move": "SO",
   "message": "JAWA - we don't go by the script",
-  "timer": 128
+  "timer": 168
 }
 > Game score: 366
 > Moving from: undefined
@@ -128,7 +128,7 @@ Move:  {
 > +++
   move: SO
   message: JAWA - we don't go by the script
-  timer: 128
+  timer: 168
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -139,7 +139,7 @@ Program Output (0):
 Move:  {
   "move": "DU",
   "message": "JAWA - we don't go by the script",
-  "timer": 226
+  "timer": 232
 }
 > Game score: 366
 > Moving from: undefined
@@ -148,7 +148,7 @@ Move:  {
 > +++
   move: DU
   message: JAWA - we don't go by the script
-  timer: 226
+  timer: 232
 > ---
 > End of Round:  0
 > Starting Round:  1
@@ -159,18 +159,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.."
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 700,
+  "message": "JAWA - we don't go by the script",
   "move": "BB",
-  "message": "JAWA - we don't go by the script"
+  "timer": 783
 }
 > Game score: 365
 > Moving from: AO
 > Life Points: 9
 > Player 0 made move:
 > +++
-  timer: 700
-  move: BB
   message: JAWA - we don't go by the script
+  move: BB
+  timer: 783
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -181,7 +181,7 @@ Program Output (0):
 Move:  {
   "move": "AO",
   "message": "JAWA - we don't go by the script",
-  "timer": 590
+  "timer": 757
 }
 > Game score: 365
 > Moving from: LS
@@ -190,7 +190,7 @@ Move:  {
 > +++
   move: AO
   message: JAWA - we don't go by the script
-  timer: 590
+  timer: 757
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -201,7 +201,7 @@ Program Output (0):
 Move:  {
   "move": "LE",
   "message": "JAWA - we don't go by the script",
-  "timer": 782
+  "timer": 795
 }
 > Game score: 365
 > Moving from: BO
@@ -210,7 +210,7 @@ Move:  {
 > +++
   move: LE
   message: JAWA - we don't go by the script
-  timer: 782
+  timer: 795
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -221,7 +221,7 @@ Program Output (0):
 Move:  {
   "move": "BC",
   "message": "JAWA - we don't go by the script",
-  "timer": 329
+  "timer": 818
 }
 > Game score: 365
 > Moving from: SO
@@ -230,7 +230,7 @@ Move:  {
 > +++
   move: BC
   message: JAWA - we don't go by the script
-  timer: 329
+  timer: 818
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -239,9 +239,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "D1",
   "message": "JAWA - we don't go by the script",
-  "timer": 192
+  "move": "D1",
+  "timer": 237
 }
 > Game score: 365
 > Moving from: DU
@@ -249,9 +249,9 @@ Move:  {
 > Legal Drac moves: GW IR D1 HI
 > Player 4 made move:
 > +++
-  move: D1
   message: JAWA - we don't go by the script
-  timer: 192
+  move: D1
+  timer: 237
 > ---
 > End of Round:  1
 > Starting Round:  2
@@ -263,7 +263,7 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "NA",
-  "timer": 633,
+  "timer": 1716,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 364
@@ -272,7 +272,7 @@ Move:  {
 > Player 0 made move:
 > +++
   move: NA
-  timer: 633
+  timer: 1716
   message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
@@ -282,18 +282,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 951,
   "move": "BB",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 704
 }
 > Game score: 364
 > Moving from: AO
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 951
   move: BB
   message: JAWA - we don't go by the script
+  timer: 704
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -304,7 +304,7 @@ Program Output (0):
 Move:  {
   "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 436
+  "timer": 1138
 }
 > Game score: 364
 > Moving from: LE
@@ -313,7 +313,7 @@ Move:  {
 > +++
   move: NA
   message: JAWA - we don't go by the script
-  timer: 436
+  timer: 1138
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -324,7 +324,7 @@ Program Output (0):
 Move:  {
   "move": "CN",
   "message": "JAWA - we don't go by the script",
-  "timer": 351
+  "timer": 716
 }
 > Game score: 364
 > Moving from: BC
@@ -333,7 +333,7 @@ Move:  {
 > +++
   move: CN
   message: JAWA - we don't go by the script
-  timer: 351
+  timer: 716
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -342,9 +342,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "HI",
   "message": "JAWA - we don't go by the script",
-  "timer": 181
+  "move": "HI",
+  "timer": 159
 }
 > Game score: 364
 > Moving from: DU
@@ -352,9 +352,9 @@ Move:  {
 > Legal Drac moves: GW IR HI
 > Player 4 made move:
 > +++
-  move: HI
   message: JAWA - we don't go by the script
-  timer: 181
+  move: HI
+  timer: 159
 > ---
 > End of Round:  2
 > Starting Round:  3
@@ -365,8 +365,8 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 570,
   "move": "LE",
-  "timer": 472,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 363
@@ -374,8 +374,8 @@ Move:  {
 > Life Points: 9
 > Player 0 made move:
 > +++
+  timer: 570
   move: LE
-  timer: 472
   message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
@@ -387,7 +387,7 @@ Program Output (0):
 Move:  {
   "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 338
+  "timer": 580
 }
 > Game score: 363
 > Moving from: BB
@@ -396,7 +396,7 @@ Move:  {
 > +++
   move: NA
   message: JAWA - we don't go by the script
-  timer: 338
+  timer: 580
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -405,18 +405,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 464,
   "move": "LE",
-  "message": "JAWA - we don't go by the script",
-  "timer": 466
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 363
 > Moving from: NA
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 464
   move: LE
   message: JAWA - we don't go by the script
-  timer: 466
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -427,7 +427,7 @@ Program Output (0):
 Move:  {
   "message": "JAWA - we don't go by the script",
   "move": "BC",
-  "timer": 1282
+  "timer": 446
 }
 > Game score: 363
 > Moving from: CN
@@ -436,7 +436,7 @@ Move:  {
 > +++
   message: JAWA - we don't go by the script
   move: BC
-  timer: 1282
+  timer: 446
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -447,7 +447,7 @@ Program Output (0):
 Move:  {
   "move": "GW",
   "message": "JAWA - we don't go by the script",
-  "timer": 109
+  "timer": 116
 }
 > Game score: 363
 > Moving from: DU
@@ -457,7 +457,7 @@ Move:  {
 > +++
   move: GW
   message: JAWA - we don't go by the script
-  timer: 109
+  timer: 116
 > ---
 > End of Round:  3
 > Starting Round:  4
@@ -470,7 +470,7 @@ Program Output (0):
 Move:  {
   "move": "PA",
   "message": "JAWA - we don't go by the script",
-  "timer": 357
+  "timer": 361
 }
 > Game score: 362
 > Moving from: LE
@@ -479,7 +479,7 @@ Move:  {
 > +++
   move: PA
   message: JAWA - we don't go by the script
-  timer: 357
+  timer: 361
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -490,7 +490,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 1365
+  "timer": 847
 }
 > Game score: 362
 > Moving from: NA
@@ -499,7 +499,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 1365
+  timer: 847
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -510,7 +510,7 @@ Program Output (0):
 Move:  {
   "move": "BU",
   "message": "JAWA - we don't go by the script",
-  "timer": 863
+  "timer": 498
 }
 > Game score: 362
 > Moving from: LE
@@ -519,7 +519,7 @@ Move:  {
 > +++
   move: BU
   message: JAWA - we don't go by the script
-  timer: 863
+  timer: 498
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -530,7 +530,7 @@ Program Output (0):
 Move:  {
   "move": "BD",
   "message": "JAWA - we don't go by the script",
-  "timer": 378
+  "timer": 596
 }
 > Game score: 362
 > Moving from: BC
@@ -539,7 +539,7 @@ Move:  {
 > +++
   move: BD
   message: JAWA - we don't go by the script
-  timer: 378
+  timer: 596
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -549,8 +549,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "AO",
-  "message": "JAWA - we don't go by the script",
-  "timer": 879
+  "timer": 92,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 362
 > Moving from: GW
@@ -559,8 +559,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: AO
+  timer: 92
   message: JAWA - we don't go by the script
-  timer: 879
 > ---
 > End of Round:  4
 > Starting Round:  5
@@ -571,18 +571,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 336,
   "move": "BO",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 342
 }
 > Game score: 361
 > Moving from: PA
 > Life Points: 9
 > Player 0 made move:
 > +++
-  timer: 336
   move: BO
   message: JAWA - we don't go by the script
+  timer: 342
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -592,8 +592,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BB",
-  "timer": 505,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 397
 }
 > Game score: 361
 > Moving from: BO
@@ -601,8 +601,8 @@ Move:  {
 > Player 1 made move:
 > +++
   move: BB
-  timer: 505
   message: JAWA - we don't go by the script
+  timer: 397
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -613,7 +613,7 @@ Program Output (0):
 Move:  {
   "move": "AM",
   "message": "JAWA - we don't go by the script",
-  "timer": 709
+  "timer": 436
 }
 > Game score: 361
 > Moving from: BU
@@ -622,7 +622,7 @@ Move:  {
 > +++
   move: AM
   message: JAWA - we don't go by the script
-  timer: 709
+  timer: 436
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -633,7 +633,7 @@ Program Output (0):
 Move:  {
   "message": "JAWA - we don't go by the script",
   "move": "BD",
-  "timer": 657
+  "timer": 502
 }
 > Game score: 361
 > Moving from: BD
@@ -642,7 +642,7 @@ Move:  {
 > +++
   message: JAWA - we don't go by the script
   move: BD
-  timer: 657
+  timer: 502
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -651,7 +651,7 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 193,
+  "timer": 181,
   "move": "IR",
   "message": "JAWA - we don't go by the script"
 }
@@ -661,7 +661,7 @@ Move:  {
 > Legal Drac moves: CA LS NS EC IR BB MS
 > Player 4 made move:
 > +++
-  timer: 193
+  timer: 181
   move: IR
   message: JAWA - we don't go by the script
 > ---
@@ -676,7 +676,7 @@ Program Output (0):
 Move:  {
   "move": "BB",
   "message": "JAWA - we don't go by the script",
-  "timer": 4342
+  "timer": 352
 }
 > Game score: 360
 > Moving from: BO
@@ -685,7 +685,7 @@ Move:  {
 > +++
   move: BB
   message: JAWA - we don't go by the script
-  timer: 4342
+  timer: 352
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -694,18 +694,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 916,
+  "message": "JAWA - we don't go by the script",
   "move": "NA",
-  "message": "JAWA - we don't go by the script"
+  "timer": 357
 }
 > Game score: 360
 > Moving from: BB
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 916
-  move: NA
   message: JAWA - we don't go by the script
+  move: NA
+  timer: 357
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -714,18 +714,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
+  "timer": 829,
   "move": "BU",
-  "timer": 495
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 360
 > Moving from: AM
 > Life Points: 9
 > Player 2 made move:
 > +++
-  message: JAWA - we don't go by the script
+  timer: 829
   move: BU
-  timer: 495
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -735,8 +735,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BD",
-  "timer": 343,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 1063
 }
 > Game score: 360
 > Moving from: BD
@@ -744,8 +744,8 @@ Move:  {
 > Player 3 made move:
 > +++
   move: BD
-  timer: 343
   message: JAWA - we don't go by the script
+  timer: 1063
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -756,7 +756,7 @@ Program Output (0):
 Move:  {
   "message": "JAWA - we don't go by the script",
   "move": "DU",
-  "timer": 135
+  "timer": 142
 }
 > Game score: 360
 > Moving from: IR
@@ -766,7 +766,7 @@ Move:  {
 > +++
   message: JAWA - we don't go by the script
   move: DU
-  timer: 135
+  timer: 142
 > ---
 > End of Round:  6
 > Starting Round:  7
@@ -779,7 +779,7 @@ Program Output (0):
 Move:  {
   "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 1192
+  "timer": 364
 }
 > Game score: 346
 > Moving from: BB
@@ -788,7 +788,7 @@ Move:  {
 > +++
   move: NA
   message: JAWA - we don't go by the script
-  timer: 1192
+  timer: 364
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -799,7 +799,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 837
+  "timer": 366
 }
 > Game score: 346
 > Moving from: NA
@@ -808,7 +808,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 837
+  timer: 366
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -819,7 +819,7 @@ Program Output (0):
 Move:  {
   "move": "CO",
   "message": "JAWA - we don't go by the script",
-  "timer": 426
+  "timer": 359
 }
 > Game score: 346
 > Moving from: BU
@@ -828,7 +828,7 @@ Move:  {
 > +++
   move: CO
   message: JAWA - we don't go by the script
-  timer: 426
+  timer: 359
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -839,7 +839,7 @@ Program Output (0):
 Move:  {
   "move": "BC",
   "message": "JAWA - we don't go by the script",
-  "timer": 2410
+  "timer": 345
 }
 > Game score: 346
 > Moving from: BD
@@ -848,7 +848,7 @@ Move:  {
 > +++
   move: BC
   message: JAWA - we don't go by the script
-  timer: 2410
+  timer: 345
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -858,8 +858,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "D1",
-  "message": "JAWA - we don't go by the script",
-  "timer": 641
+  "timer": 180,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 346
 > Moving from: DU
@@ -868,8 +868,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: D1
+  timer: 180
   message: JAWA - we don't go by the script
-  timer: 641
 > ---
 > End of Round:  7
 > Starting Round:  8
@@ -882,7 +882,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 567
+  "timer": 359
 }
 > Game score: 345
 > Moving from: NA
@@ -891,7 +891,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 567
+  timer: 359
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -901,8 +901,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "CF",
-  "timer": 958,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 368
 }
 > Game score: 345
 > Moving from: BO
@@ -910,8 +910,8 @@ Move:  {
 > Player 1 made move:
 > +++
   move: CF
-  timer: 958
   message: JAWA - we don't go by the script
+  timer: 368
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -922,7 +922,7 @@ Program Output (0):
 Move:  {
   "move": "ST",
   "message": "JAWA - we don't go by the script",
-  "timer": 873
+  "timer": 1191
 }
 > Game score: 345
 > Moving from: CO
@@ -931,7 +931,7 @@ Move:  {
 > +++
   move: ST
   message: JAWA - we don't go by the script
-  timer: 873
+  timer: 1191
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -940,18 +940,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "BD",
   "message": "JAWA - we don't go by the script",
-  "timer": 1170
+  "move": "BD",
+  "timer": 943
 }
 > Game score: 345
 > Moving from: BC
 > Life Points: 9
 > Player 3 made move:
 > +++
-  move: BD
   message: JAWA - we don't go by the script
-  timer: 1170
+  move: BD
+  timer: 943
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -961,8 +961,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "HI",
-  "message": "JAWA - we don't go by the script",
-  "timer": 85
+  "timer": 694,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 345
 > Moving from: DU
@@ -971,8 +971,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: HI
+  timer: 694
   message: JAWA - we don't go by the script
-  timer: 85
 > ---
 > End of Round:  8
 > Starting Round:  9
@@ -984,8 +984,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "CF",
-  "timer": 308,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 361
 }
 > Game score: 344
 > Moving from: BO
@@ -993,8 +993,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: CF
-  timer: 308
   message: JAWA - we don't go by the script
+  timer: 361
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1005,7 +1005,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 1213
+  "timer": 800
 }
 > Game score: 344
 > Moving from: CF
@@ -1014,7 +1014,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 1213
+  timer: 800
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1024,8 +1024,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BU",
-  "message": "JAWA - we don't go by the script",
-  "timer": 486
+  "timer": 737,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 344
 > Moving from: ST
@@ -1033,8 +1033,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: BU
+  timer: 737
   message: JAWA - we don't go by the script
-  timer: 486
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1043,18 +1043,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "VI",
   "message": "JAWA - we don't go by the script",
-  "timer": 337
+  "move": "VI",
+  "timer": 1579
 }
 > Game score: 344
 > Moving from: BD
 > Life Points: 9
 > Player 3 made move:
 > +++
-  move: VI
   message: JAWA - we don't go by the script
-  timer: 337
+  move: VI
+  timer: 1579
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1063,9 +1063,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "GW",
-  "timer": 441
+  "message": "JAWA - we don't go by the script",
+  "timer": 358
 }
 > Game score: 344
 > Moving from: DU
@@ -1073,9 +1073,9 @@ Move:  {
 > Legal Drac moves: GW
 > Player 4 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: GW
-  timer: 441
+  message: JAWA - we don't go by the script
+  timer: 358
 > ---
 > End of Round:  9
 > Starting Round:  10
@@ -1088,7 +1088,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 1324
+  "timer": 715
 }
 > Game score: 343
 > Moving from: CF
@@ -1097,7 +1097,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 1324
+  timer: 715
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1108,7 +1108,7 @@ Program Output (0):
 Move:  {
   "move": "FL",
   "message": "JAWA - we don't go by the script",
-  "timer": 1566
+  "timer": 366
 }
 > Game score: 343
 > Moving from: GE
@@ -1117,7 +1117,7 @@ Move:  {
 > +++
   move: FL
   message: JAWA - we don't go by the script
-  timer: 1566
+  timer: 366
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1126,18 +1126,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 368,
   "move": "CO",
-  "message": "JAWA - we don't go by the script",
-  "timer": 366
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 343
 > Moving from: BU
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 368
   move: CO
   message: JAWA - we don't go by the script
-  timer: 366
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1147,8 +1147,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "MU",
-  "message": "JAWA - we don't go by the script",
-  "timer": 392
+  "timer": 489,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 343
 > Moving from: VI
@@ -1156,8 +1156,8 @@ Move:  {
 > Player 3 made move:
 > +++
   move: MU
+  timer: 489
   message: JAWA - we don't go by the script
-  timer: 392
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1168,7 +1168,7 @@ Program Output (0):
 Move:  {
   "move": "AO",
   "message": "JAWA - we don't go by the script",
-  "timer": 94
+  "timer": 106
 }
 > Game score: 343
 > Moving from: GW
@@ -1178,7 +1178,7 @@ Move:  {
 > +++
   move: AO
   message: JAWA - we don't go by the script
-  timer: 94
+  timer: 106
 > ---
 > End of Round:  10
 > Starting Round:  11
@@ -1190,8 +1190,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "GE",
-  "message": "JAWA - we don't go by the script",
-  "timer": 352
+  "timer": 577,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 342
 > Moving from: GE
@@ -1199,8 +1199,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: GE
+  timer: 577
   message: JAWA - we don't go by the script
-  timer: 352
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1209,18 +1209,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 340,
   "move": "FL",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 554
 }
 > Game score: 342
 > Moving from: FL
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 340
   move: FL
   message: JAWA - we don't go by the script
+  timer: 554
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1231,7 +1231,7 @@ Program Output (0):
 Move:  {
   "move": "CO",
   "message": "JAWA - we don't go by the script",
-  "timer": 349
+  "timer": 350
 }
 > Game score: 342
 > Moving from: CO
@@ -1240,7 +1240,7 @@ Move:  {
 > +++
   move: CO
   message: JAWA - we don't go by the script
-  timer: 349
+  timer: 350
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1249,18 +1249,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "MU",
   "message": "JAWA - we don't go by the script",
-  "timer": 810
+  "move": "MU",
+  "timer": 854
 }
 > Game score: 342
 > Moving from: MU
 > Life Points: 9
 > Player 3 made move:
 > +++
-  move: MU
   message: JAWA - we don't go by the script
-  timer: 810
+  move: MU
+  timer: 854
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1271,7 +1271,7 @@ Program Output (0):
 Move:  {
   "move": "CA",
   "message": "JAWA - we don't go by the script",
-  "timer": 239
+  "timer": 255
 }
 > Game score: 342
 > Moving from: AO
@@ -1281,7 +1281,7 @@ Move:  {
 > +++
   move: CA
   message: JAWA - we don't go by the script
-  timer: 239
+  timer: 255
 > ---
 > End of Round:  11
 > Starting Round:  12
@@ -1292,18 +1292,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 185,
   "move": "MR",
-  "message": "JAWA - we don't go by the script",
-  "timer": 214
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 341
 > Moving from: GE
 > Life Points: 9
 > Player 0 made move:
 > +++
+  timer: 185
   move: MR
   message: JAWA - we don't go by the script
-  timer: 214
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1312,18 +1312,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
+  "timer": 185,
   "move": "GO",
-  "timer": 173
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 341
 > Moving from: FL
 > Life Points: 9
 > Player 1 made move:
 > +++
-  message: JAWA - we don't go by the script
+  timer: 185
   move: GO
-  timer: 173
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1332,18 +1332,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 930,
   "move": "AM",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 184
 }
 > Game score: 341
 > Moving from: CO
 > Life Points: 9
 > Player 2 made move:
 > +++
-  timer: 930
   move: AM
   message: JAWA - we don't go by the script
+  timer: 184
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1352,18 +1352,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 185,
   "move": "BR",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 179
 }
 > Game score: 341
 > Moving from: MU
 > Life Points: 9
 > Player 3 made move:
 > +++
-  timer: 185
   move: BR
   message: JAWA - we don't go by the script
+  timer: 179
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1372,9 +1372,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 170,
   "move": "GR",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 141
 }
 > Game score: 341
 > Moving from: CA
@@ -1382,9 +1382,9 @@ Move:  {
 > Legal Drac moves: GR LS MA
 > Player 4 made move:
 > +++
-  timer: 170
   move: GR
   message: JAWA - we don't go by the script
+  timer: 141
 > ---
 > End of Round:  12
 > Starting Round:  13
@@ -1397,7 +1397,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 410
+  "timer": 415
 }
 > Game score: 340
 > Moving from: MR
@@ -1406,7 +1406,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 410
+  timer: 415
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1417,7 +1417,7 @@ Program Output (0):
 Move:  {
   "move": "MR",
   "message": "JAWA - we don't go by the script",
-  "timer": 173
+  "timer": 259
 }
 > Game score: 340
 > Moving from: GO
@@ -1426,7 +1426,7 @@ Move:  {
 > +++
   move: MR
   message: JAWA - we don't go by the script
-  timer: 173
+  timer: 259
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1437,7 +1437,7 @@ Program Output (0):
 Move:  {
   "move": "NS",
   "message": "JAWA - we don't go by the script",
-  "timer": 411
+  "timer": 403
 }
 > Game score: 340
 > Moving from: AM
@@ -1446,7 +1446,7 @@ Move:  {
 > +++
   move: NS
   message: JAWA - we don't go by the script
-  timer: 411
+  timer: 403
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1457,7 +1457,7 @@ Program Output (0):
 Move:  {
   "move": "HA",
   "message": "JAWA - we don't go by the script",
-  "timer": 175
+  "timer": 319
 }
 > Game score: 340
 > Moving from: BR
@@ -1466,7 +1466,7 @@ Move:  {
 > +++
   move: HA
   message: JAWA - we don't go by the script
-  timer: 175
+  timer: 319
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1477,7 +1477,7 @@ Program Output (0):
 Move:  {
   "move": "D1",
   "message": "JAWA - we don't go by the script",
-  "timer": 1305
+  "timer": 339
 }
 > Game score: 340
 > Moving from: GR
@@ -1487,7 +1487,7 @@ Move:  {
 > +++
   move: D1
   message: JAWA - we don't go by the script
-  timer: 1305
+  timer: 339
 > ---
 > End of Round:  13
 > Starting Round:  14
@@ -1498,18 +1498,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "message": "JAWA - we don't go by the script",
   "move": "MR",
-  "timer": 181,
-  "message": "JAWA - we don't go by the script"
+  "timer": 178
 }
 > Game score: 339
 > Moving from: GE
 > Life Points: 9
 > Player 0 made move:
 > +++
-  move: MR
-  timer: 181
   message: JAWA - we don't go by the script
+  move: MR
+  timer: 178
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1519,8 +1519,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BO",
-  "timer": 411,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 447
 }
 > Game score: 339
 > Moving from: MR
@@ -1528,8 +1528,8 @@ Move:  {
 > Player 1 made move:
 > +++
   move: BO
-  timer: 411
   message: JAWA - we don't go by the script
+  timer: 447
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1540,7 +1540,7 @@ Program Output (0):
 Move:  {
   "move": "AO",
   "message": "JAWA - we don't go by the script",
-  "timer": 411
+  "timer": 403
 }
 > Game score: 339
 > Moving from: NS
@@ -1549,7 +1549,7 @@ Move:  {
 > +++
   move: AO
   message: JAWA - we don't go by the script
-  timer: 411
+  timer: 403
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1558,18 +1558,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "LI",
-  "timer": 437
+  "message": "JAWA - we don't go by the script",
+  "timer": 395
 }
 > Game score: 339
 > Moving from: HA
 > Life Points: 9
 > Player 3 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: LI
-  timer: 437
+  message: JAWA - we don't go by the script
+  timer: 395
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1580,7 +1580,7 @@ Program Output (0):
 Move:  {
   "move": "HI",
   "message": "JAWA - we don't go by the script",
-  "timer": 270
+  "timer": 160
 }
 > Game score: 339
 > Moving from: GR
@@ -1590,7 +1590,7 @@ Move:  {
 > +++
   move: HI
   message: JAWA - we don't go by the script
-  timer: 270
+  timer: 160
 > ---
 > End of Round:  14
 > Starting Round:  15
@@ -1601,18 +1601,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "BU",
   "message": "JAWA - we don't go by the script",
-  "timer": 603
+  "move": "BU",
+  "timer": 445
 }
 > Game score: 338
 > Moving from: MR
 > Life Points: 9
 > Player 0 made move:
 > +++
-  move: BU
   message: JAWA - we don't go by the script
-  timer: 603
+  move: BU
+  timer: 445
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1623,7 +1623,7 @@ Program Output (0):
 Move:  {
   "move": "CF",
   "message": "JAWA - we don't go by the script",
-  "timer": 413
+  "timer": 1046
 }
 > Game score: 338
 > Moving from: BO
@@ -1632,7 +1632,7 @@ Move:  {
 > +++
   move: CF
   message: JAWA - we don't go by the script
-  timer: 413
+  timer: 1046
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1643,7 +1643,7 @@ Program Output (0):
 Move:  {
   "move": "BB",
   "message": "JAWA - we don't go by the script",
-  "timer": 730
+  "timer": 435
 }
 > Game score: 338
 > Moving from: AO
@@ -1652,7 +1652,7 @@ Move:  {
 > +++
   move: BB
   message: JAWA - we don't go by the script
-  timer: 730
+  timer: 435
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1662,8 +1662,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "HA",
-  "timer": 247,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 176
 }
 > Game score: 338
 > Moving from: LI
@@ -1671,8 +1671,8 @@ Move:  {
 > Player 3 made move:
 > +++
   move: HA
-  timer: 247
   message: JAWA - we don't go by the script
+  timer: 176
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1682,8 +1682,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "AL",
-  "timer": 1084,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 162
 }
 > Game score: 338
 > Moving from: GR
@@ -1692,8 +1692,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: AL
-  timer: 1084
   message: JAWA - we don't go by the script
+  timer: 162
 > ---
 > End of Round:  15
 > Starting Round:  16
@@ -1706,7 +1706,7 @@ Program Output (0):
 Move:  {
   "move": "CO",
   "message": "JAWA - we don't go by the script",
-  "timer": 517
+  "timer": 2196
 }
 > Game score: 337
 > Moving from: BU
@@ -1715,7 +1715,7 @@ Move:  {
 > +++
   move: CO
   message: JAWA - we don't go by the script
-  timer: 517
+  timer: 2196
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1724,18 +1724,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 454,
   "move": "GE",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 413
 }
 > Game score: 337
 > Moving from: CF
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 454
   move: GE
   message: JAWA - we don't go by the script
+  timer: 413
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1744,18 +1744,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 434,
   "move": "NA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 1675
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 337
 > Moving from: BB
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 434
   move: NA
   message: JAWA - we don't go by the script
-  timer: 1675
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1766,7 +1766,7 @@ Program Output (0):
 Move:  {
   "message": "JAWA - we don't go by the script",
   "move": "CO",
-  "timer": 424
+  "timer": 420
 }
 > Game score: 337
 > Moving from: HA
@@ -1775,7 +1775,7 @@ Move:  {
 > +++
   message: JAWA - we don't go by the script
   move: CO
-  timer: 424
+  timer: 420
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1784,7 +1784,7 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 1288,
+  "timer": 150,
   "move": "MA",
   "message": "JAWA - we don't go by the script"
 }
@@ -1794,7 +1794,7 @@ Move:  {
 > Legal Drac moves: MA SR MS
 > Player 4 made move:
 > +++
-  timer: 1288
+  timer: 150
   move: MA
   message: JAWA - we don't go by the script
 > ---
@@ -1808,8 +1808,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "CO",
-  "message": "JAWA - we don't go by the script",
-  "timer": 836
+  "timer": 401,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 336
 > Moving from: CO
@@ -1817,8 +1817,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: CO
+  timer: 401
   message: JAWA - we don't go by the script
-  timer: 836
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1827,18 +1827,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 429,
   "move": "GE",
-  "message": "JAWA - we don't go by the script",
-  "timer": 404
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 336
 > Moving from: GE
 > Life Points: 9
 > Player 1 made move:
 > +++
+  timer: 429
   move: GE
   message: JAWA - we don't go by the script
-  timer: 404
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1847,18 +1847,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 449
+  "move": "NA",
+  "timer": 393
 }
 > Game score: 336
 > Moving from: NA
 > Life Points: 9
 > Player 2 made move:
 > +++
-  move: NA
   message: JAWA - we don't go by the script
-  timer: 449
+  move: NA
+  timer: 393
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1867,18 +1867,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "CO",
-  "timer": 428
+  "timer": 1112,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 336
 > Moving from: CO
 > Life Points: 9
 > Player 3 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: CO
-  timer: 428
+  timer: 1112
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1889,7 +1889,7 @@ Program Output (0):
 Move:  {
   "move": "CA",
   "message": "JAWA - we don't go by the script",
-  "timer": 185
+  "timer": 179
 }
 > Game score: 336
 > Moving from: MA
@@ -1899,7 +1899,7 @@ Move:  {
 > +++
   move: CA
   message: JAWA - we don't go by the script
-  timer: 185
+  timer: 179
 > ---
 > End of Round:  17
 > Starting Round:  18
@@ -1910,18 +1910,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 326,
   "move": "PA",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 184
 }
 > Game score: 335
 > Moving from: CO
 > Life Points: 9
 > Player 0 made move:
 > +++
-  timer: 326
   move: PA
   message: JAWA - we don't go by the script
+  timer: 184
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -1932,7 +1932,7 @@ Program Output (0):
 Move:  {
   "move": "MR",
   "message": "JAWA - we don't go by the script",
-  "timer": 182
+  "timer": 284
 }
 > Game score: 335
 > Moving from: GE
@@ -1941,7 +1941,7 @@ Move:  {
 > +++
   move: MR
   message: JAWA - we don't go by the script
-  timer: 182
+  timer: 284
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -1952,7 +1952,7 @@ Program Output (0):
 Move:  {
   "move": "BB",
   "message": "JAWA - we don't go by the script",
-  "timer": 304
+  "timer": 247
 }
 > Game score: 335
 > Moving from: NA
@@ -1961,7 +1961,7 @@ Move:  {
 > +++
   move: BB
   message: JAWA - we don't go by the script
-  timer: 304
+  timer: 247
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -1972,7 +1972,7 @@ Program Output (0):
 Move:  {
   "move": "AM",
   "message": "JAWA - we don't go by the script",
-  "timer": 165
+  "timer": 183
 }
 > Game score: 335
 > Moving from: CO
@@ -1981,7 +1981,7 @@ Move:  {
 > +++
   move: AM
   message: JAWA - we don't go by the script
-  timer: 165
+  timer: 183
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -1990,9 +1990,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "GR",
-  "timer": 145
+  "message": "JAWA - we don't go by the script",
+  "timer": 149
 }
 > Game score: 335
 > Moving from: CA
@@ -2000,9 +2000,9 @@ Move:  {
 > Legal Drac moves: GR LS AO
 > Player 4 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: GR
-  timer: 145
+  message: JAWA - we don't go by the script
+  timer: 149
 > ---
 > End of Round:  18
 > Starting Round:  19
@@ -2015,7 +2015,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 1750
+  "timer": 465
 }
 > Game score: 334
 > Moving from: PA
@@ -2024,7 +2024,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 1750
+  timer: 465
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2033,18 +2033,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 1836,
   "move": "ZU",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 491
 }
 > Game score: 334
 > Moving from: MR
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 1836
   move: ZU
   message: JAWA - we don't go by the script
+  timer: 491
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2053,8 +2053,8 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 665,
   "move": "NA",
-  "timer": 417,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 334
@@ -2062,8 +2062,8 @@ Move:  {
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 665
   move: NA
-  timer: 417
   message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
@@ -2075,7 +2075,7 @@ Program Output (0):
 Move:  {
   "move": "NS",
   "message": "JAWA - we don't go by the script",
-  "timer": 448
+  "timer": 410
 }
 > Game score: 334
 > Moving from: AM
@@ -2084,7 +2084,7 @@ Move:  {
 > +++
   move: NS
   message: JAWA - we don't go by the script
-  timer: 448
+  timer: 410
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2095,7 +2095,7 @@ Program Output (0):
 Move:  {
   "message": "JAWA - we don't go by the script",
   "move": "D1",
-  "timer": 187
+  "timer": 171
 }
 > Game score: 334
 > Moving from: GR
@@ -2105,7 +2105,7 @@ Move:  {
 > +++
   message: JAWA - we don't go by the script
   move: D1
-  timer: 187
+  timer: 171
 > ---
 > End of Round:  19
 > Starting Round:  20
@@ -2117,8 +2117,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "CF",
-  "message": "JAWA - we don't go by the script",
-  "timer": 419
+  "timer": 412,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 320
 > Moving from: BO
@@ -2126,8 +2126,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: CF
+  timer: 412
   message: JAWA - we don't go by the script
-  timer: 419
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2138,7 +2138,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 1090
+  "timer": 191
 }
 > Game score: 320
 > Moving from: ZU
@@ -2147,7 +2147,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 1090
+  timer: 191
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2158,7 +2158,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 417
+  "timer": 412
 }
 > Game score: 320
 > Moving from: NA
@@ -2167,7 +2167,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 417
+  timer: 412
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2178,7 +2178,7 @@ Program Output (0):
 Move:  {
   "move": "AO",
   "message": "JAWA - we don't go by the script",
-  "timer": 442
+  "timer": 422
 }
 > Game score: 320
 > Moving from: NS
@@ -2187,7 +2187,7 @@ Move:  {
 > +++
   move: AO
   message: JAWA - we don't go by the script
-  timer: 442
+  timer: 422
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2198,7 +2198,7 @@ Program Output (0):
 Move:  {
   "move": "HI",
   "message": "JAWA - we don't go by the script",
-  "timer": 111
+  "timer": 426
 }
 > Game score: 320
 > Moving from: GR
@@ -2208,7 +2208,7 @@ Move:  {
 > +++
   move: HI
   message: JAWA - we don't go by the script
-  timer: 111
+  timer: 426
 > ---
 > End of Round:  20
 > Starting Round:  21
@@ -2221,7 +2221,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 1185
+  "timer": 627
 }
 > Game score: 319
 > Moving from: CF
@@ -2230,7 +2230,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 1185
+  timer: 627
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2240,8 +2240,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "ZU",
-  "message": "JAWA - we don't go by the script",
-  "timer": 1098
+  "timer": 418,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 319
 > Moving from: GE
@@ -2249,8 +2249,8 @@ Move:  {
 > Player 1 made move:
 > +++
   move: ZU
+  timer: 418
   message: JAWA - we don't go by the script
-  timer: 1098
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2260,8 +2260,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "LE",
-  "timer": 433,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 429
 }
 > Game score: 319
 > Moving from: BO
@@ -2269,8 +2269,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: LE
-  timer: 433
   message: JAWA - we don't go by the script
+  timer: 429
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2281,7 +2281,7 @@ Program Output (0):
 Move:  {
   "move": "BB",
   "message": "JAWA - we don't go by the script",
-  "timer": 430
+  "timer": 746
 }
 > Game score: 319
 > Moving from: AO
@@ -2290,7 +2290,7 @@ Move:  {
 > +++
   move: BB
   message: JAWA - we don't go by the script
-  timer: 430
+  timer: 746
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2299,9 +2299,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "AL",
-  "timer": 271
+  "message": "JAWA - we don't go by the script",
+  "timer": 121
 }
 > Game score: 319
 > Moving from: GR
@@ -2309,9 +2309,9 @@ Move:  {
 > Legal Drac moves: AL
 > Player 4 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: AL
-  timer: 271
+  message: JAWA - we don't go by the script
+  timer: 121
 > ---
 > End of Round:  21
 > Starting Round:  22
@@ -2324,7 +2324,7 @@ Program Output (0):
 Move:  {
   "move": "FL",
   "message": "JAWA - we don't go by the script",
-  "timer": 591
+  "timer": 452
 }
 > Game score: 318
 > Moving from: GE
@@ -2333,7 +2333,7 @@ Move:  {
 > +++
   move: FL
   message: JAWA - we don't go by the script
-  timer: 591
+  timer: 452
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2344,7 +2344,7 @@ Program Output (0):
 Move:  {
   "move": "MI",
   "message": "JAWA - we don't go by the script",
-  "timer": 432
+  "timer": 624
 }
 > Game score: 318
 > Moving from: ZU
@@ -2353,7 +2353,7 @@ Move:  {
 > +++
   move: MI
   message: JAWA - we don't go by the script
-  timer: 432
+  timer: 624
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2363,8 +2363,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "NA",
-  "timer": 772,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 1762
 }
 > Game score: 318
 > Moving from: LE
@@ -2372,8 +2372,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: NA
-  timer: 772
   message: JAWA - we don't go by the script
+  timer: 1762
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2384,7 +2384,7 @@ Program Output (0):
 Move:  {
   "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 3054
+  "timer": 1307
 }
 > Game score: 318
 > Moving from: BB
@@ -2393,7 +2393,7 @@ Move:  {
 > +++
   move: NA
   message: JAWA - we don't go by the script
-  timer: 3054
+  timer: 1307
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2403,8 +2403,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "MS",
-  "message": "JAWA - we don't go by the script",
-  "timer": 143
+  "timer": 147,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 318
 > Moving from: AL
@@ -2413,8 +2413,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: MS
+  timer: 147
   message: JAWA - we don't go by the script
-  timer: 143
 > ---
 > End of Round:  22
 > Starting Round:  23
@@ -2426,8 +2426,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "FL",
-  "message": "JAWA - we don't go by the script",
-  "timer": 483
+  "timer": 500,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 317
 > Moving from: FL
@@ -2435,8 +2435,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: FL
+  timer: 500
   message: JAWA - we don't go by the script
-  timer: 483
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2445,18 +2445,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 567,
   "move": "MI",
-  "message": "JAWA - we don't go by the script",
-  "timer": 4714
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 317
 > Moving from: MI
 > Life Points: 9
 > Player 1 made move:
 > +++
+  timer: 567
   move: MI
   message: JAWA - we don't go by the script
-  timer: 4714
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2466,8 +2466,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "NA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 366
+  "timer": 409,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 317
 > Moving from: NA
@@ -2475,8 +2475,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: NA
+  timer: 409
   message: JAWA - we don't go by the script
-  timer: 366
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2487,7 +2487,7 @@ Program Output (0):
 Move:  {
   "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 406
+  "timer": 395
 }
 > Game score: 317
 > Moving from: NA
@@ -2496,7 +2496,7 @@ Move:  {
 > +++
   move: NA
   message: JAWA - we don't go by the script
-  timer: 406
+  timer: 395
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2507,7 +2507,7 @@ Program Output (0):
 Move:  {
   "move": "CG",
   "message": "JAWA - we don't go by the script",
-  "timer": 146
+  "timer": 167
 }
 > Game score: 317
 > Moving from: MS
@@ -2517,7 +2517,7 @@ Move:  {
 > +++
   move: CG
   message: JAWA - we don't go by the script
-  timer: 146
+  timer: 167
 > ---
 > End of Round:  23
 > Starting Round:  24
@@ -2530,7 +2530,7 @@ Program Output (0):
 Move:  {
   "move": "GO",
   "message": "JAWA - we don't go by the script",
-  "timer": 551
+  "timer": 194
 }
 > Game score: 316
 > Moving from: FL
@@ -2539,7 +2539,7 @@ Move:  {
 > +++
   move: GO
   message: JAWA - we don't go by the script
-  timer: 551
+  timer: 194
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2550,7 +2550,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 207
+  "timer": 194
 }
 > Game score: 316
 > Moving from: MI
@@ -2559,7 +2559,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 207
+  timer: 194
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2570,7 +2570,7 @@ Program Output (0):
 Move:  {
   "move": "BB",
   "message": "JAWA - we don't go by the script",
-  "timer": 842
+  "timer": 189
 }
 > Game score: 316
 > Moving from: NA
@@ -2579,7 +2579,7 @@ Move:  {
 > +++
   move: BB
   message: JAWA - we don't go by the script
-  timer: 842
+  timer: 189
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2589,8 +2589,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BB",
-  "timer": 222,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 342
 }
 > Game score: 316
 > Moving from: NA
@@ -2598,8 +2598,8 @@ Move:  {
 > Player 3 made move:
 > +++
   move: BB
-  timer: 222
   message: JAWA - we don't go by the script
+  timer: 342
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2609,8 +2609,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "TS",
-  "timer": 110,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 113
 }
 > Game score: 316
 > Moving from: CG
@@ -2619,8 +2619,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: TS
-  timer: 110
   message: JAWA - we don't go by the script
+  timer: 113
 > ---
 > End of Round:  24
 > Starting Round:  25
@@ -2631,18 +2631,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "MR",
-  "timer": 612
+  "message": "JAWA - we don't go by the script",
+  "timer": 231
 }
 > Game score: 315
 > Moving from: GO
 > Life Points: 9
 > Player 0 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: MR
-  timer: 612
+  message: JAWA - we don't go by the script
+  timer: 231
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2651,18 +2651,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "CF",
   "message": "JAWA - we don't go by the script",
-  "timer": 449
+  "move": "CF",
+  "timer": 415
 }
 > Game score: 315
 > Moving from: GE
 > Life Points: 9
 > Player 1 made move:
 > +++
-  move: CF
   message: JAWA - we don't go by the script
-  timer: 449
+  move: CF
+  timer: 415
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2673,7 +2673,7 @@ Program Output (0):
 Move:  {
   "move": "NA",
   "message": "JAWA - we don't go by the script",
-  "timer": 448
+  "timer": 438
 }
 > Game score: 315
 > Moving from: BB
@@ -2682,7 +2682,7 @@ Move:  {
 > +++
   move: NA
   message: JAWA - we don't go by the script
-  timer: 448
+  timer: 438
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2691,18 +2691,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 1149,
   "move": "NA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 432
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 315
 > Moving from: BB
 > Life Points: 9
 > Player 3 made move:
 > +++
+  timer: 1149
   move: NA
   message: JAWA - we don't go by the script
-  timer: 432
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2711,9 +2711,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "IO",
-  "timer": 225
+  "message": "JAWA - we don't go by the script",
+  "timer": 227
 }
 > Game score: 315
 > Moving from: TS
@@ -2721,9 +2721,9 @@ Move:  {
 > Legal Drac moves: GO NP RO IO D1 D2 D3
 > Player 4 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: IO
-  timer: 225
+  message: JAWA - we don't go by the script
+  timer: 227
 > ---
 > End of Round:  25
 > Starting Round:  26
@@ -2735,8 +2735,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BU",
-  "timer": 916,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 424
 }
 > Game score: 314
 > Moving from: MR
@@ -2744,8 +2744,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: BU
-  timer: 916
   message: JAWA - we don't go by the script
+  timer: 424
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2756,7 +2756,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 192
+  "timer": 190
 }
 > Game score: 314
 > Moving from: CF
@@ -2765,7 +2765,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 192
+  timer: 190
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2775,8 +2775,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BO",
-  "timer": 372,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 441
 }
 > Game score: 314
 > Moving from: NA
@@ -2784,8 +2784,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: BO
-  timer: 372
   message: JAWA - we don't go by the script
+  timer: 441
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2796,7 +2796,7 @@ Program Output (0):
 Move:  {
   "move": "BO",
   "message": "JAWA - we don't go by the script",
-  "timer": 422
+  "timer": 412
 }
 > Game score: 314
 > Moving from: NA
@@ -2805,7 +2805,7 @@ Move:  {
 > +++
   move: BO
   message: JAWA - we don't go by the script
-  timer: 422
+  timer: 412
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2816,7 +2816,7 @@ Program Output (0):
 Move:  {
   "move": "AT",
   "message": "JAWA - we don't go by the script",
-  "timer": 290
+  "timer": 284
 }
 > Game score: 314
 > Moving from: IO
@@ -2826,7 +2826,7 @@ Move:  {
 > +++
   move: AT
   message: JAWA - we don't go by the script
-  timer: 290
+  timer: 284
 > ---
 > End of Round:  26
 > Starting Round:  27
@@ -2838,7 +2838,7 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "FR",
-  "timer": 2380,
+  "timer": 454,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 313
@@ -2847,7 +2847,7 @@ Move:  {
 > Player 0 made move:
 > +++
   move: FR
-  timer: 2380
+  timer: 454
   message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
@@ -2858,8 +2858,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "SR",
-  "timer": 1259,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 429
 }
 > Game score: 313
 > Moving from: BO
@@ -2867,8 +2867,8 @@ Move:  {
 > Player 1 made move:
 > +++
   move: SR
-  timer: 1259
   message: JAWA - we don't go by the script
+  timer: 429
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -2877,18 +2877,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "CF",
-  "timer": 376
+  "timer": 421,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 313
 > Moving from: BO
 > Life Points: 9
 > Player 2 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: CF
-  timer: 376
+  timer: 421
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -2899,7 +2899,7 @@ Program Output (0):
 Move:  {
   "move": "MR",
   "message": "JAWA - we don't go by the script",
-  "timer": 381
+  "timer": 429
 }
 > Game score: 313
 > Moving from: BO
@@ -2908,7 +2908,7 @@ Move:  {
 > +++
   move: MR
   message: JAWA - we don't go by the script
-  timer: 381
+  timer: 429
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -2919,7 +2919,7 @@ Program Output (0):
 Move:  {
   "move": "VA",
   "message": "JAWA - we don't go by the script",
-  "timer": 197
+  "timer": 334
 }
 > Game score: 313
 > Moving from: AT
@@ -2929,7 +2929,7 @@ Move:  {
 > +++
   move: VA
   message: JAWA - we don't go by the script
-  timer: 197
+  timer: 334
 > ---
 > End of Round:  27
 > Starting Round:  28
@@ -2940,18 +2940,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 488,
   "move": "NU",
-  "message": "JAWA - we don't go by the script",
-  "timer": 425
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 312
 > Moving from: FR
 > Life Points: 9
 > Player 0 made move:
 > +++
+  timer: 488
   move: NU
   message: JAWA - we don't go by the script
-  timer: 425
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -2982,7 +2982,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 12759
+  "timer": 1032
 }
 > Game score: 312
 > Moving from: CF
@@ -2991,7 +2991,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 12759
+  timer: 1032
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3002,7 +3002,7 @@ Program Output (0):
 Move:  {
   "move": "BU",
   "message": "JAWA - we don't go by the script",
-  "timer": 402
+  "timer": 455
 }
 > Game score: 312
 > Moving from: MR
@@ -3011,7 +3011,7 @@ Move:  {
 > +++
   move: BU
   message: JAWA - we don't go by the script
-  timer: 402
+  timer: 455
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3020,9 +3020,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 267,
   "move": "SA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 239
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 312
 > Moving from: VA
@@ -3030,9 +3030,9 @@ Move:  {
 > Legal Drac moves: SA SJ SO D1 D2 D3 HI
 > Player 4 made move:
 > +++
+  timer: 267
   move: SA
   message: JAWA - we don't go by the script
-  timer: 239
 > ---
 > End of Round:  28
 > Starting Round:  29
@@ -3044,8 +3044,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "NU",
-  "timer": 1149,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 911
 }
 > Game score: 311
 > Moving from: NU
@@ -3053,8 +3053,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: NU
-  timer: 1149
   message: JAWA - we don't go by the script
+  timer: 911
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3063,18 +3063,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "BA",
-  "timer": 375
+  "message": "JAWA - we don't go by the script",
+  "timer": 627
 }
 > Game score: 311
 > Moving from: BA
 > Life Points: 9
 > Player 1 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: BA
-  timer: 375
+  message: JAWA - we don't go by the script
+  timer: 627
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3083,18 +3083,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "GE",
-  "timer": 419
+  "message": "JAWA - we don't go by the script",
+  "timer": 509
 }
 > Game score: 311
 > Moving from: GE
 > Life Points: 9
 > Player 2 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: GE
-  timer: 419
+  message: JAWA - we don't go by the script
+  timer: 509
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3104,8 +3104,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BU",
-  "timer": 2122,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 964
 }
 > Game score: 311
 > Moving from: BU
@@ -3113,8 +3113,8 @@ Move:  {
 > Player 3 made move:
 > +++
   move: BU
-  timer: 2122
   message: JAWA - we don't go by the script
+  timer: 964
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3125,7 +3125,7 @@ Program Output (0):
 Move:  {
   "move": "SO",
   "message": "JAWA - we don't go by the script",
-  "timer": 223
+  "timer": 229
 }
 > Game score: 311
 > Moving from: SA
@@ -3135,7 +3135,7 @@ Move:  {
 > +++
   move: SO
   message: JAWA - we don't go by the script
-  timer: 223
+  timer: 229
 > ---
 > End of Round:  29
 > Starting Round:  30
@@ -3146,18 +3146,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 684,
   "move": "ST",
-  "message": "JAWA - we don't go by the script",
-  "timer": 580
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 310
 > Moving from: NU
 > Life Points: 9
 > Player 0 made move:
 > +++
+  timer: 684
   move: ST
   message: JAWA - we don't go by the script
-  timer: 580
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3168,7 +3168,7 @@ Program Output (0):
 Move:  {
   "move": "MS",
   "message": "JAWA - we don't go by the script",
-  "timer": 763
+  "timer": 373
 }
 > Game score: 310
 > Moving from: BA
@@ -3177,7 +3177,7 @@ Move:  {
 > +++
   move: MS
   message: JAWA - we don't go by the script
-  timer: 763
+  timer: 373
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3186,18 +3186,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 791,
   "move": "MR",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 732
 }
 > Game score: 310
 > Moving from: GE
 > Life Points: 9
 > Player 2 made move:
 > +++
-  timer: 791
   move: MR
   message: JAWA - we don't go by the script
+  timer: 732
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3208,7 +3208,7 @@ Program Output (0):
 Move:  {
   "move": "LE",
   "message": "JAWA - we don't go by the script",
-  "timer": 212
+  "timer": 206
 }
 > Game score: 310
 > Moving from: BU
@@ -3217,7 +3217,7 @@ Move:  {
 > +++
   move: LE
   message: JAWA - we don't go by the script
-  timer: 212
+  timer: 206
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3226,9 +3226,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "BE",
   "message": "JAWA - we don't go by the script",
-  "timer": 321
+  "move": "BE",
+  "timer": 324
 }
 > Game score: 310
 > Moving from: SO
@@ -3236,9 +3236,9 @@ Move:  {
 > Legal Drac moves: BE BC SJ VR D1 D2 D3 HI
 > Player 4 made move:
 > +++
-  move: BE
   message: JAWA - we don't go by the script
-  timer: 321
+  move: BE
+  timer: 324
 > ---
 > End of Round:  30
 > Starting Round:  31
@@ -3251,7 +3251,7 @@ Program Output (0):
 Move:  {
   "move": "BU",
   "message": "JAWA - we don't go by the script",
-  "timer": 745
+  "timer": 2767
 }
 > Game score: 309
 > Moving from: ST
@@ -3260,7 +3260,7 @@ Move:  {
 > +++
   move: BU
   message: JAWA - we don't go by the script
-  timer: 745
+  timer: 2767
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3269,18 +3269,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "AO",
-  "timer": 385
+  "message": "JAWA - we don't go by the script",
+  "timer": 1027
 }
 > Game score: 309
 > Moving from: MS
 > Life Points: 9
 > Player 1 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: AO
-  timer: 385
+  message: JAWA - we don't go by the script
+  timer: 1027
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3289,18 +3289,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 704,
   "move": "GE",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 443
 }
 > Game score: 309
 > Moving from: MR
 > Life Points: 9
 > Player 2 made move:
 > +++
-  timer: 704
   move: GE
   message: JAWA - we don't go by the script
+  timer: 443
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3311,7 +3311,7 @@ Program Output (0):
 Move:  {
   "move": "BU",
   "message": "JAWA - we don't go by the script",
-  "timer": 1366
+  "timer": 991
 }
 > Game score: 309
 > Moving from: LE
@@ -3320,7 +3320,7 @@ Move:  {
 > +++
   move: BU
   message: JAWA - we don't go by the script
-  timer: 1366
+  timer: 991
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3329,8 +3329,8 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 770,
   "move": "BC",
+  "timer": 1104,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 309
@@ -3339,8 +3339,8 @@ Move:  {
 > Legal Drac moves: BC KL SJ SZ D1 D2 HI
 > Player 4 made move:
 > +++
-  timer: 770
   move: BC
+  timer: 1104
   message: JAWA - we don't go by the script
 > ---
 > End of Round:  31
@@ -3354,7 +3354,7 @@ Program Output (0):
 Move:  {
   "move": "PA",
   "message": "JAWA - we don't go by the script",
-  "timer": 490
+  "timer": 2093
 }
 > Game score: 308
 > Moving from: BU
@@ -3363,7 +3363,7 @@ Move:  {
 > +++
   move: PA
   message: JAWA - we don't go by the script
-  timer: 490
+  timer: 2093
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3372,18 +3372,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 430,
   "move": "BB",
-  "message": "JAWA - we don't go by the script",
-  "timer": 703
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 308
 > Moving from: AO
 > Life Points: 9
 > Player 1 made move:
 > +++
+  timer: 430
   move: BB
   message: JAWA - we don't go by the script
-  timer: 703
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3392,18 +3392,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "FL",
   "message": "JAWA - we don't go by the script",
-  "timer": 1300
+  "move": "FL",
+  "timer": 433
 }
 > Game score: 308
 > Moving from: GE
 > Life Points: 9
 > Player 2 made move:
 > +++
-  move: FL
   message: JAWA - we don't go by the script
-  timer: 1300
+  move: FL
+  timer: 433
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3412,18 +3412,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "LI",
+  "timer": 433,
   "message": "JAWA - we don't go by the script",
-  "timer": 1498
+  "move": "LI"
 }
 > Game score: 308
 > Moving from: BU
 > Life Points: 9
 > Player 3 made move:
 > +++
-  move: LI
+  timer: 433
   message: JAWA - we don't go by the script
-  timer: 1498
+  move: LI
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3433,8 +3433,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "CN",
-  "message": "JAWA - we don't go by the script",
-  "timer": 987
+  "timer": 661,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 308
 > Moving from: BC
@@ -3443,8 +3443,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: CN
+  timer: 661
   message: JAWA - we don't go by the script
-  timer: 987
 > ---
 > End of Round:  32
 > Starting Round:  33
@@ -3455,18 +3455,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "BU",
-  "timer": 1282
+  "timer": 819,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 294
 > Moving from: PA
 > Life Points: 9
 > Player 0 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: BU
-  timer: 1282
+  timer: 819
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3475,18 +3475,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 1334,
   "move": "NA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 1446
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 294
 > Moving from: BB
 > Life Points: 9
 > Player 1 made move:
 > +++
+  timer: 1334
   move: NA
   message: JAWA - we don't go by the script
-  timer: 1446
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3497,7 +3497,7 @@ Program Output (0):
 Move:  {
   "move": "GO",
   "message": "JAWA - we don't go by the script",
-  "timer": 1099
+  "timer": 1025
 }
 > Game score: 294
 > Moving from: FL
@@ -3506,7 +3506,7 @@ Move:  {
 > +++
   move: GO
   message: JAWA - we don't go by the script
-  timer: 1099
+  timer: 1025
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3515,18 +3515,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "CO",
-  "timer": 739
+  "timer": 614,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 294
 > Moving from: LI
 > Life Points: 9
 > Player 3 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: CO
-  timer: 739
+  timer: 614
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3535,9 +3535,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 1011,
   "move": "GA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 988
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 294
 > Moving from: CN
@@ -3545,9 +3545,9 @@ Move:  {
 > Legal Drac moves: GA VR BS D1 D2 HI
 > Player 4 made move:
 > +++
+  timer: 1011
   move: GA
   message: JAWA - we don't go by the script
-  timer: 988
 > ---
 > End of Round:  33
 > Starting Round:  34
@@ -3558,18 +3558,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "BO",
-  "timer": 801
+  "timer": 1001,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 293
 > Moving from: BU
 > Life Points: 9
 > Player 0 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: BO
-  timer: 801
+  timer: 1001
+  message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3578,18 +3578,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 1423,
+  "message": "JAWA - we don't go by the script",
   "move": "BO",
-  "message": "JAWA - we don't go by the script"
+  "timer": 1316
 }
 > Game score: 293
 > Moving from: NA
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 1423
-  move: BO
   message: JAWA - we don't go by the script
+  move: BO
+  timer: 1316
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3598,18 +3598,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 1895,
   "move": "MR",
-  "message": "JAWA - we don't go by the script",
-  "timer": 1101
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 293
 > Moving from: GO
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 1895
   move: MR
   message: JAWA - we don't go by the script
-  timer: 1101
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3620,7 +3620,7 @@ Program Output (0):
 Move:  {
   "move": "BU",
   "message": "JAWA - we don't go by the script",
-  "timer": 509
+  "timer": 437
 }
 > Game score: 293
 > Moving from: CO
@@ -3629,7 +3629,7 @@ Move:  {
 > +++
   move: BU
   message: JAWA - we don't go by the script
-  timer: 509
+  timer: 437
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3638,9 +3638,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 643,
   "move": "CD",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 308
 }
 > Game score: 293
 > Moving from: GA
@@ -3648,9 +3648,9 @@ Move:  {
 > Legal Drac moves: CD KL D1 D2 D3 HI
 > Player 4 made move:
 > +++
-  timer: 643
   move: CD
   message: JAWA - we don't go by the script
+  timer: 308
 > ---
 > End of Round:  34
 > Starting Round:  35
@@ -3661,18 +3661,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "MR",
-  "timer": 203
+  "message": "JAWA - we don't go by the script",
+  "timer": 205
 }
 > Game score: 292
 > Moving from: BO
 > Life Points: 9
 > Player 0 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: MR
-  timer: 203
+  message: JAWA - we don't go by the script
+  timer: 205
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3683,7 +3683,7 @@ Program Output (0):
 Move:  {
   "move": "CF",
   "message": "JAWA - we don't go by the script",
-  "timer": 228
+  "timer": 266
 }
 > Game score: 292
 > Moving from: BO
@@ -3692,7 +3692,7 @@ Move:  {
 > +++
   move: CF
   message: JAWA - we don't go by the script
-  timer: 228
+  timer: 266
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3703,7 +3703,7 @@ Program Output (0):
 Move:  {
   "move": "GO",
   "message": "JAWA - we don't go by the script",
-  "timer": 1143
+  "timer": 219
 }
 > Game score: 292
 > Moving from: MR
@@ -3712,7 +3712,7 @@ Move:  {
 > +++
   move: GO
   message: JAWA - we don't go by the script
-  timer: 1143
+  timer: 219
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3723,7 +3723,7 @@ Program Output (0):
 Move:  {
   "move": "FR",
   "message": "JAWA - we don't go by the script",
-  "timer": 217
+  "timer": 213
 }
 > Game score: 292
 > Moving from: BU
@@ -3732,7 +3732,7 @@ Move:  {
 > +++
   move: FR
   message: JAWA - we don't go by the script
-  timer: 217
+  timer: 213
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3742,8 +3742,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "KL",
-  "timer": 568,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 228
 }
 > Game score: 292
 > Moving from: CD
@@ -3752,8 +3752,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: KL
-  timer: 568
   message: JAWA - we don't go by the script
+  timer: 228
 > ---
 > End of Round:  35
 > Starting Round:  36
@@ -3764,18 +3764,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "GO",
-  "timer": 733
+  "message": "JAWA - we don't go by the script",
+  "timer": 284
 }
 > Game score: 291
 > Moving from: MR
 > Life Points: 9
 > Player 0 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: GO
-  timer: 733
+  message: JAWA - we don't go by the script
+  timer: 284
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3786,7 +3786,7 @@ Program Output (0):
 Move:  {
   "move": "GE",
   "message": "JAWA - we don't go by the script",
-  "timer": 2183
+  "timer": 1491
 }
 > Game score: 291
 > Moving from: CF
@@ -3795,7 +3795,7 @@ Move:  {
 > +++
   move: GE
   message: JAWA - we don't go by the script
-  timer: 2183
+  timer: 1491
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3804,18 +3804,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 750,
   "move": "VE",
-  "message": "JAWA - we don't go by the script",
-  "timer": 211
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 291
 > Moving from: GO
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 750
   move: VE
   message: JAWA - we don't go by the script
-  timer: 211
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3826,7 +3826,7 @@ Program Output (0):
 Move:  {
   "move": "MU",
   "message": "JAWA - we don't go by the script",
-  "timer": 271
+  "timer": 188
 }
 > Game score: 291
 > Moving from: FR
@@ -3835,7 +3835,7 @@ Move:  {
 > +++
   move: MU
   message: JAWA - we don't go by the script
-  timer: 271
+  timer: 188
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3846,7 +3846,7 @@ Program Output (0):
 Move:  {
   "move": "D2",
   "message": "JAWA - we don't go by the script",
-  "timer": 302
+  "timer": 1469
 }
 > Game score: 291
 > Moving from: KL
@@ -3856,7 +3856,7 @@ Move:  {
 > +++
   move: D2
   message: JAWA - we don't go by the script
-  timer: 302
+  timer: 1469
 > ---
 > End of Round:  36
 > Starting Round:  37
@@ -3869,7 +3869,7 @@ Program Output (0):
 Move:  {
   "move": "VE",
   "message": "JAWA - we don't go by the script",
-  "timer": 249
+  "timer": 210
 }
 > Game score: 290
 > Moving from: GO
@@ -3878,7 +3878,7 @@ Move:  {
 > +++
   move: VE
   message: JAWA - we don't go by the script
-  timer: 249
+  timer: 210
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3887,18 +3887,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "MI",
-  "timer": 218
+  "message": "JAWA - we don't go by the script",
+  "timer": 451
 }
 > Game score: 290
 > Moving from: GE
 > Life Points: 9
 > Player 1 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: MI
-  timer: 218
+  message: JAWA - we don't go by the script
+  timer: 451
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -3907,18 +3907,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "BD",
-  "timer": 208
+  "message": "JAWA - we don't go by the script",
+  "timer": 727
 }
 > Game score: 290
 > Moving from: VE
 > Life Points: 9
 > Player 2 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: BD
-  timer: 208
+  message: JAWA - we don't go by the script
+  timer: 727
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -3929,7 +3929,7 @@ Program Output (0):
 Move:  {
   "move": "VI",
   "message": "JAWA - we don't go by the script",
-  "timer": 211
+  "timer": 421
 }
 > Game score: 290
 > Moving from: MU
@@ -3938,7 +3938,7 @@ Move:  {
 > +++
   move: VI
   message: JAWA - we don't go by the script
-  timer: 211
+  timer: 421
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -3947,9 +3947,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "move": "HI",
   "message": "JAWA - we don't go by the script",
-  "timer": 265
+  "move": "HI",
+  "timer": 145
 }
 > Game score: 290
 > Moving from: CD
@@ -3957,9 +3957,9 @@ Move:  {
 > Legal Drac moves: HI
 > Player 4 made move:
 > +++
-  move: HI
   message: JAWA - we don't go by the script
-  timer: 265
+  move: HI
+  timer: 145
 > ---
 > End of Round:  37
 > Starting Round:  38
@@ -3971,8 +3971,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BD",
-  "message": "JAWA - we don't go by the script",
-  "timer": 1359
+  "timer": 239,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 289
 > Moving from: VE
@@ -3980,8 +3980,8 @@ Move:  {
 > Player 0 made move:
 > +++
   move: BD
+  timer: 239
   message: JAWA - we don't go by the script
-  timer: 1359
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -3992,7 +3992,7 @@ Program Output (0):
 Move:  {
   "move": "MU",
   "message": "JAWA - we don't go by the script",
-  "timer": 210
+  "timer": 209
 }
 > Game score: 289
 > Moving from: MI
@@ -4001,7 +4001,7 @@ Move:  {
 > +++
   move: MU
   message: JAWA - we don't go by the script
-  timer: 210
+  timer: 209
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -4011,8 +4011,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "KL",
-  "message": "JAWA - we don't go by the script",
-  "timer": 2022
+  "timer": 191,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 289
 > Moving from: BD
@@ -4020,8 +4020,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: KL
+  timer: 191
   message: JAWA - we don't go by the script
-  timer: 2022
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -4030,18 +4030,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "BD",
-  "timer": 1186
+  "message": "JAWA - we don't go by the script",
+  "timer": 220
 }
 > Game score: 289
 > Moving from: VI
 > Life Points: 9
 > Player 3 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: BD
-  timer: 1186
+  message: JAWA - we don't go by the script
+  timer: 220
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -4051,8 +4051,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "TP",
-  "message": "JAWA - we don't go by the script",
-  "timer": 379
+  "timer": 108,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 289
 > Moving from: CD
@@ -4061,8 +4061,8 @@ Move:  {
 > Player 4 made move:
 > +++
   move: TP
+  timer: 108
   message: JAWA - we don't go by the script
-  timer: 379
 > ---
 > End of Round:  38
 > Starting Round:  39
@@ -4073,18 +4073,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 409,
   "move": "GA",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 400
 }
 > Game score: 288
 > Moving from: BD
 > Life Points: 9
 > Player 0 made move:
 > +++
-  timer: 409
   move: GA
   message: JAWA - we don't go by the script
+  timer: 400
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -4095,7 +4095,7 @@ Program Output (0):
 Move:  {
   "move": "VI",
   "message": "JAWA - we don't go by the script",
-  "timer": 458
+  "timer": 672
 }
 > Game score: 288
 > Moving from: MU
@@ -4104,7 +4104,7 @@ Move:  {
 > +++
   move: VI
   message: JAWA - we don't go by the script
-  timer: 458
+  timer: 672
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -4115,7 +4115,7 @@ Program Output (0):
 Move:  {
   "move": "CD",
   "message": "JAWA - we don't go by the script",
-  "timer": 527
+  "timer": 136
 }
 > Game score: 288
 > Moving from: KL
@@ -4124,7 +4124,7 @@ Move:  {
 > +++
   move: CD
   message: JAWA - we don't go by the script
-  timer: 527
+  timer: 136
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -4134,7 +4134,7 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "KL",
-  "timer": 215,
+  "timer": 430,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 282
@@ -4143,7 +4143,7 @@ Move:  {
 > Player 3 made move:
 > +++
   move: KL
-  timer: 215
+  timer: 430
   message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
@@ -4153,9 +4153,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "GA",
-  "timer": 471
+  "message": "JAWA - we don't go by the script",
+  "timer": 115
 }
 > Game score: 282
 > Moving from: CD
@@ -4163,9 +4163,9 @@ Move:  {
 > Legal Drac moves: GA
 > Player 4 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: GA
-  timer: 471
+  message: JAWA - we don't go by the script
+  timer: 115
 > ---
 > End of Round:  39
 > Starting Round:  40
@@ -4178,7 +4178,7 @@ Program Output (0):
 Move:  {
   "move": "GA",
   "message": "JAWA - we don't go by the script",
-  "timer": 174
+  "timer": 301
 }
 > Game score: 281
 > Moving from: GA
@@ -4187,7 +4187,7 @@ Move:  {
 > +++
   move: GA
   message: JAWA - we don't go by the script
-  timer: 174
+  timer: 301
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -4198,7 +4198,7 @@ Program Output (0):
 Move:  {
   "move": "BD",
   "message": "JAWA - we don't go by the script",
-  "timer": 1377
+  "timer": 427
 }
 > Game score: 281
 > Moving from: VI
@@ -4207,7 +4207,7 @@ Move:  {
 > +++
   move: BD
   message: JAWA - we don't go by the script
-  timer: 1377
+  timer: 427
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -4216,18 +4216,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
+  "timer": 191,
   "move": "BE",
-  "message": "JAWA - we don't go by the script",
-  "timer": 542
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 281
 > Moving from: JM
 > Life Points: 9
 > Player 2 made move:
 > +++
+  timer: 191
   move: BE
   message: JAWA - we don't go by the script
-  timer: 542
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -4236,7 +4236,7 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 160,
+  "timer": 4355,
   "move": "GA",
   "message": "JAWA - we don't go by the script"
 }
@@ -4245,7 +4245,7 @@ Move:  {
 > Life Points: 9
 > Player 3 made move:
 > +++
-  timer: 160
+  timer: 4355
   move: GA
   message: JAWA - we don't go by the script
 > ---
@@ -4256,9 +4256,9 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DDU.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 148,
   "move": "CD",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 1825
 }
 > Game score: 281
 > Moving from: GA
@@ -4266,9 +4266,9 @@ Move:  {
 > Legal Drac moves: BC CD CN
 > Player 4 made move:
 > +++
-  timer: 148
   move: CD
   message: JAWA - we don't go by the script
+  timer: 1825
 > ---
 > End of Round:  40
 > Starting Round:  41
@@ -4281,7 +4281,7 @@ Program Output (0):
 Move:  {
   "move": "CD",
   "message": "JAWA - we don't go by the script",
-  "timer": 312
+  "timer": 297
 }
 > Game score: 280
 > Moving from: GA
@@ -4290,7 +4290,7 @@ Move:  {
 > +++
   move: CD
   message: JAWA - we don't go by the script
-  timer: 312
+  timer: 297
 > ---
 --------------------------------------------------------------------------
 > Running player 1... 
@@ -4299,18 +4299,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "message": "JAWA - we don't go by the script",
   "move": "KL",
-  "timer": 2133
+  "message": "JAWA - we don't go by the script",
+  "timer": 435
 }
 > Game score: 274
 > Moving from: BD
 > Life Points: 9
 > Player 1 made move:
 > +++
-  message: JAWA - we don't go by the script
   move: KL
-  timer: 2133
+  message: JAWA - we don't go by the script
+  timer: 435
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -4320,8 +4320,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "GA",
-  "message": "JAWA - we don't go by the script",
-  "timer": 1119
+  "timer": 436,
+  "message": "JAWA - we don't go by the script"
 }
 > Game score: 274
 > Moving from: BE
@@ -4329,8 +4329,8 @@ Move:  {
 > Player 2 made move:
 > +++
   move: GA
+  timer: 436
   message: JAWA - we don't go by the script
-  timer: 1119
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -4340,8 +4340,8 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "CD",
-  "timer": 300,
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 692
 }
 > Game score: 274
 > Moving from: GA
@@ -4349,8 +4349,8 @@ Move:  {
 > Player 3 made move:
 > +++
   move: CD
-  timer: 300
   message: JAWA - we don't go by the script
+  timer: 692
 > ---
 --------------------------------------------------------------------------
 > Running player 4... 
@@ -4361,7 +4361,7 @@ Program Output (0):
 Move:  {
   "move": "KL",
   "message": "JAWA - we don't go by the script",
-  "timer": 573
+  "timer": 228
 }
 > Game score: 274
 > Moving from: CD
@@ -4371,7 +4371,7 @@ Move:  {
 > +++
   move: KL
   message: JAWA - we don't go by the script
-  timer: 573
+  timer: 228
 > ---
 > End of Round:  41
 > Starting Round:  42
@@ -4383,7 +4383,7 @@ Program Output (0):
 ==============================================================
 Move:  {
   "move": "BE",
-  "timer": 227,
+  "timer": 683,
   "message": "JAWA - we don't go by the script"
 }
 > Game score: 273
@@ -4392,7 +4392,7 @@ Move:  {
 > Player 0 made move:
 > +++
   move: BE
-  timer: 227
+  timer: 683
   message: JAWA - we don't go by the script
 > ---
 --------------------------------------------------------------------------
@@ -4402,18 +4402,18 @@ Running with input: "past_plays": "GAO.... SLS.... HBO.... MSO.... DC?.V.. GBB..
 Program Output (0): 
 ==============================================================
 Move:  {
-  "timer": 350,
   "move": "KL",
-  "message": "JAWA - we don't go by the script"
+  "message": "JAWA - we don't go by the script",
+  "timer": 929
 }
 > Game score: 273
 > Moving from: KL
 > Life Points: 9
 > Player 1 made move:
 > +++
-  timer: 350
   move: KL
   message: JAWA - we don't go by the script
+  timer: 929
 > ---
 --------------------------------------------------------------------------
 > Running player 2... 
@@ -4424,7 +4424,7 @@ Program Output (0):
 Move:  {
   "move": "KL",
   "message": "JAWA - we don't go by the script",
-  "timer": 156
+  "timer": 299
 }
 > Game score: 273
 > Moving from: GA
@@ -4433,7 +4433,7 @@ Move:  {
 > +++
   move: KL
   message: JAWA - we don't go by the script
-  timer: 156
+  timer: 299
 > ---
 --------------------------------------------------------------------------
 > Running player 3... 
@@ -4444,7 +4444,7 @@ Program Output (0):
 Move:  {
   "move": "KL",
   "message": "JAWA - we don't go by the script",
-  "timer": 292
+  "timer": 548
 }
 > Game score: 273
 > Moving from: CD
@@ -4453,7 +4453,7 @@ Move:  {
 > +++
   move: KL
   message: JAWA - we don't go by the script
-  timer: 292
+  timer: 548
 > ---
 --------------------------------------------------------------------------
 > End of game: 
