@@ -93,7 +93,6 @@ void decideHunterMove(HunterView hv)
             return;
         }
     }
-    free(reachable);
 
     // BFS to Dracula location if far away
     if (placeIsReal(lastDraculaLocation)) {
@@ -251,7 +250,6 @@ void decideHunterMove(HunterView hv)
     free(generalReachable);
     return;
 }
-
 
 // Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv)
