@@ -99,36 +99,34 @@ void decideHunterMove(HunterView hv)
     if (placeIsReal(lastDraculaLocation)) {
         int pathLengthD = 0;
         PlaceId *pathD = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLengthD);
+        PlaceId shortestPathStep = pathD[0];
+        free(pathD);
         if (pathLengthD > 3 && round - roundRevealed <= 10) {
             // Move towards Dracula
-            registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "JAWA - we don't go by the script");
-            free(pathD);
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
         } else if (pathLengthD > 1 && round - roundRevealed <= 7) {
             // Move towards Dracula
-            registerBestPlay((char *)placeIdToAbbrev(pathD[0]), "JAWA - we don't go by the script");
-            free(pathD);
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
         }
-        free(pathD);
     }
 
     // BFS to trap location if far away
     if (placeIsReal(lastTrapLocation)) {
         int pathLengthT = 0;
         PlaceId *pathT = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLengthT);
+        PlaceId shortestPathStep = pathT[0];
+        free(pathT);
         if (pathLengthT > 3 && round - roundRevealed <= 10) {
             // Move towards trap location
-            registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "JAWA - we don't go by the script");
-            free(pathT);
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
         } else if (pathLengthT > 1 && round - roundRevealed <= 7) {
             // Move towards trap location
-            registerBestPlay((char *)placeIdToAbbrev(pathT[0]), "JAWA - we don't go by the script");
-            free(pathT);
+            registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
         }
-        free(pathT);
     }
 
     // Vampire
@@ -185,7 +183,7 @@ void decideHunterMove(HunterView hv)
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     // Guard 
-    } else if (draculaHealth <= 15 && player == closestPlayer && minPathLength != 0 && round % 2 == 0) {
+    } else if (draculaHealth <= 15 && player == closestPlayer && minPathLength != 0 && round % 3 == 0) {
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     }
