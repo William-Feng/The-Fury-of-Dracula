@@ -223,7 +223,7 @@ void decideHunterMove(HunterView hv)
     int moveWeight[NUM_REAL_PLACES] = {0}; int minimumWeight = 100000;
     for (int i = 0; i < numReturnedLocs; i++) {
         PlaceId option = generalReachable[i];
-        moveWeight[i] = 2 * numHuntersAtLocation(hv, option);
+        moveWeight[i] = 5 * numHuntersAtLocation(hv, option);
         moveWeight[i] += numHuntersReachable(hv, option, player);
         if (moveWeight[i] < minimumWeight) minimumWeight = moveWeight[i];
     }
