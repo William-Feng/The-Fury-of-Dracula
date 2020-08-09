@@ -7,7 +7,7 @@
 // 2018-12-31   v2.0    Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
 //
-// This was created by JAWA on 08/08/2020.
+// This was created by JAWA on 10/08/2020.
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -105,7 +105,7 @@ void decideHunterMove(HunterView hv)
             // Move towards Dracula
             registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
-        } else if (pathLengthD > 1 && round - roundRevealed <= 7) {
+        } else if (pathLengthD > 1 && round - roundRevealed <= 8) {
             // Move towards Dracula
             registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
@@ -122,7 +122,7 @@ void decideHunterMove(HunterView hv)
             // Move towards trap location
             registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
-        } else if (pathLengthT > 1 && round - roundRevealed <= 7) {
+        } else if (pathLengthT > 1 && round - roundRevealed <= 8) {
             // Move towards trap location
             registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
@@ -152,14 +152,25 @@ void decideHunterMove(HunterView hv)
         }
     }
 
-    // Rest
-    if (health < 4) {
+    // Check whether Dracula can be encountered in two turns
+    for (int i = 0; i < numReturnedLocs; i++) {
+        PlaceId city = reachable[i];
+        if (city == lastDraculaLocation && numHuntersAtLocation(hv, city) == 0 && round - roundRevealed == 2 && placeIsReal(lastDraculaLocation)) {
+            registerBestPlay((char *)placeIdToAbbrev(city), "JAWA - we don't go by the script");
+            free(reachable);
+            return;
+        }
+    }
+    free(reachable);
+
+    // Collaborative research
+    if (round >= 6 && round - roundRevealed >= 12) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
         return;
     }
 
-    // Collaborative research
-    if (round >= 6 && round - roundRevealed >= 12) {
+    // Rest
+    if (health < 3) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
         return;
     }
@@ -183,7 +194,10 @@ void decideHunterMove(HunterView hv)
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     // Guard 
-    } else if (draculaHealth <= 15 && player == closestPlayer && minPathLength != 0 && round % 3 == 0) {
+    } else if (draculaHealth <= 15 && player == closestPlayer && minPathLength != 0 && round % 5 == 0) {
+        registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
+        return;
+    } else if (draculaHealth <= 8 && player == closestPlayer && minPathLength != 0 && round % 3 == 0) {
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     }

@@ -7,7 +7,7 @@
 // 2018-12-31   v2.0    Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
 //
-// This was created by JAWA on 08/08/2020.
+// This was created by JAWA on 10/08/2020.
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +69,7 @@ void decideDraculaMove(DraculaView dv)
             if (DvGetPlayerLocation(dv, player) == location && !placeIsSea(location))
                 moveWeight[i] -= 120;
 
-        // Reachable within two turns (only check if location is not sea)
+        // Reachable within two turns
         int numHuntersNotReachable = 0;
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
             if (!reachableInTwoTurns(dv, location, player, round))
@@ -109,7 +109,7 @@ void decideDraculaMove(DraculaView dv)
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 30) moveWeight[i] -= 50;
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 20) moveWeight[i] -= 30; 
 
-        // Prevent looping - move away
+        // Prevent getting trapped at Athens
         if (currentLocation == IONIAN_SEA && (location == TYRRHENIAN_SEA || location == ADRIATIC_SEA))
             moveWeight[i] += 15;
     }
