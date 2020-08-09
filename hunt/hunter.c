@@ -84,22 +84,6 @@ void decideHunterMove(HunterView hv)
     int numReturnedLocs = 0;
     PlaceId *reachable = HvWhereCanIGo(hv, &numReturnedLocs);
 
-    for (Player i = PLAYER_LORD_GODALMING; i < PLAYER_DRACULA; i++) {
-        if (player != i) {
-            PlaceId location = HvGetPlayerLocation(hv, i);
-            int j;
-            for (j = 0; j < numReturnedLocs; j++) {
-                if (reachable[j] == location) break;
-            }
-            numReturnedLocs--;
-            for (int k = j; k < numReturnedLocs; k++) {
-                reachable[k] = reachable[k + 1];
-            }
-        }
-    }
-
-
-
     // Check whether Dracula can be encountered on the next turn
     for (int i = 0; i < numReturnedLocs; i++) {
         PlaceId city = reachable[i];
@@ -165,8 +149,8 @@ void decideHunterMove(HunterView hv)
     if (draculaHealth <= 25 && player == closestPlayer && minPathLength > 3) {
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
-    // Noone already there
-    } else if (draculaHealth <= 20 && player == closestPlayer && minPathLength != 0 && round % 3 == 0) {
+    // Guard 
+    } else if (draculaHealth <= 20 && player == closestPlayer && minPathLength != 0 && round % 2 == 0) {
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     }
