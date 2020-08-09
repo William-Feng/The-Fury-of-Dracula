@@ -181,11 +181,11 @@ void decideHunterMove(HunterView hv)
         free(path);
     }
     // Move towards
-    if (draculaHealth <= 25 && player == closestPlayer && minPathLength > 3) {
+    if (draculaHealth <= 20 && player == closestPlayer && minPathLength > 3) {
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     // Guard 
-    } else if (draculaHealth <= 20 && player == closestPlayer && minPathLength != 0 && round % 2 == 0) {
+    } else if (draculaHealth <= 15 && player == closestPlayer && minPathLength != 0 && round % 2 == 0) {
         registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
         return;
     }
