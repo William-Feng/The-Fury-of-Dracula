@@ -101,7 +101,7 @@ void decideHunterMove(HunterView hv)
         PlaceId *pathD = HvGetShortestPathTo(hv, player, lastDraculaLocation, &pathLengthD);
         PlaceId shortestPathStep = pathD[0];
         free(pathD);
-        if (pathLengthD > 3 && round - roundRevealed <= 10) {
+        if (pathLengthD > 2 && round - roundRevealed <= 9) {
             // Move towards Dracula
             registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
@@ -118,7 +118,7 @@ void decideHunterMove(HunterView hv)
         PlaceId *pathT = HvGetShortestPathTo(hv, player, lastTrapLocation, &pathLengthT);
         PlaceId shortestPathStep = pathT[0];
         free(pathT);
-        if (pathLengthT > 3 && round - roundRevealed <= 10) {
+        if (pathLengthT > 2 && round - roundRevealed <= 9) {
             // Move towards trap location
             registerBestPlay((char *)placeIdToAbbrev(shortestPathStep), "JAWA - we don't go by the script");
             return;
@@ -223,8 +223,9 @@ void decideHunterMove(HunterView hv)
     int indexOfMin = rand() % arrSize;
     // Prevent idle
     if (arrSize == 0) {
-        PlaceId loc = generalReachable[rand() % numReturnedLocs];
-        registerBestPlay((char *)placeIdToAbbrev(loc), "JAWA - we don't go by the script");
+        int index = rand() % numReturnedLocs;
+        if (generalReachable[index] == move) index = (index + 1) % numReturnedLocs;
+        registerBestPlay((char *)placeIdToAbbrev(generalReachable[index]), "JAWA - we don't go by the script");
         free(generalReachable);
         return;
     }
@@ -236,6 +237,7 @@ void decideHunterMove(HunterView hv)
     free(generalReachable);
     return;
 }
+
 
 // Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv)
