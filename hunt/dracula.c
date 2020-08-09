@@ -66,17 +66,16 @@ void decideDraculaMove(DraculaView dv)
 
         // Extra weighting if hunter already at location
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
-            if (DvGetPlayerLocation(dv, player) == location) moveWeight[i] -= 120;
+            if (DvGetPlayerLocation(dv, player) == location && !placeIsSea(location))
+                moveWeight[i] -= 120;
 
         // Reachable within two turns (only check if location is not sea)
-        if (!placeIsSea(location)) {
-            int numHuntersNotReachable = 0;
-            for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-                if (!reachableInTwoTurns(dv, location, player, round))
-                    numHuntersNotReachable++;
-            }
-            moveWeight[i] += 8 * numHuntersNotReachable;
+        int numHuntersNotReachable = 0;
+        for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+            if (!reachableInTwoTurns(dv, location, player, round))
+                numHuntersNotReachable++;
         }
+        moveWeight[i] += 15 * numHuntersNotReachable;
 
         // Check death condition
         if (draculaHealth <= numHunters * LIFE_LOSS_HUNTER_ENCOUNTER + (placeIsSea(location) * 2) &&
@@ -93,24 +92,25 @@ void decideDraculaMove(DraculaView dv)
         
         // Prefers to go to sea if encountered hunter
         for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
-            if (DvGetPlayerLocation(dv, player) == currentLocation && placeIsSea(location)) moveWeight[i] += 5;
+            if (DvGetPlayerLocation(dv, player) == currentLocation && placeIsSea(location))
+                moveWeight[i] += 5;
 
         // Prefers to go to CD
         int huntersNotReachable = 0;
         if (location == CASTLE_DRACULA)  {
             moveWeight[i] += 7;
-            for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-                if (!reachableInTwoTurns(dv, location, player, round))
-                    huntersNotReachable++;
-            }
+            for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
+                if (!reachableInTwoTurns(dv, location, player, round)) huntersNotReachable++;
         }
         
-        if (location == CASTLE_DRACULA && huntersNotReachable > 2) moveWeight[i] += 85;
+        if (location == CASTLE_DRACULA && huntersNotReachable > 1) moveWeight[i] += 85;
 
         // Avoid staying at CD
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 30) moveWeight[i] -= 50;
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 20) moveWeight[i] -= 30; 
 
+        if (currentLocation == IONIAN_SEA && (location == TYRRHENIAN_SEA || location == ADRIATIC_SEA))
+            moveWeight[i] += 15;
     }
 
     // Select max weight

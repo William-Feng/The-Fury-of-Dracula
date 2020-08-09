@@ -161,7 +161,7 @@ void decideHunterMove(HunterView hv)
     }
 
     // Collaborative research
-    if (round >= 6 && round - roundRevealed >= 6) {
+    if (round >= 6 && round - roundRevealed >= 12) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
         return;
     }
