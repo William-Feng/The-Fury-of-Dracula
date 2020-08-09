@@ -109,6 +109,7 @@ void decideDraculaMove(DraculaView dv)
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 30) moveWeight[i] -= 50;
         if (!placeIsReal(move) && location == CASTLE_DRACULA && draculaHealth >= 20) moveWeight[i] -= 30; 
 
+        // Prevent looping - move away
         if (currentLocation == IONIAN_SEA && (location == TYRRHENIAN_SEA || location == ADRIATIC_SEA))
             moveWeight[i] += 15;
     }
