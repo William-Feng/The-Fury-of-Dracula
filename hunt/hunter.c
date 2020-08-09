@@ -223,7 +223,8 @@ void decideHunterMove(HunterView hv)
     int indexOfMin = rand() % arrSize;
     // Prevent idle
     if (arrSize == 0) {
-        registerBestPlay((char *)placeIdToAbbrev(rand() % numReturnedLocs), "JAWA - we don't go by the script");
+        PlaceId loc = generalReachable[rand() % numReturnedLocs];
+        registerBestPlay((char *)placeIdToAbbrev(loc), "JAWA - we don't go by the script");
         free(generalReachable);
         return;
     }
