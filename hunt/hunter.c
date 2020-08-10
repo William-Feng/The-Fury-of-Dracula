@@ -67,7 +67,7 @@ void decideHunterMove(HunterView hv)
     for (int i = 0; i < numReturnedLocs; i++) {
         PlaceId city = reachable[i];
         if (city == move) continue;
-        if (city == lastDraculaLocation && round - roundRevealed == 1 && placeIsReal(lastDraculaLocation)) {
+        if (city == lastDraculaLocation && round - roundRevealed <= 2 && placeIsReal(lastDraculaLocation)) {
             registerBestPlay((char *)placeIdToAbbrev(city), "JAWA - we don't go by the script");
             free(reachable);
             return;
@@ -132,7 +132,7 @@ void decideHunterMove(HunterView hv)
     }
 
     // Collaborative research
-    if (round >= 6 && round - roundRevealed >= 12) {
+    if (round >= 6 && round - roundRevealed >= 15) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
         return;
     }
