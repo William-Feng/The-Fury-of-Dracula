@@ -28,7 +28,6 @@ static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter);
 // Near trap
 static bool nearTrap(HunterView hv, PlaceId currentLocation, PlaceId lastTrapLocation);
 
-static bool possibleDraculaLocation(HunterView hv, PlaceId location);
 
 void decideHunterMove(HunterView hv)
 {
@@ -66,7 +65,6 @@ void decideHunterMove(HunterView hv)
     // Check whether Dracula can be encountered on the next turn
     for (int i = 0; i < numReturnedLocs; i++) {
         PlaceId city = reachable[i];
-        if (city == move) continue;
         if (city == lastDraculaLocation && round - roundRevealed == 1 && placeIsReal(lastDraculaLocation)) {
             registerBestPlay((char *)placeIdToAbbrev(city), "JAWA - we don't go by the script");
             free(reachable);
@@ -131,6 +129,17 @@ void decideHunterMove(HunterView hv)
         }
     }
 
+    // Check whether Dracula can be encountered in two turns
+    for (int i = 0; i < numReturnedLocs; i++) {
+        PlaceId city = reachable[i];
+        if (city == lastDraculaLocation && numHuntersAtLocation(hv, city) == 0 && round - roundRevealed == 2 && placeIsReal(lastDraculaLocation)) {
+            registerBestPlay((char *)placeIdToAbbrev(city), "JAWA - we don't go by the script");
+            free(reachable);
+            return;
+        }
+    }
+    free(reachable);
+
     // Collaborative research
     if (round >= 6 && round - roundRevealed >= 12) {
         registerBestPlay((char *)placeIdToAbbrev(move), "JAWA - we don't go by the script");
@@ -190,10 +199,7 @@ void decideHunterMove(HunterView hv)
         moveWeight[i] = 5 * numHuntersAtLocation(hv, option);
         moveWeight[i] += numHuntersReachable(hv, option, player);
         moveWeight[i] += visited(hv, option);
-        moveWeight[i] += inTrail(hv, option);
-        moveWeight[i] -= possibleDraculaLocation(hv, option);
-        if (round - trapRound < 2) moveWeight[i] -= 2 * nearTrap(hv, move, lastTrapLocation);
-        moveWeight[i] -= 1 * nearTrap(hv, move, lastTrapLocation);
+        moveWeight[i] -= 2 * nearTrap(hv, move, lastTrapLocation);
         if (moveWeight[i] < minimumWeight) minimumWeight = moveWeight[i];
     }
 
@@ -224,20 +230,6 @@ void decideHunterMove(HunterView hv)
     free(generalReachable);
     return;
 }
-
-static bool possibleDraculaLocation(HunterView hv, PlaceId location) {
-    int numReturnedLocs = 0;
-    PlaceId *possible = HvWhereCanTheyGo(hv, PLAYER_DRACULA, &numReturnedLocs);
-    for (int i = 0; i < numReturnedLocs; i++) {
-        if (possible[i] == location) {
-            free(possible);
-            return true;
-        }
-    }
-    free(possible);
-    return false;
-}
-
 
 
 // Registers a starting location for a player

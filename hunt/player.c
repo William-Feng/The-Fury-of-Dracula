@@ -71,7 +71,7 @@ typedef HunterView View;
 # define decideMove decideHunterMove
 # define ViewFree HvFree
 
-# define xPastPlays "GED.... SLS.... HVE.... MSO.... DCD.V.."
+# define xPastPlays "GED.... SLS.... HVE.... MSO.... DCD.V.. GNS.... SSR.... HBD.... MBE.... DD1T... GHA.... SMR.... HKL.... MKL.... DHIT... GVI.... SGO.... HCDTTVD"
 # define xMsgs { "", "", "" }
 
 #endif

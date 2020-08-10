@@ -288,3 +288,13 @@ bool visited(HunterView hv, PlaceId location) {
 	return false;
 }
 
+bool inTrail(HunterView hv, PlaceId location) {
+	int numLocs = 0; bool canFree = true;
+	PlaceId *trail = GvGetLastLocations(hv->gv, PLAYER_DRACULA, 5, &numLocs, &canFree);
+	for (int i = 0; i < numLocs; i++) {
+		if (trail[i] == location) {
+			return true;
+		}
+	}
+	return false;
+}
