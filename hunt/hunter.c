@@ -189,7 +189,7 @@ void decideHunterMove(HunterView hv)
         PlaceId option = generalReachable[i];
         moveWeight[i] = 5 * numHuntersAtLocation(hv, option);
         moveWeight[i] += numHuntersReachable(hv, option, player);
-        moveWeight[i] += visited(hv, option);
+        moveWeight[i] += 2 * visited(hv, option);
         moveWeight[i] += inTrail(hv, option);
         moveWeight[i] -= possibleDraculaLocation(hv, option);
         if (round - trapRound < 2) moveWeight[i] -= 2 * nearTrap(hv, move, lastTrapLocation);
