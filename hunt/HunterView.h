@@ -217,5 +217,7 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 
 // Returns most recent trap encounter
 PlaceId recentTrapEncounter(HunterView hv, Round *trapRound);
+// Already been in previous round
+bool visited(HunterView hv, PlaceId location);
 
 #endif // !defined (FOD__HUNTER_VIEW_H_)

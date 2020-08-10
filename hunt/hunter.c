@@ -198,6 +198,7 @@ void decideHunterMove(HunterView hv)
         PlaceId option = generalReachable[i];
         moveWeight[i] = 5 * numHuntersAtLocation(hv, option);
         moveWeight[i] += numHuntersReachable(hv, option, player);
+        moveWeight[i] += visited(hv, option);
         moveWeight[i] -= 2 * nearTrap(hv, move, lastTrapLocation);
         if (moveWeight[i] < minimumWeight) minimumWeight = moveWeight[i];
     }

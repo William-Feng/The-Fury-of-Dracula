@@ -269,3 +269,22 @@ PlaceId recentTrapEncounter(HunterView hv, Round *trapRound) {
 	}
 	return trap;
 }
+
+// Already been in previous round
+bool visited(HunterView hv, PlaceId location) {
+    Round round = HvGetRound(hv);
+	Round start = max(round - 1, 0);
+	for (Round r = start; r <= round; r++) {
+		for (Player p = PLAYER_LORD_GODALMING; p < PLAYER_DRACULA; p++) {
+			if (r * 40 + p * 8 >= strlen(hv->pastPlays)) continue;
+			// Location
+			char loc[3];
+			loc[0] = hv->pastPlays[r * 40 + p * 8 + 1];
+			loc[1] = hv->pastPlays[r * 40 + p * 8 + 2];
+			loc[2] = '\0';
+			if (placeAbbrevToId(loc) == location) return true;
+		}
+	}
+	return false;
+}
+
