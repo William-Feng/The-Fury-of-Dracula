@@ -251,8 +251,10 @@ static int max(int a, int b)
 PlaceId recentTrapEncounter(HunterView hv, Round *trapRound) {
 	Round round = HvGetRound(hv);
 	Round start = max(round - 6, 0);
-	for (Round r = round - 1; r >= start; r--) {
+	PlaceId trap = NOWHERE;
+	for (Round r = start; r <= round; r++) {
 		for (Player p = PLAYER_LORD_GODALMING; p < PLAYER_DRACULA; p++) {
+			if (r * 40 + p * 8 >= strlen(hv->pastPlays)) continue;
 			for (int encounter = 3; encounter <= 7; encounter++) {
 				if (hv->pastPlays[r * 40 + p * 8 + encounter] == 'T') {
 					char loc[3];
@@ -260,10 +262,10 @@ PlaceId recentTrapEncounter(HunterView hv, Round *trapRound) {
 					loc[1] = hv->pastPlays[r * 40 + p * 8 + 2];
 					loc[2] = '\0';
 					*trapRound = r;
-					return placeAbbrevToId(loc);
+					trap = placeAbbrevToId(loc);
 				}
 			}
 		}
 	}
-	return NOWHERE;
+	return trap;
 }

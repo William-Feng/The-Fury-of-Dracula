@@ -21,13 +21,35 @@
 
 // Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv);
-// Returns number of hunters at location
-static int numHuntersAtLocation(HunterView hv, PlaceId location);
-// Return number of hunters who can reach a location on their next turn
-static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter);
-// Near trap
-static bool nearTrap(HunterView hv, PlaceId currentLocation, PlaceId lastTrapLocation);
 
+// Returns number of hunters at location
+static int numHuntersAtLocation(HunterView hv, PlaceId location)
+{
+    int numHunters = 0;
+    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
+        if (HvGetPlayerLocation(hv, player) == location) numHunters++;
+    return numHunters;
+}
+
+// Return number of hunters who can reach a location on their next turn
+static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter)
+{
+    int numHunters = 0;
+    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+        // Where can the other hunters go
+        if (player == hunter) continue;
+        int numReturnedLocs = 0;
+        PlaceId *playerReachable = HvWhereCanTheyGoByType(hv, player, true, false, true, &numReturnedLocs);
+        for (int i = 0; i < numReturnedLocs; i++) {
+            if (playerReachable[i] == location) {
+                numHunters++;
+                break;
+            }
+        }
+        free(playerReachable);
+    }
+    return numHunters;
+}
 
 void decideHunterMove(HunterView hv)
 {
@@ -198,7 +220,6 @@ void decideHunterMove(HunterView hv)
         PlaceId option = generalReachable[i];
         moveWeight[i] = 5 * numHuntersAtLocation(hv, option);
         moveWeight[i] += numHuntersReachable(hv, option, player);
-        moveWeight[i] -= 2 * nearTrap(hv, move, lastTrapLocation);
         if (moveWeight[i] < minimumWeight) minimumWeight = moveWeight[i];
     }
 
@@ -230,7 +251,6 @@ void decideHunterMove(HunterView hv)
     return;
 }
 
-
 // Registers a starting location for a player
 static PlaceId startingLocation(HunterView hv)
 {
@@ -247,48 +267,4 @@ static PlaceId startingLocation(HunterView hv)
         default:
             return NOWHERE;
     }
-}
-
-// Returns number of hunters at location
-static int numHuntersAtLocation(HunterView hv, PlaceId location)
-{
-    int numHunters = 0;
-    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++)
-        if (HvGetPlayerLocation(hv, player) == location) numHunters++;
-    return numHunters;
-}
-
-// Return number of hunters who can reach a location on their next turn
-static int numHuntersReachable(HunterView hv, PlaceId location, Player hunter)
-{
-    int numHunters = 0;
-    for (Player player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
-        // Where can the other hunters go
-        if (player == hunter) continue;
-        int numReturnedLocs = 0;
-        PlaceId *playerReachable = HvWhereCanTheyGoByType(hv, player, true, false, true, &numReturnedLocs);
-        for (int i = 0; i < numReturnedLocs; i++) {
-            if (playerReachable[i] == location) {
-                numHunters++;
-                break;
-            }
-        }
-        free(playerReachable);
-    }
-    return numHunters;
-}
-
-// Near trap
-static bool nearTrap(HunterView hv, PlaceId currentLocation, PlaceId lastTrapLocation) {
-    if (lastTrapLocation == NOWHERE) return false;
-    int numReturnedLocs = 0;
-    PlaceId *reachable = HvWhereCanIGo(hv, &numReturnedLocs);
-    for (int i = 0; i < numReturnedLocs; i++) {
-        if (reachable[i] == lastTrapLocation) {
-            free(reachable);
-            return true;
-        }
-    }
-    free(reachable);
-    return false;
 }
